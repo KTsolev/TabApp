@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ImageBackground } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 class Step extends Component {
@@ -7,21 +7,25 @@ class Step extends Component {
 
   render() {
     return (
-      <View>
-        <Text>
-          {this.props.children} Step {this.props.currentIndex}
-        </Text>
-        <LinearGradient
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        colors={['#009fea', '#0544a8']}
-        style={styles.button}>
-          <TouchableOpacity
-            dissabled={this.props.last}
-            onPress={this.props.nextStep}>
-            <Text style={styles.buttonText}>{this.props.label}</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+      <View style={styles.containerInner}>
+      <ImageBackground
+        style={styles.innerBackgroundImage}
+        source={require('../imgs/shape-1.png')}>
+          <Text style={styles.containerTitle}>
+            {this.props.children}
+          </Text>
+          <LinearGradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          colors={['#009fea', '#0544a8']}
+          style={styles.button}>
+            <TouchableOpacity
+              dissabled={this.props.last}
+              onPress={this.props.nextStep}>
+              <Text style={styles.buttonText}>{this.props.label}</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </ImageBackground>
       </View>);
   }
 }
@@ -34,6 +38,8 @@ class Wizzard extends Component {
     this.state = {
       index: 0,
       label: 'NEXT',
+      isLast: false,
+      isCompleted: false,
     };
 
     this._nextStep = this._nextStep.bind(this);
@@ -44,25 +50,33 @@ class Wizzard extends Component {
       this.setState(prevState => ({
         index: prevState.index + 1,
         label: prevState.index === 3 ? 'BEGIN' : 'NEXT',
+        isLast: this.state.index === this.props.children.length - 1,
       }));
     }
   }
 
   render() {
     return (
-      <View>
-      {React.Children.map(this.props.children, (el, index) => {
-        if (index === this.state.index) {
-          return React.cloneElement(el, {
-            currentIndex: this.state.index + 1,
-            nextStep: this._nextStep,
-            label: this.state.label,
-            isLast: this.state.index === this.props.children.length - 1,
-          });
-        }
+      <View style={styles.container}>
+      <ImageBackground
+        style={styles.mainBackgroundImage}
+        source={require('../imgs/photo.png')}>
+          <View>
+            {React.Children.map(this.props.children, (el, index) => <Text style={styles.containerText}>{index + 1}</Text>)}
+          </View>
+          {React.Children.map(this.props.children, (el, index) => {
+            if (index === this.state.index) {
+              return React.cloneElement(el, {
+                currentIndex: this.state.index + 1,
+                nextStep: this._nextStep,
+                label: this.state.label,
+                isLast: this.state.index === this.props.children.length - 1,
+              });
+            }
 
-        return null;
-      })}
+            return null;
+          })}
+        </ImageBackground>
       </View>);
   }
 }
@@ -70,13 +84,16 @@ class Wizzard extends Component {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    width: '90%',
-    height: '40%',
-    padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 50,
+  },
+
+  containerInner: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   containerTitle: {
@@ -84,8 +101,6 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
     color: '#0643a7',
     textAlign: 'center',
-    marginTop: 10,
-    marginBottom: 10,
   },
 
   containerText: {
@@ -111,7 +126,19 @@ const styles = StyleSheet.create({
     paddingRight: 50,
     paddingLeft: 50,
   },
-});
 
+  innerBackgroundImage: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flex: 1,
+    resizeMode: 'contain',
+  },
+
+  mainBackgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+});
 
 export default Wizzard;

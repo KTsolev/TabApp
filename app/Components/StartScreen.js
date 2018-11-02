@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
@@ -45,6 +45,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 50,
+  },
+
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    flex: 1,
+    resizeMode: 'cover',
   },
 
   imageHolder: {

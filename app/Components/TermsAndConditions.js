@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
