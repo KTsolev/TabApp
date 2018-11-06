@@ -8,14 +8,21 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.4.2",
+    "moment": "^2.22.2",
     "react": "16.6.0-alpha.8af6728",
     "react-native": "0.57.3",
+    "react-native-calendars": "^1.21.0",
     "react-native-elements": "^0.19.1",
     "react-native-hyperlink": "0.0.14",
     "react-native-linear-gradient": "^2.4.3",
     "react-native-mask": "^0.5.0",
+    "react-native-modal-datetime-picker": "^6.0.0",
+    "react-native-percentage-circle": "^1.0.7",
+    "react-native-progress": "^3.5.0",
+    "react-native-svg-image": "^2.0.1",
     "react-native-vector-icons": "^6.0.2",
-    "react-navigation": "^2.18.2"
+    "react-navigation": "^2.18.2",
+    "react-sweet-progress": "^1.1.2"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",
