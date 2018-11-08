@@ -3,31 +3,80 @@ import PillsButton from './PillsButton';
 import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
+import { saveData, getData, clearData, multiGet } from '../data/StoreService';
+import moment from 'moment';
 
 export default class CalendarTr extends Component{
+  constructor(props) {
+    super(...props);
+    this.state = {
+      pills: 1,
+      lastPillTaken: null,
+      daysSinceStart: 0,
+      user: null,
+    };
+
+    this.incrementPills = this.incrementPills.bind(this);
+  }
+
+  getItemAtPos(pos, name) {
+    if (this.state.user) {
+      return this.state.user[pos][name];
+    }
+  }
+
+  incrementPills() {
+    if (this.state.pills < 6) {
+      this.setState({ pills: this.state.pills + 1, lastPillTaken: moment().format() });
+    }
+  }
+
+  componentDidUpdate() {
+    saveData('pillsTaken', { pillsTaken: this.state.pills, lastPillTaken: this.state.lastPillTaken });
+  }
+
+  componentWillMount() {
+    getData('pillsTaken').then((data, err) => {
+      const jsonData = JSON.parse(data);
+
+      if (jsonData) {
+        this.setState({
+            pills: jsonData.pillsTaken,
+            lastPillTaken: jsonData.lastPillTaken,
+          });
+      }
+    });
+
+    getData('userData').then((user, err) => {
+      const jsonUser = JSON.parse(user);
+
+      if (jsonUser) {
+
+        this.setState({
+          user: jsonUser,
+          daysSinceStart: moment.duration(jsonUser[3].startingDate).asDays(),
+        });
+      }
+    });
+  }
+
   render() {
     return (
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
           <Calendar
-              style={{
+              customSrrtyle={{
                 borderWidth: 1,
                 borderColor: '#fff',
-                marginTop: -30,
-                height: 330,
+                marginTop: -60,
+                height: 300,
                 width: 350,
+                markedDates: [],
               }}
-              markedDates={
-                 {
-                  '2018-11-01': { startingDay: true, selected: true, marked: true, color: '#57c279' },
-                  '2018-11-02': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-03': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-04': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-05': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-06': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-07': { selected: true, marked: true, color: '#57c279' },
-                  '2018-11-08': { endingDay: true, selected: true, marked: true, color: '#57c279' },
-                 }}
+              markedDates={{
+                  [moment(this.getItemAtPos(3, 'startingDate')).format('L')]: { startingDay: true, selected: true, marked: true, color: '#57c279' },
+                  [moment(this.getItemAtPos(3, 'endingDate')).format('L')]: { endingDay: true, selected: true, marked: true, color: '#57c279' },
+                }}
                // Date marking style [simple/period/multi-dot/custom]. Default = 'simple'
                markingType={'period'}
               theme={{
@@ -55,7 +104,7 @@ export default class CalendarTr extends Component{
             />
           <View style={styles.containerInner}>
             <View style={styles.headerColumn}>
-              <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>25</Text>
+              <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
               <Text style={{ fontSize: 16, color: '#0648aa', marginBottom: 20, textAlign: 'center' }}>days smoke free</Text>
             </View>
           <View style={styles.innerRow}>
@@ -68,7 +117,7 @@ export default class CalendarTr extends Component{
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
           </View>
           <View style={styles.lastRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>1/6</Text>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>{this.state.pills}/6</Text>
             <PillsButton increasePills={this.incrementPills}/>
           </View>
           </View>
@@ -114,7 +163,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: '55%',
     padding: 25,
-    marginTop: 15,
+    marginTop: 5,
     marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -132,6 +181,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 100,
+    marginTop: -30,
     resizeMode: 'contain',
   },
 

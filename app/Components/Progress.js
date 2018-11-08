@@ -2,9 +2,70 @@ import React, { Component } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
+import { saveData, getData } from '../data/StoreService';
+import moment from 'moment';
 
 export default class ProgressScreen extends Component{
+  constructor(props) {
+    super(...props);
+    this.state = {
+      pills: 1,
+      leftPills: 180,
+      lastPillTaken: null,
+      user: null,
+      daysSinceStart: 0,
+      leftDays: 30,
+      daysWidth: 100,
+      daysMargin: 0,
+      pillsWidth: 100,
+      pillsMargin: 0,
+      moneySaved: 0,
+      notSomked: 0,
+    };
+  }
+
+  getItemAtPos(pos, name) {
+    if (this.state.user)
+      return this.state.user[pos][name];
+  }
+
+  componentWillMount() {
+    getData('pillsTaken').then((data, err) => {
+      const jsonData = JSON.parse(data);
+
+      if (jsonData) {
+        this.setState({
+            pills: jsonData.pillsTaken,
+            leftPills: 180 - jsonData.pillsTaken,
+            lastPillTaken: jsonData.lastPillTaken,
+            pillsWidth: Math.round((((180 - jsonData.pillsTaken) / 180) * 100)),
+            pillsMargin: Math.round(((jsonData.pillsTaken / 180) * 100)),
+          });
+      }
+    });
+
+    getData('userData').then((user, err) => {
+      const jsonUser = JSON.parse(user);
+
+      if (jsonUser) {
+
+        this.setState({
+          user: jsonUser,
+          timeSinceStart: moment.duration(jsonUser[3].startingDate).asHours(),
+          daysSinceStart: moment.duration(jsonUser[3].startingDate).asDays(),
+          leftDays: 30 - moment.duration(jsonUser[3].startingDate).asDays(),
+          daysWidth: Math.round(((30 - moment.duration(jsonUser[3].startingDate).asDays()) / 30) * 100),
+          daysMargin: Math.round((moment.duration(jsonUser[3].startingDate).asDays() / 30) * 100),
+          // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+          moneySaved: (((jsonUser[1].pricePerPack / 25) * jsonUser[2].ciggarettesPerDay) * moment.duration(jsonUser[3].startingDate).asDays()),
+          notSomked: jsonUser[2].ciggarettesPerDay * moment.duration(jsonUser[3].startingDate).asDays(),
+        });
+      }
+    });
+  }
+
   render() {
+    console.warn(this.state);
     return (
       <ImageBackground
         style={styles.backgroundImage}
@@ -16,12 +77,12 @@ export default class ProgressScreen extends Component{
         <View>
           <PercentageCircle
             radius={60}
-            percent={72}
+            percent={this.state.daysMargin}
             innerColor={'#d3ebfb'}
             bgcolor={'#d3ebfb'}
             borderWidth={5}
             color={'#3caf9c'}>
-              <Text style={{ fontSize: 22, color: '#002157' }}>72%</Text>
+              <Text style={{ fontSize: 22, color: '#002157' }}>{`${this.state.daysMargin}%`}</Text>
               <Text style={{ fontSize: 16, color: '#002157' }}>completed</Text>
           </PercentageCircle>
         </View>
@@ -35,8 +96,8 @@ export default class ProgressScreen extends Component{
               end={{ x: 0.3, y: 1 }}
               colors={['#56c17b', '#2ca5af']}
               style={styles.barGreen}>
-              <TouchableOpacity style={styles.innerBar}>
-                  <Text style={styles.innerBarText}>77 pills left</Text>
+              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin: 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
+                  <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
               </TouchableOpacity>
             </LinearGradient>
             <View style={styles.barBottomRow}>
@@ -55,8 +116,8 @@ export default class ProgressScreen extends Component{
               end={{ x: 0.3, y: 1 }}
               colors={['#ac66ea', '#3655bb']}
               style={styles.barPurple}>
-              <TouchableOpacity style={styles.innerBar}>
-                  <Text style={styles.innerBarText}>12 dayd left</Text>
+              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.daysMargin ? this.state.daysMargin : 0}%`, width: `${this.state.daysWidth ? this.state.daysWidth : 100}%` }]}>
+                  <Text style={styles.innerBarText}>{this.state.leftDays} days left</Text>
               </TouchableOpacity>
             </LinearGradient>
             <View style={styles.barBottomRow}>
@@ -67,15 +128,15 @@ export default class ProgressScreen extends Component{
         </View >
         <View style={styles.infoArea}>
           <TouchableOpacity style={styles.moneyArea}>
-            <Text style={styles.areaTextBolded}>5754</Text>
+            <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
             <Text style={styles.areaText}>BGN saved</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.ciggarettesArea}>
-            <Text style={styles.areaTextBolded}>1324</Text>
+            <Text style={styles.areaTextBolded}>{this.state.notSomked}</Text>
             <Text style={styles.areaTextSmaller}>ciggarettes not smoked</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.daysArea}>
-            <Text style={styles.areaTextBolded}>5754</Text>
+            <Text style={styles.areaTextBolded}>{this.state.daysSinceStart}</Text>
             <Text style={styles.areaTextSmaller}>days smoke free</Text>
           </TouchableOpacity>
         </View>
@@ -177,8 +238,8 @@ const styles = StyleSheet.create({
   innerBar: {
     padding: 2,
     height: 'auto',
-    marginLeft: '28%',
-    width: '72%',
+    marginLeft: '0%',
+    width: '100%',
     backgroundColor: '#05439c',
     borderRadius: 50,
   },

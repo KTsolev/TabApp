@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 import IntroScreen from './app/Components/IntroScreen';
 import MainNavigator from './app/Components/Navigator';
+import moment from 'moment';
 import { YellowBox } from 'react-native';
 import { saveData, getData, clearData } from './app/data/StoreService';
 
@@ -15,8 +16,7 @@ export default class tabexapp extends Component {
   }
 
   componentWillMount() {
-    clearData();
-    getData('user').then((user, err) => {
+    getData('userData').then((user, err) => {
       this.setState({
         isUserSet: user !== undefined && user !== null,
       });
@@ -24,7 +24,6 @@ export default class tabexapp extends Component {
   }
 
   setUser(val) {
-    let newUser = getData('user');
 
     this.setState({
       isUserSet: val.isFinished,

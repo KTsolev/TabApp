@@ -1,10 +1,10 @@
 import LinearGradient from 'react-native-linear-gradient';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
-import { saveData, getData } from '../data/StoreService';
+import { mergeData, saveData, getData } from '../data/StoreService';
 import React, { Component } from 'react';
 import { Divider } from 'react-native-elements';
-import { YellowBox } from 'react-native';
+
 import {
   StyleSheet,
   Text,
@@ -39,6 +39,7 @@ class Step extends Component {
     super(...props);
     this.state = {
       pricePerPack: 0,
+      ciggarettesPerDay: 0,
       currency: Step.currenciesArray[0],
       isDateTimePickerVisible: false,
     };
@@ -50,24 +51,18 @@ class Step extends Component {
   }
 
   selectCurrency(val) {
-    if (val !== '') {
+    if (val !== 'choose currency') {
       this.setState({ currency: Step.currenciesArray[val] });
-      this.props.updateUser({ currency: val });
+      this.props.updateUser({ currency: Step.currenciesArray[val] });
     }
   }
 
-  selectPricePerPack(val) {
-    if (!Number.isNaN(val) && val > 0) {
-      this.setState({ pricePerPack: val });
-      this.props.updateUser({ pricePerPack: val });
-    }
+  selectPricePerPack() {
+    this.props.updateUser({ pricePerPack: this.state.pricePerPack });
   }
 
-  selectCiggarettes(val) {
-    if (!Number.isNaN(val) && val > 0) {
-      this.setState({ ciggarettesPerDay: val });
-      this.props.updateUser({ ciggarettesPerDay: val });
-    }
+  selectCiggarettes() {
+    this.props.updateUser({ ciggarettesPerDay: this.state.ciggarettesPerDay });
   }
 
   _handleDatePicked(val) {
@@ -103,7 +98,8 @@ class Step extends Component {
             style={styles.input}
             placeholder="0"
             keyboardType='numeric'
-            onChangeText={this.selectPricePerPack}
+            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ pricePerPack: val }) : ''}
+            onEndEditing={this.selectPricePerPack}
           />
         </View>;
       break;
@@ -113,7 +109,8 @@ class Step extends Component {
             style={styles.input}
             placeholder="0"
             keyboardType='numeric'
-            onChangeText={this.selectCiggarettes}
+            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ ciggarettesPerDay: val }) : ''}
+            onEndEditing={this.selectCiggarettes}
           />
         </View>;
       break;
@@ -176,7 +173,8 @@ class Wizzard extends Component {
       prevLabel: 'PREV',
       isLast: false,
       isFirts: false,
-      user: null,
+      userData: [],
+      completedSteps: Array(this.props.children.length),
     };
 
     this._nextStep = this._nextStep.bind(this);
@@ -192,11 +190,11 @@ class Wizzard extends Component {
         isLast: this.state.index === this.props.children.length - 1,
         isfirst: this.state.index === 0,
       }));
+      this.state.completedSteps[this.state.index] = true;
+    } else if (this.state.index === 2) {
+      saveData('userData', this.state.userData).then((err) => err ? console.log('success') : console.warn(err));
+      this.props.finishSetUpUser({ isFinished: true });
     }
-
-    saveData('user', this.state.user);
-    let newUser = getData('user');
-    console.warn(newUser);
   }
 
   _prevStep() {
@@ -207,13 +205,12 @@ class Wizzard extends Component {
         prevLabel: prevState.index === 3 ? 'BEGIN' : 'PREVIOUS',
         isLast: this.state.index === this.props.children.length - 1,
       }));
+      this.state.completedSteps[this.state.index + 1] = false;
     }
   }
 
   _updateUser(newState) {
-    let user = { ...newState };
-    console.warn(user);
-    saveData('user', user);
+    this.state.userData.push(newState);
   }
 
   render() {
@@ -222,7 +219,7 @@ class Wizzard extends Component {
         <View style={styles.headerContainer}>
           {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
             <Divider style={styles.beforeHeaderTextElem}></Divider>
-            <Text style={styles.headerText}>
+            <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
               {index + 1}
             </Text>
         </View>)}
@@ -291,7 +288,14 @@ const styles = StyleSheet.create({
   },
 
   activeHeader: {
-    backgroundColor: 'red',
+    fontSize: 16,
+    textTransform: 'capitalize',
+    color: '#fff',
+    width: 25,
+    height: 25,
+    textAlign: 'center',
+    borderRadius: 50,
+    backgroundColor: '#54bd74',
   },
 
   input: {

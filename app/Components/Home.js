@@ -11,7 +11,9 @@ export default class Home extends Component {
     super(...props);
     this.state = {
       pills: 1,
+      lastPillTaken: null,
       user: null,
+      ciggarettesInPack: 25,
       timeSinceStart: 0,
       daysSinceStart: 0,
     };
@@ -21,23 +23,52 @@ export default class Home extends Component {
 
   incrementPills() {
     if (this.state.pills < 6) {
-      this.setState({ pills: this.state.pills + 1 });
+      this.setState({ pills: this.state.pills + 1, lastPillTaken: moment().format() });
     }
   }
 
+  getItemAtPos(pos, name) {
+    if (this.state.user)
+      return this.state.user[pos][name];
+  }
+
+  componentDidUpdate() {
+    saveData('pillsTaken', {
+      pillsTaken: this.state.pills,
+      lastPillTaken: this.state.lastPillTaken,
+    });
+  }
+
   componentWillMount() {
-    const user = getData('user').then((user, err) => {
-      if (user)
-      this.setState({
-        user,
-        timeSinceStart: moment.duration(user.startingDate, 'hours'),
-        daysSinceStart: moment.duration(user.startingDate, 'days'),
-      });
+    getData('pillsTaken').then((data, err) => {
+      const jsonData = JSON.parse(data);
+
+      if (jsonData) {
+        this.setState({
+            pills: jsonData.pillsTaken,
+            lastPillTaken: jsonData.lastPillTaken,
+          });
+      }
+    });
+
+    getData('userData').then((user, err) => {
+      const jsonUser = JSON.parse(user);
+
+      if (jsonUser) {
+
+        this.setState({
+          user: jsonUser,
+          timeSinceStart: moment.duration(jsonUser[3].startingDate).asHours(),
+          daysSinceStart: moment.duration(jsonUser[3].startingDate).asDays(),
+          // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+          moneySaved: (((jsonUser[1].pricePerPack / this.state.ciggarettesInPack) * jsonUser[2].ciggarettesPerDay ) * moment.duration(jsonUser[3].startingDate).asDays()),
+          notSomked: jsonUser[2].ciggarettesPerDay * moment.duration(jsonUser[3].startingDate).asDays(),
+        });
+      }
     });
   }
 
   render() {
-    console.warn(this.state);
     return (
       <View style={styles.headerContainer}>
         <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
@@ -48,7 +79,7 @@ export default class Home extends Component {
           bgcolor={'#3498db'}
           borderWidth={5}
           color={'#d3ebfb'}>
-            <Text style={{ fontSize: 16, color: '#d3ebfb' }}>25</Text>
+            <Text style={{ fontSize: 16, color: '#d3ebfb' }}>{this.state.daysSinceStart}</Text>
             <Text style={{ fontSize: 16, color: '#d3ebfb' }}>DAYS</Text>
             <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
         </PercentageCircle>
@@ -60,22 +91,28 @@ export default class Home extends Component {
         <View style={styles.containerInner}>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>quit date:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>{this.state.user.endingDate}</Text>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+            { moment(this.getItemAtPos(3, 'endingDate')).format('L') }
+            </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>time since:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>1342</Text>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>money saved:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>3456</Text>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              {this.state.moneySaved}
+            </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>not smoked:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>1546</Text>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              {this.state.notSomked}
+            </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
         </View>
