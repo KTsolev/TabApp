@@ -2,8 +2,32 @@ import React, { Component } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
+import { saveData, getData } from '../data/StoreService';
+import moment from 'moment';
 
 export default class Global extends Component{
+  constructor(props) {
+    super(...props);
+    this.state = {
+      peopleArroundGLobe: 135565,
+      updatedAt: '',
+    };
+  }
+
+  componentDidMount() {
+    getData('userData').then((user, err) => {
+      const jsonUser = JSON.parse(user);
+
+      if (jsonUser) {
+
+        this.setState({
+          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
+          peopleArroundGLobe: this.state.peopleArroundGLobe + moment().diff(moment(jsonUser[3].startingDate), 'days'),
+        });
+      }
+    });
+  }
+
   render() {
     return (
       <ImageBackground
@@ -18,7 +42,9 @@ export default class Global extends Component{
           resizeMode='contain'
           source={require('../imgs/Earth.png')}/>
           <View style={styles.containerInner}>
-            <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>135 565</Text>
+            <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
+              {this.state.peopleArroundGLobe}
+            </Text>
             <Text style={{ marginTop: 5, fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
               people arround the world quit smoking today
             </Text>
@@ -28,7 +54,7 @@ export default class Global extends Component{
                 resizeMode='contain'
                 source={require('../imgs/pin.png')}/>
               <Text style={{ fontSize: 12, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-                135 565 people in 7 different countries and 2 continents quit smoking today.
+                {this.state.peopleArroundGLobe} people in 7 different countries and 2 continents quit smoking today.
               </Text>
             </View>
           </View>

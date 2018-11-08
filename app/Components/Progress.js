@@ -21,6 +21,7 @@ export default class ProgressScreen extends Component{
       pillsMargin: 0,
       moneySaved: 0,
       notSomked: 0,
+      shortCurrecny: '',
     };
   }
 
@@ -29,7 +30,7 @@ export default class ProgressScreen extends Component{
       return this.state.user[pos][name];
   }
 
-  componentWillMount() {
+  componentDidMount() {
     getData('pillsTaken').then((data, err) => {
       const jsonData = JSON.parse(data);
 
@@ -51,14 +52,15 @@ export default class ProgressScreen extends Component{
 
         this.setState({
           user: jsonUser,
-          timeSinceStart: moment.duration(jsonUser[3].startingDate).asHours(),
-          daysSinceStart: moment.duration(jsonUser[3].startingDate).asDays(),
-          leftDays: 30 - moment.duration(jsonUser[3].startingDate).asDays(),
-          daysWidth: Math.round(((30 - moment.duration(jsonUser[3].startingDate).asDays()) / 30) * 100),
-          daysMargin: Math.round((moment.duration(jsonUser[3].startingDate).asDays() / 30) * 100),
+          timeSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'hours'),
+          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
+          leftDays: 30 - moment().diff(moment(jsonUser[3].startingDate), 'days'),
+          daysWidth: Math.round(((30 - moment().diff(moment(jsonUser[3].startingDate), 'days')) / 30) * 100),
+          daysMargin: Math.round((moment().diff(moment(jsonUser[3].startingDate), 'days') / 30) * 100),
           // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-          moneySaved: (((jsonUser[1].pricePerPack / 25) * jsonUser[2].ciggarettesPerDay) * moment.duration(jsonUser[3].startingDate).asDays()),
-          notSomked: jsonUser[2].ciggarettesPerDay * moment.duration(jsonUser[3].startingDate).asDays(),
+          moneySaved: Math.round(((jsonUser[1].pricePerPack / 25) * jsonUser[2].ciggarettesPerDay) * moment().diff(moment(jsonUser[3].startingDate), 'days')),
+          notSomked: jsonUser[2].ciggarettesPerDay * moment().diff(moment(jsonUser[3].startingDate), 'days'),
+          shortCurrecny: jsonUser[0].currency.split('-')[1],
         });
       }
     });
@@ -129,7 +131,7 @@ export default class ProgressScreen extends Component{
         <View style={styles.infoArea}>
           <TouchableOpacity style={styles.moneyArea}>
             <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
-            <Text style={styles.areaText}>BGN saved</Text>
+            <Text style={styles.areaText}>{this.state.shortCurrecny} saved</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.ciggarettesArea}>
             <Text style={styles.areaTextBolded}>{this.state.notSomked}</Text>

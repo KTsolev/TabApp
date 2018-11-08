@@ -14,6 +14,7 @@ export default class CalendarTr extends Component{
       lastPillTaken: null,
       daysSinceStart: 0,
       user: null,
+      dates: null,
     };
 
     this.incrementPills = this.incrementPills.bind(this);
@@ -31,11 +32,33 @@ export default class CalendarTr extends Component{
     }
   }
 
+  getSelectedRange(startDate) {
+    let minDate = moment(startDate);
+    let maxDate = moment();
+    let range  = [];
+    while (minDate.isSameOrBefore(maxDate)) {
+      range.push({
+          date: minDate.format('YYYY-MM-DD'),
+          startingDay: true,
+          selected: true,
+          marked: true,
+          color: '#57c279', });
+      minDate.add(1, 'day');
+    }
+
+    const objectArray = range.reduce((obj, item) => {
+            obj[item.date] = item;
+            return obj;
+          }, {});
+
+    this.setState({ dates: objectArray, });
+  }
+
   componentDidUpdate() {
     saveData('pillsTaken', { pillsTaken: this.state.pills, lastPillTaken: this.state.lastPillTaken });
   }
 
-  componentWillMount() {
+  componentDidMount() {
     getData('pillsTaken').then((data, err) => {
       const jsonData = JSON.parse(data);
 
@@ -54,9 +77,13 @@ export default class CalendarTr extends Component{
 
         this.setState({
           user: jsonUser,
-          daysSinceStart: moment.duration(jsonUser[3].startingDate).asDays(),
+          minDate: jsonUser[3].startingDate,
+          maxDate: moment().format(),
+          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
         });
+        this.getSelectedRange(jsonUser[3].startingDate);
       }
+
     });
   }
 
@@ -65,20 +92,9 @@ export default class CalendarTr extends Component{
         <View style={styles.headerContainer}>
           <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
           <Calendar
-              customSrrtyle={{
-                borderWidth: 1,
-                borderColor: '#fff',
-                marginTop: -60,
-                height: 300,
-                width: 350,
-                markedDates: [],
-              }}
-              markedDates={{
-                  [moment(this.getItemAtPos(3, 'startingDate')).format('L')]: { startingDay: true, selected: true, marked: true, color: '#57c279' },
-                  [moment(this.getItemAtPos(3, 'endingDate')).format('L')]: { endingDay: true, selected: true, marked: true, color: '#57c279' },
-                }}
-               // Date marking style [simple/period/multi-dot/custom]. Default = 'simple'
-               markingType={'period'}
+              startFromMonday={true}
+              allowRangeSelection={true}
+              markedDates={this.state.dates ? this.state.dates : {}}
               theme={{
                 arrowColor: 'white',
                 monthTextColor: 'white',
