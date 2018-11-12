@@ -4,6 +4,7 @@ import moment from 'moment';
 import { mergeData, saveData, getData } from '../data/StoreService';
 import React, { Component } from 'react';
 import { Divider } from 'react-native-elements';
+import UserStore from '../data/FluxStore';
 
 import {
   StyleSheet,
@@ -17,6 +18,7 @@ import {
 class Step extends Component {
   static currenciesArray = [
     'choose currency',
+    'Leva-BGN(lv)',
     'US Dolar-USD(USD)',
     'Euro-EUR(€)',
     'Pound sterling-GBP(£)',
@@ -36,10 +38,8 @@ class Step extends Component {
   ];
 
   constructor(props) {
-    super(...props);
+    super(props);
     this.state = {
-      pricePerPack: 0,
-      ciggarettesPerDay: 0,
       currency: Step.currenciesArray[0],
       isDateTimePickerVisible: false,
     };
@@ -52,8 +52,8 @@ class Step extends Component {
 
   selectCurrency(val) {
     if (val !== 'choose currency') {
-      this.setState({ currency: Step.currenciesArray[val] });
-      this.props.updateUser({ currency: Step.currenciesArray[val] });
+      this.setState({ currency: Step.currenciesArray[val].split('-')[1] });
+      this.props.updateUser({ currency: Step.currenciesArray[val].split('-')[1] });
     }
   }
 
@@ -173,7 +173,7 @@ class Wizzard extends Component {
       prevLabel: 'PREV',
       isLast: false,
       isFirts: false,
-      userData: [],
+      userData: {},
       completedSteps: Array(this.props.children.length),
     };
 
@@ -192,7 +192,7 @@ class Wizzard extends Component {
       }));
       this.state.completedSteps[this.state.index] = true;
     } else if (this.state.index === 2) {
-      saveData('userData', this.state.userData).then((err) => err ? console.log('success') : console.warn(err));
+      UserStore.createNewData(this.state.userData);
       this.props.finishSetUpUser({ isFinished: true });
     }
   }
@@ -205,12 +205,14 @@ class Wizzard extends Component {
         prevLabel: prevState.index === 3 ? 'BEGIN' : 'PREVIOUS',
         isLast: this.state.index === this.props.children.length - 1,
       }));
-      this.state.completedSteps[this.state.index + 1] = false;
+      this.state.completedSteps[this.state.index] = false;
     }
   }
 
   _updateUser(newState) {
-    this.state.userData.push(newState);
+    this.setState({
+      userData: Object.assign({}, this.state.userData, newState),
+    });
   }
 
   render() {

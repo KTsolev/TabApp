@@ -4,66 +4,75 @@ import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import { saveData, getData } from '../data/StoreService';
 import moment from 'moment';
+import UserStore from '../data/FluxStore';
 
 export default class ProgressScreen extends Component{
   constructor(props) {
-    super(...props);
+    super(props);
+    const user = UserStore.getUser();
+    const timeSinceStart = user.timeSinceStart;
+    const daysSinceStart = user.daysSinceStart;
+    const leftDays = 30 - user.daysSinceStart;
+    const daysWidth = Math.round(((30 - user.daysSinceStart) / 30) * 100);
+    const daysMargin = Math.round((user.daysSinceStart / 30) * 100);
+    const pillsWidth = Math.round((((180 - user.pills) / 180) * 100));
+    const pillsMargin = Math.round(((user.pillsTaken / 180) * 100));
+    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * user.daysSinceStart);
+    const notSomked = user.ciggarettesPerDay * user.daysSinceStart;
+    console.warn(user);
+
     this.state = {
-      pills: 1,
-      leftPills: 180,
-      lastPillTaken: null,
-      user: null,
-      daysSinceStart: 0,
-      leftDays: 30,
-      daysWidth: 100,
-      daysMargin: 0,
-      pillsWidth: 100,
-      pillsMargin: 0,
-      moneySaved: 0,
-      notSomked: 0,
-      shortCurrecny: '',
+      user,
+      timeSinceStart,
+      daysSinceStart,
+      leftDays,
+      daysWidth,
+      daysMargin,
+      pillsWidth,
+      pillsMargin,
+      moneySaved,
+      notSomked,
     };
+
+    this._getUser = this._getUser.bind(this);
   }
 
-  getItemAtPos(pos, name) {
-    if (this.state.user)
-      return this.state.user[pos][name];
+  _getUser() {
+    const user = UserStore.getUser();
+    const timeSinceStart = user.timeSinceStart;
+    const daysSinceStart = user.daysSinceStart;
+    const leftDays = 30 - user.daysSinceStart;
+    const daysWidth = Math.round(((30 - user.daysSinceStart) / 30) * 100);
+    const daysMargin = Math.round((user.daysSinceStart / 30) * 100);
+    const pillsWidth = Math.round((((180 - user.pillsTaken) / 160) * 100));
+    const pillsMargin = Math.round(((user.pillsTaken / 160) * 100));
+    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * user.daysSinceStart);
+    const notSomked = user.ciggarettesPerDay * user.daysSinceStart;
+
+    this.setState({
+      user,
+      timeSinceStart,
+      daysSinceStart,
+      leftDays,
+      daysWidth,
+      daysMargin,
+      pillsWidth,
+      pillsMargin,
+      moneySaved,
+      notSomked,
+    });
   }
 
-  componentDidMount() {
-    getData('pillsTaken').then((data, err) => {
-      const jsonData = JSON.parse(data);
+  componentWillMount() {
+    UserStore.on('user-created', this._getUser);
+    UserStore.on('user-updated', this._getUser);
+  }
 
-      if (jsonData) {
-        this.setState({
-            pills: jsonData.pillsTaken,
-            leftPills: 180 - jsonData.pillsTaken,
-            lastPillTaken: jsonData.lastPillTaken,
-            pillsWidth: Math.round((((180 - jsonData.pillsTaken) / 180) * 100)),
-            pillsMargin: Math.round(((jsonData.pillsTaken / 180) * 100)),
-          });
-      }
-    });
-
-    getData('userData').then((user, err) => {
-      const jsonUser = JSON.parse(user);
-
-      if (jsonUser) {
-
-        this.setState({
-          user: jsonUser,
-          timeSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'hours'),
-          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
-          leftDays: 30 - moment().diff(moment(jsonUser[3].startingDate), 'days'),
-          daysWidth: Math.round(((30 - moment().diff(moment(jsonUser[3].startingDate), 'days')) / 30) * 100),
-          daysMargin: Math.round((moment().diff(moment(jsonUser[3].startingDate), 'days') / 30) * 100),
-          // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-          moneySaved: Math.round(((jsonUser[1].pricePerPack / 25) * jsonUser[2].ciggarettesPerDay) * moment().diff(moment(jsonUser[3].startingDate), 'days')),
-          notSomked: jsonUser[2].ciggarettesPerDay * moment().diff(moment(jsonUser[3].startingDate), 'days'),
-          shortCurrecny: jsonUser[0].currency.split('-')[1],
-        });
-      }
-    });
+  componentWillUnmount() {
+    UserStore.removeListener('user-created', this._getUser);
+    UserStore.removeListener('user-updated', this._getUser);
   }
 
   render() {
@@ -131,7 +140,7 @@ export default class ProgressScreen extends Component{
         <View style={styles.infoArea}>
           <TouchableOpacity style={styles.moneyArea}>
             <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
-            <Text style={styles.areaText}>{this.state.shortCurrecny} saved</Text>
+            <Text style={styles.areaText}>{this.state.currecny} saved</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.ciggarettesArea}>
             <Text style={styles.areaTextBolded}>{this.state.notSomked}</Text>

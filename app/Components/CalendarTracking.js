@@ -4,35 +4,33 @@ import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
 import { saveData, getData, clearData, multiGet } from '../data/StoreService';
+import UserStore from '../data/FluxStore';
 import moment from 'moment';
 
 export default class CalendarTr extends Component{
   constructor(props) {
-    super(...props);
+    super(props);
+    const user = UserStore.getUser();
+    const dates = this._getSelectedRange(user.startingDate);
+
     this.state = {
       pills: 1,
       lastPillTaken: null,
-      daysSinceStart: 0,
-      user: null,
-      dates: null,
+      user,
+      dates,
     };
 
-    this.incrementPills = this.incrementPills.bind(this);
+    this._getUser = this._getUser.bind(this);
+    this._incrementPills = this._incrementPills.bind(this);
   }
 
-  getItemAtPos(pos, name) {
-    if (this.state.user) {
-      return this.state.user[pos][name];
-    }
-  }
-
-  incrementPills() {
+  _incrementPills() {
     if (this.state.pills < 6) {
       this.setState({ pills: this.state.pills + 1, lastPillTaken: moment().format() });
     }
   }
 
-  getSelectedRange(startDate) {
+  _getSelectedRange(startDate) {
     let minDate = moment(startDate);
     let maxDate = moment();
     let range  = [];
@@ -51,40 +49,26 @@ export default class CalendarTr extends Component{
             return obj;
           }, {});
 
-    this.setState({ dates: objectArray, });
+    return objectArray;
   }
 
-  componentDidUpdate() {
-    saveData('pillsTaken', { pillsTaken: this.state.pills, lastPillTaken: this.state.lastPillTaken });
+  _getUser() {
+    const jsonUser = userStore.getUser();
+    const dates = this._getSelectedRange(jsonUser.startingDate);
+    this.setState({
+      user: jsonUser,
+      dates,
+    });
   }
 
-  componentDidMount() {
-    getData('pillsTaken').then((data, err) => {
-      const jsonData = JSON.parse(data);
+  componentWillMount() {
+    UserStore.on('user-created', this._getUser);
+    UserStore.on('user-updated', this._getUser);
+  }
 
-      if (jsonData) {
-        this.setState({
-            pills: jsonData.pillsTaken,
-            lastPillTaken: jsonData.lastPillTaken,
-          });
-      }
-    });
-
-    getData('userData').then((user, err) => {
-      const jsonUser = JSON.parse(user);
-
-      if (jsonUser) {
-
-        this.setState({
-          user: jsonUser,
-          minDate: jsonUser[3].startingDate,
-          maxDate: moment().format(),
-          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
-        });
-        this.getSelectedRange(jsonUser[3].startingDate);
-      }
-
-    });
+  componentWillUnmount() {
+    UserStore.removeListener('user-created', this._getUser);
+    UserStore.removeListener('user-updated', this._getUser);
   }
 
   render() {
@@ -120,7 +104,7 @@ export default class CalendarTr extends Component{
             />
           <View style={styles.containerInner}>
             <View style={styles.headerColumn}>
-              <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
+              <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.user.daysSinceStart}</Text>
               <Text style={{ fontSize: 16, color: '#0648aa', marginBottom: 20, textAlign: 'center' }}>days smoke free</Text>
             </View>
           <View style={styles.innerRow}>
@@ -133,8 +117,10 @@ export default class CalendarTr extends Component{
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
           </View>
           <View style={styles.lastRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>{this.state.pills}/6</Text>
-            <PillsButton increasePills={this.incrementPills}/>
+            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
+            {this.state.pills}/6
+            </Text>
+            <PillsButton increasePills={this._incrementPills}/>
           </View>
           </View>
         </View>

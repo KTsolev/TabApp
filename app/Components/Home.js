@@ -5,75 +5,74 @@ import moment from 'moment';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { saveData, getData } from '../data/StoreService';
+import UserStore from '../data/FluxStore';
 
 export default class Home extends Component {
   constructor(props) {
-    super(...props);
+    super(props);
+    const user = UserStore.getUser();
+    const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day //
+    const moneySaved = Math.round(((user.pricePerPack / 20) * user.ciggarettesPerDay ) * daysSinceStart);
+    const notSmoked = (user.ciggarettesPerDay * daysSinceStart);
+
     this.state = {
       pills: 1,
       pillsTakenToday: 1,
       lastPillTaken: null,
-      user: null,
-      ciggarettesInPack: 25,
-      timeSinceStart: 0,
-      daysSinceStart: 0,
-      shortCurrecny: '',
+      user,
+      timeSinceStart,
+      daysSinceStart,
+      notSmoked,
+      moneySaved,
     };
 
-    this.incrementPills = this.incrementPills.bind(this);
-  }
-
-  incrementPills() {
-    if (this.state.pillsTakenToday < 6) {
-      this.setState({ pills: this.state.pills + 1, pillsTakenToday:this.state.pillsTakenToday + 1 ,lastPillTaken: moment().format() });
-    }
-  }
-
-  getItemAtPos(pos, name) {
-    if (this.state.user)
-      return this.state.user[pos][name];
-  }
-
-  componentDidUpdate() {
-    saveData('pillsTaken', {
+    UserStore.addNewData({
+      timeSinceStart: this.state.timeSinceStart,
+      daysSinceStart: this.state.daysSinceStart,
+      notSmoked: this.state.notSmoked,
+      moneySaved: this.state.moneySaved,
       pillsTaken: this.state.pills,
       lastPillTaken: this.state.lastPillTaken,
       pillsTakenToday: moment().diff(moment(this.state.lastPillTaken), 'days') !== 0 ? 1 : this.state.pillsTakenToday,
     });
+
+    this._getUser = this._getUser.bind(this);
+    this._incrementPills = this._incrementPills.bind(this);
   }
 
-  componentDidMount() {
-    getData('pillsTaken').then((data, err) => {
-      const jsonData = JSON.parse(data);
+  _incrementPills() {
+    if (this.state.pillsTakenToday < 6) {
+      this.setState({ pills: this.state.pills + 1, pillsTakenToday: this.state.pillsTakenToday + 1, lastPillTaken: moment().format() });
+    }
+  }
 
-      if (jsonData) {
-        this.setState({
-            pills: jsonData.pillsTaken,
-            lastPillTaken: jsonData.lastPillTaken,
-          });
-      }
+
+  _getUser() {
+    const jsonUser = userStore.getAll();
+    this.setState({
+      user: jsonUser,
+      timeSinceStart: moment().diff(moment(jsonUser.startingDate), 'hours'),
+      daysSinceStart: moment().diff(moment(jsonUser.startingDate), 'days'),
+      // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+      moneySaved: Math.round(((jsonUser.pricePerPack / this.state.ciggarettesInPack) * jsonUser.ciggarettesPerDay ) * daysSinceStart),
+      notSomked: (jsonUser.ciggarettesPerDay * daysSinceStart),
     });
+  }
 
-    getData('userData').then((user, err) => {
-      const jsonUser = JSON.parse(user);
+  componentWillMount() {
+    UserStore.on('user-created', this._getUser);
+    UserStore.on('user-updated', this._getUser);
+  }
 
-      if (jsonUser) {
-
-        this.setState({
-          user: jsonUser,
-          timeSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'hours'),
-          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
-          // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-          moneySaved: Math.round(((jsonUser[1].pricePerPack / this.state.ciggarettesInPack) * jsonUser[2].ciggarettesPerDay ) * moment().diff(moment(jsonUser[3].startingDate), 'days')),
-          notSomked: (jsonUser[2].ciggarettesPerDay * moment().diff(moment(jsonUser[3].startingDate), 'days')),
-          shortCurrecny: jsonUser[0].currency.split('-')[1],
-        });
-      }
-    });
+  componentWillUnmount() {
+    UserStore.removeListener('user-created', this._getUser);
+    UserStore.removeListener('user-updated', this._getUser);
   }
 
   render() {
-    console.warn(this.state)
+    console.warn(this.state);
     return (
       <View style={styles.headerContainer}>
         <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
@@ -90,14 +89,14 @@ export default class Home extends Component {
         </PercentageCircle>
         <Divider style={styles.headerDivider}></Divider>
         <View style={styles.headerRow}>
-          <PillsButton increasePills={this.incrementPills}/>
+          <PillsButton increasePills={this._incrementPills}/>
           <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
         </View>
         <View style={styles.containerInner}>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>quit date:</Text>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-            { moment(this.getItemAtPos(3, 'endingDate')).format('L') }
+            { moment(this.state.user.endingDate).format('L') }
             </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
@@ -109,14 +108,14 @@ export default class Home extends Component {
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>money saved:</Text>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-              {`${this.state.moneySaved} ${this.state.shortCurrecny}`}
+              {`${this.state.moneySaved} ${this.state.user.currency}`}
             </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>
           <View style={styles.innerRow}>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>not smoked:</Text>
             <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-              {this.state.notSomked}
+              {this.state.notSmoked}
             </Text>
           </View>
           <Divider style={styles.rowDivider}></Divider>

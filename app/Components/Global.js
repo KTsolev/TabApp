@@ -4,28 +4,34 @@ import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import { saveData, getData } from '../data/StoreService';
 import moment from 'moment';
+import UserStore from '../data/FluxStore';
 
 export default class Global extends Component{
   constructor(props) {
-    super(...props);
+    super(props);
+    const jsonUser = UserStore.getUser();
+
     this.state = {
-      peopleArroundGLobe: 135565,
-      updatedAt: '',
+      peopleArroundGLobe: 135565 + moment().diff(moment(jsonUser.startingDate), 'days'),
     };
   }
 
-  componentDidMount() {
-    getData('userData').then((user, err) => {
-      const jsonUser = JSON.parse(user);
-
-      if (jsonUser) {
-
-        this.setState({
-          daysSinceStart: moment().diff(moment(jsonUser[3].startingDate), 'days'),
-          peopleArroundGLobe: this.state.peopleArroundGLobe + moment().diff(moment(jsonUser[3].startingDate), 'days'),
-        });
-      }
+  _getUser() {
+    const jsonUser = UserStore.getUser();
+    const dates = this._getSelectedRange(jsonUser.startingDate);
+    this.setState({
+      peopleArroundGLobe: this.state.peopleArroundGLobe + moment().diff(moment(jsonUser.startingDate), 'days'),
     });
+  }
+
+  componentWillMount() {
+    UserStore.on('user-created', this._getUser);
+    UserStore.on('user-updated', this._getUser);
+  }
+
+  componentWillUnmount() {
+    UserStore.removeListener('user-created', this._getUser);
+    UserStore.removeListener('user-updated', this._getUser);
   }
 
   render() {
