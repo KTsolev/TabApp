@@ -2,30 +2,32 @@ import React, { Component } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
-import { saveData, getData } from '../data/StoreService';
+import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
-import UserStore from '../data/FluxStore';
+import UserStore from '../data/UserStore';
 
 export default class ProgressScreen extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    const timeSinceStart = user.timeSinceStart;
-    const daysSinceStart = user.daysSinceStart;
-    const leftDays = 30 - user.daysSinceStart;
-    const daysWidth = Math.round(((30 - user.daysSinceStart) / 30) * 100);
-    const daysMargin = Math.round((user.daysSinceStart / 30) * 100);
-    const pillsWidth = Math.round((((180 - user.pills) / 180) * 100));
-    const pillsMargin = Math.round(((user.pillsTaken / 180) * 100));
-    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * user.daysSinceStart);
-    const notSomked = user.ciggarettesPerDay * user.daysSinceStart;
     console.warn(user);
+    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    const leftDays = 30 - daysSinceStart;
+    const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
+    const daysMargin = Math.round((daysSinceStart / 30) * 100);
+    const leftPills = 180 - pillsTakenToday;
+    const pillsWidth = Math.round((((180 - pillsTakenToday) / 180) * 100));
+    const pillsMargin = Math.round((pillsTakenToday / 180) * 100);
+    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
+    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
+    const notSomked = user.ciggarettesPerDay * daysSinceStart;
 
     this.state = {
-      user,
       timeSinceStart,
       daysSinceStart,
+      leftPills,
       leftDays,
       daysWidth,
       daysMargin,
@@ -35,29 +37,34 @@ export default class ProgressScreen extends Component{
       notSomked,
     };
 
-    this._getUser = this._getUser.bind(this);
+    this._getUserInfo = this._getUserInfo.bind(this);
   }
 
-  _getUser() {
+  _getUserInfo() {
     const user = UserStore.getUser();
-    const timeSinceStart = user.timeSinceStart;
-    const daysSinceStart = user.daysSinceStart;
-    const leftDays = 30 - user.daysSinceStart;
-    const daysWidth = Math.round(((30 - user.daysSinceStart) / 30) * 100);
-    const daysMargin = Math.round((user.daysSinceStart / 30) * 100);
-    const pillsWidth = Math.round((((180 - user.pillsTaken) / 160) * 100));
-    const pillsMargin = Math.round(((user.pillsTaken / 160) * 100));
+    console.warn(user);
+    const pills = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    const leftDays = 30 - daysSinceStart;
+    const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
+    const daysMargin = Math.round((daysSinceStart / 30) * 100);
+    const leftPills = 180 - pills;
+    const pillsWidth = Math.round((((180 - pills) / 180) * 100));
+    const pillsMargin = Math.round(((pills / 180) * 100));
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * user.daysSinceStart);
-    const notSomked = user.ciggarettesPerDay * user.daysSinceStart;
+    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
+    const notSomked = user.ciggarettesPerDay * daysSinceStart;
 
     this.setState({
       user,
+      leftPills,
       timeSinceStart,
       daysSinceStart,
       leftDays,
       daysWidth,
       daysMargin,
+      pills,
       pillsWidth,
       pillsMargin,
       moneySaved,
@@ -65,18 +72,17 @@ export default class ProgressScreen extends Component{
     });
   }
 
-  componentWillMount() {
-    UserStore.on('user-created', this._getUser);
-    UserStore.on('user-updated', this._getUser);
+  componentDidMount() {
+    UserStore.on('user-updated', this._getUserInfo);
+    UserStore.on('user-saved', () => loadUser());
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-created', this._getUser);
-    UserStore.removeListener('user-updated', this._getUser);
+    UserStore.removeListener('user-updated', this._getUserInfo);
+    UserStore.removeListener('user-saved', () => loadUser());
   }
 
   render() {
-    console.warn(this.state);
     return (
       <ImageBackground
         style={styles.backgroundImage}
@@ -107,7 +113,7 @@ export default class ProgressScreen extends Component{
               end={{ x: 0.3, y: 1 }}
               colors={['#56c17b', '#2ca5af']}
               style={styles.barGreen}>
-              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin: 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
+              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin : 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
                   <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
               </TouchableOpacity>
             </LinearGradient>

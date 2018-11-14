@@ -4,7 +4,7 @@ import moment from 'moment';
 import { mergeData, saveData, getData } from '../data/StoreService';
 import React, { Component } from 'react';
 import { Divider } from 'react-native-elements';
-import UserStore from '../data/FluxStore';
+import { createUser, saveUser, } from '../data/FluxActions';
 
 import {
   StyleSheet,
@@ -192,8 +192,8 @@ class Wizzard extends Component {
       }));
       this.state.completedSteps[this.state.index] = true;
     } else if (this.state.index === 2) {
-      UserStore.createNewData(this.state.userData);
-      this.props.finishSetUpUser({ isFinished: true });
+      createUser(this.state.userData);
+      saveUser(this.state.userData);
     }
   }
 
@@ -210,6 +210,7 @@ class Wizzard extends Component {
   }
 
   _updateUser(newState) {
+    console.warn(newState);
     this.setState({
       userData: Object.assign({}, this.state.userData, newState),
     });

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
-import { saveData, getData } from '../data/StoreService';
+import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
-import UserStore from '../data/FluxStore';
+import UserStore from '../data/UserStore';
 
 export default class Global extends Component{
   constructor(props) {
@@ -14,9 +14,11 @@ export default class Global extends Component{
     this.state = {
       peopleArroundGLobe: 135565 + moment().diff(moment(jsonUser.startingDate), 'days'),
     };
+    this._getUserStartingDate = this._getUserStartingDate.bind(this);
+
   }
 
-  _getUser() {
+  _getUserStartingDate() {
     const jsonUser = UserStore.getUser();
     const dates = this._getSelectedRange(jsonUser.startingDate);
     this.setState({
@@ -24,14 +26,14 @@ export default class Global extends Component{
     });
   }
 
-  componentWillMount() {
-    UserStore.on('user-created', this._getUser);
-    UserStore.on('user-updated', this._getUser);
+  componentDidMount() {
+    UserStore.on('user-updated', this._getUserStartingDate);
+    UserStore.on('user-saved', () => loadUser());
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-created', this._getUser);
-    UserStore.removeListener('user-updated', this._getUser);
+    UserStore.removeListener('user-updated', this._getUserStartingDate);
+    UserStore.removeListener('user-saved', () => loadUser());
   }
 
   render() {

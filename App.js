@@ -4,23 +4,23 @@ import IntroScreen from './app/Components/IntroScreen';
 import MainNavigator from './app/Components/Navigator';
 import moment from 'moment';
 import { YellowBox } from 'react-native';
-import { saveData, getData, clearData } from './app/data/StoreService';
-import UserStore from './app/data/FluxStore';
+import UserStore from './app/data/UserStore';
+import { loadUser } from './app/data/FluxActions';
+
 
 export default class tabexapp extends Component {
   constructor(props) {
     super(props);
+    loadUser();
 
     this.state = { isUserSet: false };
     this._setUser = this._setUser.bind(this);
-    this._getUser = this._getUser.bind(this);
+    this._loadUser = this._loadUser.bind(this);
   }
 
-  _getUser() {
+  _loadUser() {
     const user = UserStore.getUser();
-    this.setState({
-      isUserSet: user !== undefined && user !== null,
-    });
+    this._setUser({ isFinished: user !== undefined && user !== null })
   }
 
   _setUser(val) {
@@ -29,14 +29,19 @@ export default class tabexapp extends Component {
     });
   }
 
-  componentWillMount() {
-    UserStore.on('user-created', this._getUser);
-    UserStore.on('user-updated', this._getUser);
+  componentDidMount() {
+    UserStore.on('user-created', this._loadUser);
+    UserStore.on('user-deleted', () => this._setUser(false));
+    UserStore.on('user-updated', this._loadUser);
+    UserStore.on('user-saved', () => loadUser());
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-created', this._getUser);
-    UserStore.removeListener('user-updated', this._getUser);
+    UserStore.removeListener('user-created', this._loadUser);
+    UserStore.removeListener('user-deleted', () => this._setUser(false));
+    UserStore.removeListener('user-updated', this._loadUser);
+    UserStore.removeListener('user-saved', () => loadUser());
+
   }
 
   render() {
@@ -44,7 +49,7 @@ export default class tabexapp extends Component {
     if (this.state.isUserSet) {
       return <MainNavigator />;
     } else {
-      return <IntroScreen finishSetUpUser={this._setUser} />;
+      return <IntroScreen />;
     }
 
   }

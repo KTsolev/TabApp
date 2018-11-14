@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PercentageCircle from 'react-native-percentage-circle';
-import { StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { increasePills } from '../data/FluxActions';
 
 export default class PillsButton extends Component {
   render() {
@@ -8,13 +9,12 @@ export default class PillsButton extends Component {
       <TouchableOpacity
         style={styles.button}
         dissabled={false}
-        onPress={this.props.increasePills}>
+        onPress={() => increasePills()}>
         <Text style={styles.buttonText}>+1</Text>
       </TouchableOpacity>
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   button: {
@@ -33,11 +33,13 @@ const styles = StyleSheet.create({
       },
     shadowRadius: 5,
     shadowOpacity: 1.0,
+    zIndex: 15,
   },
 
   buttonText: {
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
+    zIndex: 15,
   },
 });

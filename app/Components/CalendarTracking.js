@@ -3,30 +3,42 @@ import PillsButton from './PillsButton';
 import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
-import { saveData, getData, clearData, multiGet } from '../data/StoreService';
-import UserStore from '../data/FluxStore';
+import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
+import UserStore from '../data/UserStore';
+import PillStore from '../data/PillStore';
 
 export default class CalendarTr extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
     const dates = this._getSelectedRange(user.startingDate);
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
 
     this.state = {
       pills: 1,
+      pillsTakenToday,
       lastPillTaken: null,
-      user,
       dates,
     };
 
-    this._getUser = this._getUser.bind(this);
-    this._incrementPills = this._incrementPills.bind(this);
+    this._getUserData = this._getUserData.bind(this);
+    this._increasePills = this._increasePills.bind(this);
+    this._getSelectedRange = this._getSelectedRange.bind(this);
+
   }
 
-  _incrementPills() {
+  _increasePills() {
+    console.log('in method');
+    let pills = PillStore.getPills();
     if (this.state.pills < 6) {
-      this.setState({ pills: this.state.pills + 1, lastPillTaken: moment().format() });
+      let sum = this.state.pillsTakenToday + pills.count;
+      this.setState({
+        pills: pills.count,
+        pillsTakenToday: sum,
+        lastPillTaken: pills.lastPillTaken,
+      });
     }
   }
 
@@ -52,23 +64,21 @@ export default class CalendarTr extends Component{
     return objectArray;
   }
 
-  _getUser() {
-    const jsonUser = userStore.getUser();
-    const dates = this._getSelectedRange(jsonUser.startingDate);
-    this.setState({
-      user: jsonUser,
-      dates,
-    });
+  _getUserData() {
+    const jsonUser = UserStore.getUser();
+    this._getSelectedRange(jsonUser.startingDate);
   }
 
-  componentWillMount() {
-    UserStore.on('user-created', this._getUser);
-    UserStore.on('user-updated', this._getUser);
+  componentDidMount() {
+    UserStore.on('user-updated', this._getUserData);
+    PillStore.on('pills-increased', this._increasePills);
+    UserStore.on('user-saved', () => loadUser());
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-created', this._getUser);
-    UserStore.removeListener('user-updated', this._getUser);
+    UserStore.removeListener('user-updated', this._getUserData);
+    PillStore.removeListener('pills-increased', this._increasePills);
+    UserStore.removeListener('user-saved', () => loadUser());
   }
 
   render() {
@@ -100,29 +110,29 @@ export default class CalendarTr extends Component{
                 textDayFontSize: 16,
                 textMonthFontSize: 16,
                 textDayHeaderFontSize: 16,
+                marginTop: -50,
               }}
             />
-          <View style={styles.containerInner}>
-            <View style={styles.headerColumn}>
-              <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.user.daysSinceStart}</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', marginBottom: 20, textAlign: 'center' }}>days smoke free</Text>
+            <View style={styles.containerInner}>
+              <View style={styles.headerColumn}>
+                <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
+                <Text style={{ fontSize: 16, color: '#0648aa', marginBottom: 20, textAlign: 'center' }}>days smoke free</Text>
+              </View>
+              <View style={styles.innerRow}>
+                <Image style={styles.img} source={require('../imgs/pill.png')}/>
+                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>6 pills/day</Text>
+              </View>
+              <View style={styles.innerRow}>
+                <Image style={styles.img} source={require('../imgs/clock.png')}/>
+                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
+              </View>
+              <View style={styles.lastRow}>
+                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
+                  {this.state.pills}/6
+                </Text>
+                <PillsButton />
+              </View>
             </View>
-          <View style={styles.innerRow}>
-          <Image style={styles.img} source={require('../imgs/pill.png')}/>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>6 pills/day</Text>
-          </View>
-          <Divider style={styles.rowDivider}></Divider>
-          <View style={styles.innerRow}>
-            <Image style={styles.img} source={require('../imgs/clock.png')}/>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
-          </View>
-          <View style={styles.lastRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
-            {this.state.pills}/6
-            </Text>
-            <PillsButton increasePills={this._incrementPills}/>
-          </View>
-          </View>
         </View>
     );
   }
@@ -135,17 +145,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     resizeMode: 'contain',
   },
-  container: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
 
   headerContainer: {
+    flex: 1,
+    height: '50%',
     flexDirection: 'column',
-    width: '100%',
-    height: '60%',
     justifyContent: 'flex-start',
     backgroundColor: '#0187e6',
     alignItems: 'center',
@@ -161,13 +165,14 @@ const styles = StyleSheet.create({
   },
 
   containerInner: {
+    flex: 1,
     flexDirection: 'column',
-    width: '90%',
-    height: '55%',
-    padding: 25,
-    marginTop: 5,
-    marginBottom: 15,
     justifyContent: 'center',
+    width: '90%',
+    height: '50%',
+    padding: 25,
+    marginBottom: 15,
+    marginTop: 15,
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
@@ -204,6 +209,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
+    borderBottomWidth: 2,
+    borderColor: '#0648aa',
   },
 
   lastRow: {
@@ -225,13 +232,5 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  rowDivider: {
-    width: '100%',
-    marginTop: 5,
-    marginBottom: 5,
-    borderColor: '#0648aa',
-    borderWidth: 1,
   },
 });
