@@ -22,15 +22,15 @@ export default class Tips extends Component{
 
   randomTipGenerator() {
     let index = Math.floor(Math.random() * (this.state.tips.length - 1));
-    console.warn(index);
-    console.warn(this.state.tips[index]);
+    console.log(index);
+    console.log(this.state.tips[index]);
 
 
     return this.state.tips[index];
   }
 
   componentDidMount() {
-    console.warn(this.randomTipGenerator());
+    console.log(this.randomTipGenerator());
     this.setState({ currentTip: this.randomTipGenerator() });
   }
 
@@ -49,7 +49,7 @@ export default class Tips extends Component{
           </Text>
         </View>
         <Image
-        style={styles.logo}
+        style={styles.characteLogo}
         resizeMode='contain'
         source={require('../imgs/character.png')}/>
         <Image
@@ -65,8 +65,6 @@ const styles = StyleSheet.create({
   backgroundImage: {
     width: '100%',
     height: '100%',
-    flex: 1,
-    marginTop: -70,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -74,38 +72,31 @@ const styles = StyleSheet.create({
 
   logo: {
     marginTop: 20,
-    width: 200,
-    height: 250,
+    maxWidth: 200,
+    maxHeight: 250,
   },
 
   bottomLogo: {
-    width: 200,
-    height: 250,
-    marginTop: -100,
+    maxWidth: 200,
+    maxHeight: 250,
   },
 
-  img: {
-    width: 30,
-    height: 28,
-    padding: 5,
-    marginLeft: -10,
-    marginTop: 10,
+  characteLogo: {
+    maxWidth: 200,
+    maxHeight: 250,
   },
 
   containerInner: {
+    flex: 2,
     flexDirection: 'column',
-    width: '90%',
-    height: '25%',
-    marginTop: -70,
+    maxWidth: '90%',
+    maxHeight: '35%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
-  },
-
-  innerRow: {
-    flexDirection: 'row',
-    width: '80%',
+    padding: 25,
     marginTop: 20,
+    marginBottom: 20,
   },
 });

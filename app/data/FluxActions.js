@@ -22,19 +22,16 @@ export function createUser(data) {
 };
 
 export function addNewUserProps(data) {
-  dispatcher.dispatch({
-    type: 'user-new-props-added',
-    data,
+  setTimeout(() => {
+    dispatcher.dispatch({
+      type: 'user-new-props-added',
+      data,
+    });
   });
 };
 
 export function saveUser(data) {
-  console.warn('from add save');
-  console.warn(data);
   saveData('userData', data);
-  dispatcher.dispatch({
-    type: 'user-saving',
-  });
   setTimeout(() => {
     dispatcher.dispatch({
       type: 'user-saved',
@@ -45,11 +42,9 @@ export function saveUser(data) {
 export function loadUser() {
   getData('userData').then((data) => {
     let jsonData = JSON.parse(data);
-    setTimeout(() => {
-        dispatcher.dispatch({
-            type: 'recieved-user-data',
-            data: jsonData,
-          });
-      }, 1000);
+    dispatcher.dispatch({
+        type: 'recieved-user-data',
+        data: jsonData,
+      });
   });
 };

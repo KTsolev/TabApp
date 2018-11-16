@@ -10,7 +10,7 @@ export default class ProgressScreen extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    console.warn(user);
+    console.log(user);
     const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
@@ -42,7 +42,7 @@ export default class ProgressScreen extends Component{
 
   _getUserInfo() {
     const user = UserStore.getUser();
-    console.warn(user);
+    console.log(user);
     const pills = user.pillsTakenToday ? user.pillsTakenToday : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
@@ -87,11 +87,13 @@ export default class ProgressScreen extends Component{
       <ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/background.png')}>
-        <Image
-          style={styles.logo}
-          resizeMode='contain'
-          source={require('../imgs/tracking.png')}/>
-        <View>
+        <View style={styles.headerContainer}>
+          <Image
+            style={styles.logo}
+            resizeMode='contain'
+            source={require('../imgs/tracking.png')}/>
+        </View>
+        <View style={styles.headerContainer}>
           <PercentageCircle
             radius={60}
             percent={this.state.daysMargin}
@@ -164,8 +166,10 @@ export default class ProgressScreen extends Component{
 
 const styles = StyleSheet.create({
   logo: {
-    width: 200,
-    height: 250,
+    maxWidth: 200,
+    maxHeight: 250,
+    marginTop: 50,
+    marginBottom: 50,
   },
 
   img: {
@@ -174,6 +178,12 @@ const styles = StyleSheet.create({
     padding: 5,
     marginLeft: -10,
     marginTop: 10,
+  },
+
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    maxHeight: 150,
   },
 
   tabBarRow: {
@@ -195,13 +205,9 @@ const styles = StyleSheet.create({
   },
 
   backgroundImage: {
-    width: '100%',
-    height: '100%',
-    flex: 1,
-    marginTop: -70,
-    flexDirection: 'column',
+    resizeMode: 'cover',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    flex: 1,
   },
 
   barGreen: {
@@ -227,7 +233,6 @@ const styles = StyleSheet.create({
   },
 
   barBottomRow: {
-    flex: 1,
     marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -262,16 +267,14 @@ const styles = StyleSheet.create({
   },
 
   progressBar: {
-    marginTop: 35,
-    marginBottom: 35,
+    marginTop: 15,
+    marginBottom: 15,
   },
 
   infoArea: {
-    marginBottom: 20,
-    marginTop: 10,
+    flex: 1,
     paddingLeft: 10,
     paddingRight: 10,
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

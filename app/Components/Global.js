@@ -61,7 +61,7 @@ export default class Global extends Component{
                 style={styles.img}
                 resizeMode='contain'
                 source={require('../imgs/pin.png')}/>
-              <Text style={{ fontSize: 12, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
                 {this.state.peopleArroundGLobe} people in 7 different countries and 2 continents quit smoking today.
               </Text>
             </View>
@@ -73,24 +73,24 @@ export default class Global extends Component{
 
 const styles = StyleSheet.create({
   backgroundImage: {
-    width: '100%',
-    height: '100%',
     flex: 1,
-    marginTop: -70,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
 
   logo: {
-    width: 200,
-    height: 250,
+    marginTop: 20,
+    marginBottom: 20,
+    maxWidth: 200,
+    maxHeight: 250,
   },
 
   earthImg: {
-    marginTop: -70,
-    width: 350,
-    height: 350,
+    maxWidth: 350,
+    maxHeight: 300,
+    marginTop: 10,
+    marginBottom: 10,
   },
 
   img: {
@@ -98,17 +98,18 @@ const styles = StyleSheet.create({
     height: 28,
     padding: 5,
     marginLeft: -10,
-    marginTop: 10,
   },
 
   containerInner: {
     flexDirection: 'column',
-    width: '90%',
-    height: '25%',
-    marginTop: -30,
+    flex: 2,
+    maxWidth: '90%',
+    maxHeight: '50%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
+    padding: 35,
+    marginBottom: 10,
     borderRadius: 50,
   },
 

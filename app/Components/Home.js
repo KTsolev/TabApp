@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import PercentageCircle from 'react-native-percentage-circle';
 import PillsButton from './PillsButton';
 import moment from 'moment';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { Divider } from 'react-native-elements';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
@@ -12,6 +11,7 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
+    let pills = PillStore.getPills();
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day //
@@ -21,7 +21,7 @@ export default class Home extends Component {
     const currency = user.currency;
 
     this.state = {
-      pills: 1,
+      pills: pills.count,
       pillsTakenToday: user.pillsTakenToday ? user.pillsTakenToday : 1,
       lastPillTaken: null,
       timeSinceStart,
@@ -88,54 +88,55 @@ export default class Home extends Component {
   }
 
   render() {
-    console.warn(this.state);
+    console.log(this.state);
 
     return (
       <View style={styles.headerContainer}>
-        <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
-        <PercentageCircle
-          radius={75}
-          percent={this.state.daysSinceStart}
-          innerColor={'#0187e6'}
-          bgcolor={'#3498db'}
-          borderWidth={5}
-          color={'#d3ebfb'}>
-            <Text style={{ fontSize: 16, color: '#d3ebfb' }}>{this.state.daysSinceStart}</Text>
-            <Text style={{ fontSize: 16, color: '#d3ebfb' }}>DAYS</Text>
-            <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
-        </PercentageCircle>
-        <Divider style={styles.headerDivider}></Divider>
-        <View style={styles.headerRow}>
-          <PillsButton />
-          <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
-        </View>
-        <View style={styles.containerInner}>
-          <View style={styles.innerRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>quit date:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-            { moment(this.state.endingDate).format('L') }
-            </Text>
+        <ImageBackground
+          style={styles.backgroundImage}
+          source={require('../imgs/rectangle.png')}>
+          <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
+          <PercentageCircle
+            radius={75}
+            percent={this.state.daysSinceStart}
+            innerColor={'#0187e6'}
+            bgcolor={'#3498db'}
+            borderWidth={5}
+            color={'#d3ebfb'}>
+              <Text style={{ fontSize: 16, color: '#d3ebfb' }}>{this.state.daysSinceStart}</Text>
+              <Text style={{ fontSize: 16, color: '#d3ebfb' }}>DAYS</Text>
+              <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
+          </PercentageCircle>
+          <View style={styles.headerRow}>
+            <PillsButton />
+            <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
           </View>
-          <Divider style={styles.rowDivider}></Divider>
-          <View style={styles.innerRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>time since:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
+          </ImageBackground>
+        <View style={styles.container}>
+          <View style={styles.containerInner}>
+            <View style={styles.innerRow}>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>quit date:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              { moment(this.state.endingDate).format('DD/MM/YYYY') }
+              </Text>
+            </View>
+            <View style={styles.innerRow}>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>time since:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
+            </View>
+            <View style={styles.innerRow}>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>money saved:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+                {`${this.state.moneySaved} ${this.state.currency}`}
+              </Text>
+            </View>
+            <View style={styles.innerRow}>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>not smoked:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+                {this.state.notSmoked}
+              </Text>
+            </View>
           </View>
-          <Divider style={styles.rowDivider}></Divider>
-          <View style={styles.innerRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>money saved:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-              {`${this.state.moneySaved} ${this.state.currency}`}
-            </Text>
-          </View>
-          <Divider style={styles.rowDivider}></Divider>
-          <View style={styles.innerRow}>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>not smoked:</Text>
-            <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-              {this.state.notSmoked}
-            </Text>
-          </View>
-          <Divider style={styles.rowDivider}></Divider>
         </View>
       </View>
     );
@@ -144,10 +145,18 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 2,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+
+  backgroundImage: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    resizeMode: 'contain',
   },
 
   logo: {
@@ -158,12 +167,8 @@ const styles = StyleSheet.create({
 
   headerContainer: {
     flexDirection: 'column',
-    width: '100%',
-    height: '55%',
+    flex: 1,
     justifyContent: 'flex-start',
-    backgroundColor: '#0187e6',
-    alignItems: 'center',
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 
   headerText: {
@@ -176,11 +181,9 @@ const styles = StyleSheet.create({
 
   containerInner: {
     flexDirection: 'column',
-    width: '90%',
-    height: '60%',
+    flex: 2,
     padding: 25,
-    marginTop: 25,
-    marginBottom: 25,
+    margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
@@ -198,34 +201,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 15,
   },
 
   innerRow: {
-    flex: 1,
     width: '100%',
+    flex: 1,
     height: 70,
     flexDirection: 'row',
-    paddingLeft: 5,
-    paddingRight: 5,
-    justifyContent: 'space-around',
-  },
-
-  headerDivider: {
-    width: '100%',
-    height: 2,
-    marginTop: 25,
-    marginBottom: 25,
-    marginLeft: -10,
-    marginRight: -10,
-    borderColor: '#d3ebfb',
-    borderWidth: 1,
-  },
-
-  rowDivider: {
-    width: '100%',
-    marginTop: 5,
-    marginBottom: 5,
+    padding: 5,
+    justifyContent: 'space-between',
     borderColor: '#0648aa',
-    borderWidth: 1,
+    borderBottomWidth: 2,
   },
 });

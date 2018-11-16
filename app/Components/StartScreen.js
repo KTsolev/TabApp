@@ -38,9 +38,9 @@ export default class TermsAndConditions extends Component {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    width: '90%',
-    height: '50%',
-    padding: 25,
+    maxWidth: '90%',
+    maxHeight: '70%',
+    padding: 35,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -58,26 +58,29 @@ const styles = StyleSheet.create({
   imageHolder: {
     position: 'relative',
     flexDirection: 'row',
-    width: '100%',
+    maxWidth: '100%',
+    maxHeight: '30%',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   leftImage: {
     position: 'absolute',
-    zIndex: 3,
+    zIndex: 2,
+    alignSelf: 'center',
+    left: '-10%',
     top: -20,
-    left: 20,
-    width: '100%',
+    width: 70,
     height: 70,
   },
 
   rightImage: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: -2,
+    alignSelf: 'center',
+    right: '-3%',
     top: -20,
-    left: -20,
-    width: '100%',
+    width: 70,
     height: 70,
   },
 

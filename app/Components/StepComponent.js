@@ -85,7 +85,7 @@ class Step extends Component {
                   return (<Picker.Item label={item} value={index} key={index} />);
                 })}
             </Picker>
-            <Text style = {styles.text}>{this.state.currency}</Text>
+            <Text style = {styles.currencyText}>{this.state.currency}</Text>
          </View>;
 
     let inputs;
@@ -131,9 +131,9 @@ class Step extends Component {
     }
     return (
       <View
-        style={styles.innerBackgroundImage}>
+        style={styles.inputContainer}>
           <Text style={styles.containerTitle}>
-            {this.props.children}
+            {this.props.maxHhildren}
           </Text>
           {inputs}
           <LinearGradient
@@ -210,7 +210,7 @@ class Wizzard extends Component {
   }
 
   _updateUser(newState) {
-    console.warn(newState);
+    console.log(newState);
     this.setState({
       userData: Object.assign({}, this.state.userData, newState),
     });
@@ -248,22 +248,26 @@ class Wizzard extends Component {
 }
 
 const styles = StyleSheet.create({
+  currencyText: {
+      marginBottom: 5,
+    },
+
   container: {
+    flex: 2,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    width: '100%',
-    height: '100%',
+    backgroundColor: '#ddf1fd',
   },
 
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#ddf1fd',
     alignItems: 'center',
-    paddingTop: 50,
-    paddingBottom: 50,
+    flex: 1,
+    maxHeight: '5%',
+    paddingTop: 10,
+    paddingBottom: 10,
   },
 
   containerInner: {
@@ -305,8 +309,6 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 45,
     paddingRight: 45,
-    marginTop: 10,
-    marginBottom: 10,
     borderRadius: 50,
     backgroundColor: '#fff',
   },
@@ -315,7 +317,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: 2,
-    top: 10,
+    top: 0,
     marginLeft: -10,
     marginRight: -10,
     borderColor: '#99d7b9',
@@ -341,8 +343,8 @@ const styles = StyleSheet.create({
 
   button: {
     padding: 10,
-    marginTop: 20,
-    marginBottom: 20,
+    marginTop: 10,
+    marginBottom: 10,
     borderRadius: 50,
     borderWidth: 1,
     borderColor: '#fff',
@@ -355,13 +357,12 @@ const styles = StyleSheet.create({
     paddingLeft: 50,
   },
 
-  innerBackgroundImage: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    flex: 1,
+  inputContainer: {
+    flex: 2,
+    maxWidth: '100%',
+    maxHeight: '65%',
+    alignItems: 'stretch',
     flexDirection: 'column',
-    backgroundColor: '#ddf1fd',
   },
 
   mainBackgroundImage: {
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
   datePicker: {
     marginTop: 20,
     padding: 10,
-    width: '80%',
+    maxWidth: '80%',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 50,

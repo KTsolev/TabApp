@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PillsButton from './PillsButton';
-import { View, Text, Image, ImageBackground, StyleSheet } from 'react-native';
+import { View, Text, Image, ImageBackground, StyleSheet, ScrollView } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
@@ -11,22 +11,23 @@ import PillStore from '../data/PillStore';
 export default class CalendarTr extends Component{
   constructor(props) {
     super(props);
-    const user = UserStore.getUser();
-    const dates = this._getSelectedRange(user.startingDate);
-    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
-
-    this.state = {
-      pills: 1,
-      pillsTakenToday,
-      lastPillTaken: null,
-      dates,
-    };
-
     this._getUserData = this._getUserData.bind(this);
     this._increasePills = this._increasePills.bind(this);
     this._getSelectedRange = this._getSelectedRange.bind(this);
 
+    const user = UserStore.getUser();
+    let pills = PillStore.getPills();
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    let dates =  this._getSelectedRange(moment().format(), '#57c279', user.endingDate);
+    console.log(dates)
+    this.state = {
+      pills: pills.count,
+      daysSinceStart,
+      pillsTakenToday,
+      lastPillTaken: null,
+      dates,
+    };
   }
 
   _increasePills() {
@@ -42,9 +43,9 @@ export default class CalendarTr extends Component{
     }
   }
 
-  _getSelectedRange(startDate) {
+  _getSelectedRange(startDate, color, endingDate) {
     let minDate = moment(startDate);
-    let maxDate = moment();
+    let maxDate = endingDate ? moment(endingDate) : moment();
     let range  = [];
     while (minDate.isSameOrBefore(maxDate)) {
       range.push({
@@ -52,7 +53,12 @@ export default class CalendarTr extends Component{
           startingDay: true,
           selected: true,
           marked: true,
-          color: '#57c279', });
+          customStyle: {
+            container: {
+              backgroundColor: color,
+            },
+          },
+        });
       minDate.add(1, 'day');
     }
 
@@ -67,6 +73,10 @@ export default class CalendarTr extends Component{
   _getUserData() {
     const jsonUser = UserStore.getUser();
     this._getSelectedRange(jsonUser.startingDate);
+    const datesObjects = this._getSelectedRange(jsonUser.startingDate);
+    this.setState({
+      dates: datesObjects,
+    });
   }
 
   componentDidMount() {
@@ -82,78 +92,82 @@ export default class CalendarTr extends Component{
   }
 
   render() {
+    console.log(this.state)
     return (
-        <View style={styles.headerContainer}>
-          <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
-          <Calendar
-              startFromMonday={true}
-              allowRangeSelection={true}
-              markedDates={this.state.dates ? this.state.dates : {}}
-              theme={{
-                arrowColor: 'white',
-                monthTextColor: 'white',
-                calendarBackground: '#00adf5',
-                textSectionTitleColor: '#fff',
-                selectedDayBackgroundColor: '#57c279',
-                selectedDayTextColor: '#ffffff',
-                todayTextColor: '#fff',
-                dayTextColor: '#fff',
-                textDisabledColor: '#d9e1e8',
-                dotColor: '#2d4150',
-                selectedDotColor: '#57c279',
-                arrowColor: 'orange',
-                monthTextColor: 'blue',
-                textDayFontFamily: 'monospace',
-                textMonthFontFamily: 'monospace',
-                textDayHeaderFontFamily: 'monospace',
-                textMonthFontWeight: 'bold',
-                textDayFontSize: 16,
-                textMonthFontSize: 16,
-                textDayHeaderFontSize: 16,
-                marginTop: -50,
-              }}
-            />
+        <ScrollView >
+          <ImageBackground
+            source={require('../imgs/rectangle.png')}
+            style={styles.backgroundImage}>
+            <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
+            <Calendar
+                style={styles.calendar}
+                startFromMonday={true}
+                allowRangeSelection={true}
+                markedDates={this.state.dates ? this.state.dates : {}}
+                theme={{
+                  arrowColor: 'white',
+                  monthTextColor: 'white',
+                  calendarBackground: '#00adf5',
+                  textSectionTitleColor: '#fff',
+                  selectedDayBackgroundColor: '#57c279',
+                  selectedDayTextColor: '#ffffff',
+                  todayTextColor: '#fff',
+                  dayTextColor: '#fff',
+                  textDisabledColor: '#d9e1e8',
+                  dotColor: '#2d4150',
+                  selectedDotColor: '#57c279',
+                  arrowColor: 'white',
+                  monthTextColor: 'white',
+                  textDayFontFamily: 'monospace',
+                  textMonthFontFamily: 'monospace',
+                  textDayHeaderFontFamily: 'monospace',
+                  textMonthFontWeight: 'bold',
+                  textDayFontSize: 16,
+                  textMonthFontSize: 16,
+                  textDayHeaderFontSize: 16,
+                  marginTop: -50,
+                }}
+              />
+            </ImageBackground>
             <View style={styles.containerInner}>
               <View style={styles.headerColumn}>
-                <Text style={{ fontSize: 18, color: '#0648aa', textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
-                <Text style={{ fontSize: 16, color: '#0648aa', marginBottom: 20, textAlign: 'center' }}>days smoke free</Text>
+                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
+                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>days smoke free</Text>
               </View>
               <View style={styles.innerRow}>
                 <Image style={styles.img} source={require('../imgs/pill.png')}/>
-                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>6 pills/day</Text>
+                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, textAlign: 'right' }}>6 pills/day</Text>
               </View>
               <View style={styles.innerRow}>
                 <Image style={styles.img} source={require('../imgs/clock.png')}/>
-                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
+                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
               </View>
               <View style={styles.lastRow}>
-                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
+                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
                   {this.state.pills}/6
                 </Text>
                 <PillsButton />
               </View>
             </View>
-        </View>
+        </ScrollView>
     );
   }
 }
 const styles = StyleSheet.create({
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    flexDirection: 'column',
-    alignItems: 'center',
-    resizeMode: 'contain',
+  calendar: {
+    flex: 1,
+    maxHeight: 450,
+    maxWidth: '90%',
+    padding: 20,
+    marginBottom: 70,
+    alignSelf: 'center',
   },
 
-  headerContainer: {
-    flex: 1,
-    height: '50%',
+  backgroundImage: {
     flexDirection: 'column',
-    justifyContent: 'flex-start',
-    backgroundColor: '#0187e6',
     alignItems: 'center',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'center',
+    resizeMode: 'contain',
   },
 
   headerText: {
@@ -168,11 +182,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    width: '90%',
-    height: '50%',
-    padding: 25,
-    marginBottom: 15,
-    marginTop: 15,
+    padding: 15,
+    margin: 15,
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
@@ -200,13 +211,11 @@ const styles = StyleSheet.create({
 
   innerRow: {
     flex: 1,
-    width: '100%',
-    height: 50,
     flexDirection: 'row',
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginBottom: 10,
-    marginTop: 10,
+    padding: 5,
+    margin: 5,
+    maxWidth: '100%',
+    maxHeight: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 2,
@@ -215,9 +224,9 @@ const styles = StyleSheet.create({
 
   lastRow: {
     flex: 1,
-    width: '100%',
-    height: 60,
-    marginTop: 20,
+    marginTop: 10,
+    marginRight: 20,
+    maxHeight: 90,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -225,8 +234,8 @@ const styles = StyleSheet.create({
 
   headerColumn: {
     flex: 1,
-    width: '100%',
-    height: 90,
+    maxWidth: '100%',
+    maxHeight: 50,
     flexDirection: 'column',
     paddingLeft: 5,
     paddingRight: 5,

@@ -23,8 +23,8 @@ class UserStore extends EventEmmiter {
 
   addNewData(user) {
     this.userData = Object.assign({}, this.userData, user);
-    console.warn('from add pills');
-    console.warn(this.userData);
+    console.log('from add pills');
+    console.log(this.userData);
 
     this.emit('user-updated');
   }
@@ -53,6 +53,7 @@ class UserStore extends EventEmmiter {
         break;
       case 'recieved-user-data':
         this.createNewUser(action.data);
+        this.emit('recieved-user-data');
         break;
       default:
         break;

@@ -8,7 +8,7 @@ import { saveData, getData } from '../data/StoreService';
 export default class IntroScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = { agreed: props.isChecked || false, goToSteps: false };
+    this.state = { agreed: props.isChecked || false, goToSteps: false, };
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.goToStepsHandler = this.goToStepsHandler.bind(this);
   }

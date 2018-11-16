@@ -73,9 +73,10 @@ export default class TermsAndConditions extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
-    width: '90%',
-    height: '40%',
+    maxWidth: '90%',
+    maxHeight: '50%',
     padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
 
   button: {
     overflow: 'hidden',
-    padding: 10,
+    padding: 15,
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 50,

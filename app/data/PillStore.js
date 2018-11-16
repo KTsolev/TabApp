@@ -6,7 +6,7 @@ class PillStore extends EventEmmiter {
   constructor() {
     super();
     this.pillsData = {
-      count: 0,
+      count: 1,
       lastPillTaken: null,
       showResetModal: false,
     };
