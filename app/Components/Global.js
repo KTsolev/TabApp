@@ -5,22 +5,68 @@ import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
-import MapView,  { PROVIDER_GOOGLE }  from  'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 export default class Global extends Component{
   constructor(props) {
     super(props);
     const jsonUser = UserStore.getUser();
-    this.state = {
-      center: {
-        lat: 59.95,
-        lng: 30.33,
-      },
-      zoom: 11,
-    };
+
     this.state = {
       peopleArroundGLobe: 135565 + moment().diff(moment(jsonUser.startingDate), 'days'),
+      region: {
+          latitude: 46.8507116,
+          longitude: 12.3533676,
+          latitudeDelta: 1.2,
+          longitudeDelta: 0.8,
+        },
+      markerPositions: [
+        {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 47.810175,
+            longitude: 13.045552,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 48.178978,
+            longitude: 11.643729,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 49.498006,
+            longitude: 11.066757,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 47.150983,
+            longitude: 9.675587,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 44.515366,
+            longitude: 11.051963,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 45.795467,
+            longitude: 5.320312,
+          },
+        }, {
+          title: 'People using Tabeks',
+          coordinates: {
+            latitude: 47.065358,
+            longitude: 9.738450,
+          },
+        },
+      ],
     };
+
     this._getUserStartingDate = this._getUserStartingDate.bind(this);
 
   }
@@ -52,11 +98,17 @@ export default class Global extends Component{
           style={styles.logo}
           resizeMode='contain'
           source={require('../imgs/tracking.png')}/>
-        <Image
-          style={styles.earthImg}
-          resizeMode='contain'
-          source={require('../imgs/Earth.png')}/>
-
+            <MapView
+             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+             style={styles.map}
+             region={this.state.region}>
+              {this.state.markerPositions.map(marker => (
+                <Marker
+                  coordinate={marker.coordinates}
+                  title={marker.title}
+                />
+              ))}
+           </MapView>
           <View style={styles.containerInner}>
             <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
               {this.state.peopleArroundGLobe}
@@ -94,12 +146,11 @@ const styles = StyleSheet.create({
     maxHeight: 250,
   },
 
-  earthImg: {
-    flex: 2,
-    maxHeight: 400,
-
+  map: {
+    height: 250,
+    width: 350,
+    marginBottom: 20,
     marginTop: 10,
-    marginBottom: 10,
   },
 
   img: {
