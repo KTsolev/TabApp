@@ -17,15 +17,24 @@ class PillStore extends EventEmmiter {
   }
 
   increasePills() {
-    this.pillsData.count += 1;
-    this.pillsData.lastPillTaken = moment().format();
-
-    this.emit('pills-increased');
+    if (this.pillsData.count >= 6) {
+      console.warn('dispaching event');
+      this.emit('day-doze-reached');
+    } else {
+      this.pillsData.count = this.pillsData.count + 1;
+      this.pillsData.lastPillTaken = moment().format();
+      this.emit('pills-increased');
+    }
   }
 
-  forgotPills(user) {
+  forgotPills(pills) {
     this.pillsData.showResetModal = true;
     this.emit('pills-missed');
+  }
+
+  createNewPillsData(pils) {
+    this.pilsData = pils;
+    this.emit('pills-created');
   }
 
   _handleActions(action) {
@@ -35,6 +44,16 @@ class PillStore extends EventEmmiter {
         break;
       case 'pills-not-taken':
         this.forgotPills(action.data);
+        break;
+      case 'pills-saved':
+        this.emit('pills-saved');
+        break;
+      case 'pills-loading':
+        this.emit('pills-loading');
+        break;
+      case 'recieved-pills-data':
+        this.createNewPillsData(action.data);
+        this.emit('recieved-pills-data');
         break;
       default:
         break;

@@ -148,7 +148,8 @@ android {
 }
 
 ext {
-    googlePlayServicesVersion = 49 // default: "+"
+   androidMapsUtilsVersion = "0.5+"
+   googlePlayServicesVersion = "11.8.0"
     // Other settings
     compileSdkVersion = 27 // default: 23
     buildToolsVersion = "27.0.1" // default: "23.0.1"
@@ -157,6 +158,8 @@ ext {
 }
 
 dependencies {
+    compile project(':react-native-push-notification')
+    compile project(':react-native-linear-gradient')
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
     implementation project(':react-native-push-notification')
     implementation project(':react-native-linear-gradient')

@@ -10,8 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
   TouchableOpacity,
-  ImageBackground,
   Picker,
   TextInput } from 'react-native';
 
@@ -43,6 +43,7 @@ class Step extends Component {
       currency: Step.currenciesArray[0],
       isDateTimePickerVisible: false,
     };
+
     this.selectCurrency = this.selectCurrency.bind(this);
     this.selectPricePerPack = this.selectPricePerPack.bind(this);
     this.selectCiggarettes = this.selectCiggarettes.bind(this);
@@ -80,7 +81,7 @@ class Step extends Component {
 
   render() {
     const currencyDropDown = <View>
-            <Picker selectedValue={this.state.currency} onValueChange={this.selectCurrency}>
+            <Picker style={{ width: 150, height: 50 }} selectedValue={this.state.currency} onValueChange={this.selectCurrency}>
                {Step.currenciesArray.map((item, index) => {
                   return (<Picker.Item label={item} value={index} key={index} />);
                 })}
@@ -89,6 +90,7 @@ class Step extends Component {
          </View>;
 
     let inputs;
+    let buttons;
 
     switch (this.props.currentIndex) {
       case 1:
@@ -102,6 +104,17 @@ class Step extends Component {
             onEndEditing={this.selectPricePerPack}
           />
         </View>;
+        buttons = <View><LinearGradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  colors={['#009fea', '#0544a8']}
+                  style={styles.button}>
+                    <TouchableOpacity
+                      dissabled={this.props.isLast}
+                      onPress={this.props.nextStep}>
+                      <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
+                    </TouchableOpacity>
+                  </LinearGradient></View>;
       break;
       case 2:
         inputs = <View>
@@ -113,11 +126,33 @@ class Step extends Component {
             onEndEditing={this.selectCiggarettes}
           />
         </View>;
+        buttons =  <View><LinearGradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  colors={['#009fea', '#0544a8']}
+                  style={styles.button}>
+                    <TouchableOpacity
+                      dissabled={this.props.isLast}
+                      onPress={this.props.nextStep}>
+                      <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
+                    </TouchableOpacity>
+                  </LinearGradient>
+                  <LinearGradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  colors={['#009fea', '#0544a8']}
+                  style={styles.button}>
+                    <TouchableOpacity
+                      dissabled={this.props.isfirst}
+                      onPress={this.props.prevStep}>
+                      <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
+                    </TouchableOpacity>
+                  </LinearGradient></View>;
       break;
       case 3:
         inputs = <View style={styles.datePicker}>
         <TouchableOpacity onPress={this._toggleDateTimePicker}>
-          <Text>dd/mm/yyyy</Text>
+          <Text>{this.state.startingDate ? moment(this.state.startingDate).format('DD/MM/YYYY') : 'dd/mm/yyyy'}</Text>
         </TouchableOpacity>
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
@@ -125,39 +160,41 @@ class Step extends Component {
           onCancel={this._toggleDateTimePicker}
         />
       </View>;
+      buttons = <View><LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                colors={['#009fea', '#0544a8']}
+                style={styles.button}>
+                  <TouchableOpacity
+                    dissabled={this.props.isLast}
+                    onPress={this.props.nextStep}>
+                    <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
+                  </TouchableOpacity>
+                </LinearGradient>
+                <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                colors={['#009fea', '#0544a8']}
+                style={styles.button}>
+                  <TouchableOpacity
+                    dissabled={this.props.isfirst}
+                    onPress={this.props.prevStep}>
+                    <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
+                  </TouchableOpacity>
+                </LinearGradient></View>;
       break;
       default:
       break;
     }
+
     return (
       <View
         style={styles.inputContainer}>
           <Text style={styles.containerTitle}>
-            {this.props.maxHhildren}
+            {this.props.children}
           </Text>
           {inputs}
-          <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          colors={['#009fea', '#0544a8']}
-          style={styles.button}>
-            <TouchableOpacity
-              dissabled={this.props.isLast}
-              onPress={this.props.nextStep}>
-              <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
-            </TouchableOpacity>
-          </LinearGradient>
-          <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          colors={['#009fea', '#0544a8']}
-          style={styles.button}>
-            <TouchableOpacity
-              dissabled={this.props.isfirst}
-              onPress={this.props.prevStep}>
-              <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
-            </TouchableOpacity>
-          </LinearGradient>
+          {buttons}
         </View>);
   }
 }
@@ -240,9 +277,9 @@ class Wizzard extends Component {
               isLast: this.state.index === this.props.children.length - 1,
             });
           }
-
           return null;
         })}
+        <Image source={require('../imgs/leaves.png')} style={styles.imageHolder} />
       </View>);
   }
 }
@@ -253,11 +290,19 @@ const styles = StyleSheet.create({
     },
 
   container: {
-    flex: 2,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    textAlign: 'center',
     backgroundColor: '#ddf1fd',
+  },
+
+  imageHolder: {
+    flex: 1,
+    flexDirection: 'row',
+    maxWidth: '100%',
+    maxHeight: '20%',
+    justifyContent: 'flex-end',
   },
 
   headerContainer: {
@@ -278,6 +323,7 @@ const styles = StyleSheet.create({
 
   containerTitle: {
     fontSize: 22,
+    padding: 15,
     textTransform: 'capitalize',
     color: '#0643a7',
     textAlign: 'center',
@@ -306,7 +352,10 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: '100%',
+    maxWidth: '40%',
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 20,
     paddingLeft: 45,
     paddingRight: 45,
     borderRadius: 50,
@@ -342,9 +391,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
+    maxWidth: '70%',
+    alignSelf: 'center',
     padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 20,
+    marginBottom: 20,
     borderRadius: 50,
     borderWidth: 1,
     borderColor: '#fff',
@@ -358,10 +409,10 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    flex: 2,
     maxWidth: '100%',
-    maxHeight: '65%',
-    alignItems: 'stretch',
+    maxHeight: '70%',
+    alignItems: 'center',
+    justifyContent: 'center',
     flexDirection: 'column',
   },
 

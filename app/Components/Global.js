@@ -5,12 +5,19 @@ import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
+import MapView,  { PROVIDER_GOOGLE }  from  'react-native-maps';
 
 export default class Global extends Component{
   constructor(props) {
     super(props);
     const jsonUser = UserStore.getUser();
-
+    this.state = {
+      center: {
+        lat: 59.95,
+        lng: 30.33,
+      },
+      zoom: 11,
+    };
     this.state = {
       peopleArroundGLobe: 135565 + moment().diff(moment(jsonUser.startingDate), 'days'),
     };
@@ -49,6 +56,7 @@ export default class Global extends Component{
           style={styles.earthImg}
           resizeMode='contain'
           source={require('../imgs/Earth.png')}/>
+
           <View style={styles.containerInner}>
             <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
               {this.state.peopleArroundGLobe}
@@ -87,8 +95,9 @@ const styles = StyleSheet.create({
   },
 
   earthImg: {
-    maxWidth: 350,
-    maxHeight: 300,
+    flex: 2,
+    maxHeight: 400,
+
     marginTop: 10,
     marginBottom: 10,
   },

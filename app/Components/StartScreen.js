@@ -37,22 +37,15 @@ export default class TermsAndConditions extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'column',
     maxWidth: '90%',
-    maxHeight: '70%',
+    maxHeight: '60%',
     padding: 35,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
     borderRadius: 50,
-  },
-
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    flex: 1,
-    resizeMode: 'cover',
   },
 
   imageHolder: {
@@ -78,7 +71,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: -2,
     alignSelf: 'center',
-    right: '-3%',
+    right: '-10%',
     top: -20,
     width: 70,
     height: 70,

@@ -14,16 +14,17 @@ export default class CalendarTr extends Component{
     this._getUserData = this._getUserData.bind(this);
     this._increasePills = this._increasePills.bind(this);
     this._getSelectedRange = this._getSelectedRange.bind(this);
+    this._dozeHandler = this._dozeHandler.bind(this);
 
     const user = UserStore.getUser();
     let pills = PillStore.getPills();
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
     let dates =  this._getSelectedRange(moment().format(), '#57c279', user.endingDate);
-    console.log(dates)
     this.state = {
       pills: pills.count,
       daysSinceStart,
+      dissabled: user.dissabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       pillsTakenToday,
       lastPillTaken: null,
       dates,
@@ -31,9 +32,9 @@ export default class CalendarTr extends Component{
   }
 
   _increasePills() {
-    console.log('in method');
     let pills = PillStore.getPills();
-    if (this.state.pills < 6) {
+    console.log('in method');
+    if (!this.state.dissabled) {
       let sum = this.state.pillsTakenToday + pills.count;
       this.setState({
         pills: pills.count,
@@ -41,6 +42,16 @@ export default class CalendarTr extends Component{
         lastPillTaken: pills.lastPillTaken,
       });
     }
+  }
+
+  _dozeHandler() {
+    this.setState({ dissabled: true });
+    addNewUserProps({
+      pillsTakenToday: this.state.pillsTakenToday,
+      lastPillTaken: this.state.lastPillTaken,
+      dissabled: true });
+
+    setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
   _getSelectedRange(startDate, color, endingDate) {
@@ -53,11 +64,6 @@ export default class CalendarTr extends Component{
           startingDay: true,
           selected: true,
           marked: true,
-          customStyle: {
-            container: {
-              backgroundColor: color,
-            },
-          },
         });
       minDate.add(1, 'day');
     }
@@ -83,16 +89,18 @@ export default class CalendarTr extends Component{
     UserStore.on('user-updated', this._getUserData);
     PillStore.on('pills-increased', this._increasePills);
     UserStore.on('user-saved', () => loadUser());
+    PillStore.on('day-doze-reached', this._dozeHandler);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUserData);
     PillStore.removeListener('pills-increased', this._increasePills);
     UserStore.removeListener('user-saved', () => loadUser());
+    PillStore.removeListener('day-doze-reached', this._dozeHandler);
   }
 
   render() {
-    console.log(this.state)
+    console.warn(UserStore.getUser())
     return (
         <ScrollView >
           <ImageBackground
@@ -146,7 +154,7 @@ export default class CalendarTr extends Component{
                 <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
                   {this.state.pills}/6
                 </Text>
-                <PillsButton />
+                <PillsButton dissabled={this.state.dissabled} />
               </View>
             </View>
         </ScrollView>

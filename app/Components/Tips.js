@@ -12,11 +12,10 @@ export default class Tips extends Component{
         ` By quiting, you are even improving your hair.
           Experts now say that toxic chemicals in smoke can damage DNA in hair folicles.
           This can cause hair to thin and go gray faster.`,
-        `At ourselves direction believing do he departure. Celebrated her had sentiments understood are projection set. Possession ye no mr unaffected remarkably at.`,
-        `Wrote house in never fruit up. Pasture imagine my garrets an he. However distant she request behaved see nothing. Talking settled at pleased an of me brother weather.`,
-        `Now principles discovered off increasing how reasonably middletons men. Add seems out man met plate court sense. His joy she worth truth given.`,
-        `All year feet led view went sake. You agreeable breakfast his set perceived immediate. Stimulated man are projecting favourable middletons can cultivated. `,
-      ],
+        `By quiting, you are even improving your hair. Experts now say that toxic
+         chemicals in smoke can damage DNA in hair folicles. This can cause hair to thin and go gray faster.`,
+        `Get back your glow. Quitting will improve the color and appearance of your skin.`,
+        `The breathing through a small straw. This is a good smoking simulator.`],
     };
   }
 

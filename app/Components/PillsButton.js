@@ -7,8 +7,8 @@ export default class PillsButton extends Component {
   render() {
     return (
       <TouchableOpacity
-        style={styles.button}
-        dissabled={false}
+        style={this.props.dissabled ? styles.buttonDissabled : styles.button}
+        dissabled={this.props.dissabled}
         onPress={() => increasePills()}>
         <Text style={styles.buttonText}>+1</Text>
       </TouchableOpacity>
@@ -25,6 +25,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#56c078',
     backgroundColor: '#56c078',
+    borderWidth: 1,
+    shadowColor: '#000000',
+    shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+    shadowRadius: 5,
+    shadowOpacity: 1.0,
+    zIndex: 15,
+  },
+
+  buttonDissabled: {
+    padding: 10,
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#98d5b8',
+    backgroundColor: '#98d5b8',
     borderWidth: 1,
     shadowColor: '#000000',
     shadowOffset: {

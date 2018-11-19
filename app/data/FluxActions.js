@@ -31,6 +31,7 @@ export function addNewUserProps(data) {
 };
 
 export function saveUser(data) {
+  console.warn(data)
   saveData('userData', data);
   setTimeout(() => {
     dispatcher.dispatch({
@@ -44,6 +45,25 @@ export function loadUser() {
     let jsonData = JSON.parse(data);
     dispatcher.dispatch({
         type: 'recieved-user-data',
+        data: jsonData,
+      });
+  });
+};
+
+export function savePillsData(data) {
+  saveData('pillsData', data);
+  setTimeout(() => {
+    dispatcher.dispatch({
+      type: 'pills-saved',
+    });
+  }, 1000);
+};
+
+export function loadPillsData() {
+  getData('pillsData').then((data) => {
+    let jsonData = JSON.parse(data);
+    dispatcher.dispatch({
+        type: 'recieved-pills-data',
         data: jsonData,
       });
   });

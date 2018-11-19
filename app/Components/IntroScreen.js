@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ImageBackground, Image } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Image, ScrollView } from 'react-native';
 import TermsAndConditions from './TermsAndConditions';
 import StartScreen from './StartScreen';
+import LinearGradient from 'react-native-linear-gradient';
 import Wizzard from './StepComponent';
 import { saveData, getData } from '../data/StoreService';
 
 export default class IntroScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = { agreed: props.isChecked || false, goToSteps: false, };
+    this.state = {
+      agreed: props.isChecked || false,
+      goToSteps: false,
+    };
+
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.goToStepsHandler = this.goToStepsHandler.bind(this);
   }
@@ -19,7 +24,7 @@ export default class IntroScreen extends Component {
 
   goToStepsHandler() {
     saveData({ agreed: this.state.agreed });
-    this.setState({ goToSteps: !this.state.goToSteps });
+    this.setState({ goToSteps: !this.state.goToSteps, });
   }
 
   RenderTemplate() {
@@ -27,7 +32,7 @@ export default class IntroScreen extends Component {
       return <Wizzard finishSetUpUser={this.props.finishSetUpUser}>
       <Wizzard.Step>How much you pay for pack of cigarettes?</Wizzard.Step>
       <Wizzard.Step>How many cigarettes you smoke per day?</Wizzard.Step>
-      <Wizzard.Step>When do you want to start yor Tabex Treatmen?</Wizzard.Step>
+      <Wizzard.Step>When do you want to start your Tabex Treatmen?</Wizzard.Step>
       </Wizzard>;
     }
 
@@ -63,14 +68,13 @@ const styles = StyleSheet.create({
   },
 
   backgroundImage: {
-    width: '100%',
-    height: '100%',
     alignItems: 'center',
     flex: 1,
     resizeMode: 'cover',
   },
 
   container: {
+    flex: 1,
     flexDirection: 'column',
     width: '100%',
     height: '100%',

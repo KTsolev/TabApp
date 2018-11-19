@@ -3,9 +3,10 @@ import PercentageCircle from 'react-native-percentage-circle';
 import PillsButton from './PillsButton';
 import moment from 'moment';
 import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
-import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser, } from '../data/FluxActions';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
+
 
 export default class Home extends Component {
   constructor(props) {
@@ -21,12 +22,13 @@ export default class Home extends Component {
     const currency = user.currency;
 
     this.state = {
-      pills: pills.count,
+      pills: 1,
       pillsTakenToday: user.pillsTakenToday ? user.pillsTakenToday : 1,
       lastPillTaken: null,
       timeSinceStart,
       daysSinceStart,
       endingDate,
+      dissabled: user.dissabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       currency,
       notSmoked,
       moneySaved,
@@ -34,11 +36,13 @@ export default class Home extends Component {
 
     this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
+    this._dozeHandler = this._dozeHandler.bind(this);
+
   }
 
   _incrementPills() {
     let pills = PillStore.getPills();
-    if (this.state.pills < 6) {
+    if (!this.state.dissabled) {
       let sum = this.state.pillsTakenToday + pills.count;
       this.setState({
         pills: pills.count,
@@ -46,6 +50,16 @@ export default class Home extends Component {
         lastPillTaken: pills.lastPillTaken,
       });
     }
+  }
+
+  _dozeHandler() {
+    console.warn('doze-reached');
+    this.setState({ dissabled: true });
+    addNewUserProps({
+      pillsTakenToday: this.state.pillsTakenToday,
+      lastPillTaken: this.state.lastPillTaken,
+      dissabled: true });
+    setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
   _getUser() {
@@ -68,23 +82,18 @@ export default class Home extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevState.pillsTakenToday !== this.state.pillsTakenToday) {
-      addNewUserProps({ pillsTakenToday: this.state.pillsTakenToday });
-      saveUser(UserStore.getUser());
-    }
-  }
-
   componentDidMount() {
     UserStore.on('user-updated', this._getUser);
     PillStore.on('pills-increased', this._incrementPills);
     UserStore.on('user-saved', () => loadUser());
+    PillStore.on('day-doze-reached', this._dozeHandler);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUser);
     PillStore.removeListener('pills-increased', this._incrementPills);
     UserStore.removeListener('user-saved', () => loadUser());
+    PillStore.removeListener('day-doze-reached', this._dozeHandler);
   }
 
   render() {
@@ -108,7 +117,7 @@ export default class Home extends Component {
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
           </PercentageCircle>
           <View style={styles.headerRow}>
-            <PillsButton />
+            <PillsButton dissabled={this.state.dissabled} />
             <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
           </View>
           </ImageBackground>

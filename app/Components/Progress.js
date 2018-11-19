@@ -11,7 +11,7 @@ export default class ProgressScreen extends Component{
     super(props);
     const user = UserStore.getUser();
     console.log(user);
-    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday > 180 ? 180 : user.pillsTakenToday : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const leftDays = 30 - daysSinceStart;
