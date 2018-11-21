@@ -19,21 +19,21 @@ export default class Home extends Component {
     const moneySaved = Math.round(((user.pricePerPack / 20) * user.ciggarettesPerDay) * daysSinceStart);
     const notSmoked = (user.ciggarettesPerDay * daysSinceStart);
     const endingDate = user.endingDate;
-    const currency = user.currency;
+    const currency = user.currency.split('-')[1];
 
     this.state = {
       pills: 1,
-      pillsTakenToday: user.pillsTakenToday ? user.pillsTakenToday : 1,
-      lastPillTaken: null,
+      pillsTakenToday: user.pillsTakenToday,
+      lastPillTaken: user.lastPillTaken,
       timeSinceStart,
       daysSinceStart,
       endingDate,
-      dissabled: user.dissabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
+      disabled: user.disabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       currency,
       notSmoked,
       moneySaved,
     };
-
+    console.log(user)
     this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
@@ -42,23 +42,30 @@ export default class Home extends Component {
 
   _incrementPills() {
     let pills = PillStore.getPills();
-    if (!this.state.dissabled) {
-      let sum = this.state.pillsTakenToday + pills.count;
+    if (!this.state.disabled) {
+      let sum = this.state.pillsTakenToday + 1;
+      console.log(sum)
       this.setState({
         pills: pills.count,
         pillsTakenToday: sum,
         lastPillTaken: pills.lastPillTaken,
       });
+
+      addNewUserProps({
+        pillsTakenToday: this.state.pillsTakenToday,
+        lastPillTaken: this.state.lastPillTaken,
+        disabled: false });
+      setTimeout(() => saveUser(UserStore.getUser()), 1000);
     }
   }
 
   _dozeHandler() {
     console.warn('doze-reached');
-    this.setState({ dissabled: true });
+    this.setState({ disabled: true });
     addNewUserProps({
       pillsTakenToday: this.state.pillsTakenToday,
       lastPillTaken: this.state.lastPillTaken,
-      dissabled: true });
+      disabled: true });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
@@ -68,8 +75,8 @@ export default class Home extends Component {
     const timeSinceStart = moment().diff(moment(startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(startingDate), 'days');
     const endingDate = jsonUser.endingDate;
-    const currency = jsonUser.currency;
-
+    const currency = jsonUser.currency.split('-')[1];
+    console.log(jsonUser)
     this.setState({
       timeSinceStart,
       startingDate,
@@ -117,7 +124,7 @@ export default class Home extends Component {
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
           </PercentageCircle>
           <View style={styles.headerRow}>
-            <PillsButton dissabled={this.state.dissabled} />
+            <PillsButton disabled={this.state.disabled} />
             <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
           </View>
           </ImageBackground>

@@ -158,6 +158,8 @@ ext {
 }
 
 dependencies {
+    compile project(':react-native-maps')
+    compile project(':react-native-gmaps')
     implementation project(':react-native-maps')
     compile project(':react-native-push-notification')
     compile project(':react-native-linear-gradient')

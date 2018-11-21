@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
 
   containerText: {
-    fontSize: 14,
+    fontSize: 20,
     textTransform: 'capitalize',
     color: '#0643a7',
     paddingRight: 10,

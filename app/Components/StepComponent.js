@@ -39,10 +39,21 @@ class Step extends Component {
 
   constructor(props) {
     super(props);
+    let index = Step.currenciesArray.indexOf(props.userData.currency);
     this.state = {
-      currency: Step.currenciesArray[0],
+      currency: `key${index}` || 'key0',
+      pricePerPack: props.userData.pricePerPack || 0,
+      ciggarettesPerDay: props.userData.ciggarettesPerDay || 0,
+      startingDate: props.userData.startingDate || '',
       isDateTimePickerVisible: false,
+      dissabled: true,
     };
+
+    if (!this.state.dissabled) {
+      this.setState({ activeColors: ['#009fea', '#0544a8'] });
+    } else {
+      this.setState({ activeColors: ['#e3f3fd', '#e7e7e7'] });
+    }
 
     this.selectCurrency = this.selectCurrency.bind(this);
     this.selectPricePerPack = this.selectPricePerPack.bind(this);
@@ -52,9 +63,11 @@ class Step extends Component {
   }
 
   selectCurrency(val) {
-    if (val !== 'choose currency') {
-      this.setState({ currency: Step.currenciesArray[val].split('-')[1] });
-      this.props.updateUser({ currency: Step.currenciesArray[val].split('-')[1] });
+    console.log(val);
+    let index = val.split('key')[1];
+    if (val !== 'key0') {
+      this.setState({ currency: val });
+      this.props.updateUser({ currency: Step.currenciesArray[index] });
     }
   }
 
@@ -68,7 +81,7 @@ class Step extends Component {
 
   _handleDatePicked(val) {
     let endDate = moment(val).add(30, 'days');
-    this.setState({ startingDate: val });
+    this.setState({ startingDate: val, isDateTimePickerVisible: false, });
     this.props.updateUser({
         startingDate: moment(val).format(),
         endingDate: endDate.format(),
@@ -76,32 +89,38 @@ class Step extends Component {
   }
 
   _toggleDateTimePicker() {
-    this.setState({ isDateTimePickerVisible: !this.state.isDateTimePickerVisible });
+    this.setState({ isDateTimePickerVisible: true });
   }
 
   render() {
     const currencyDropDown = <View>
-            <Picker style={{ width: 150, height: 50 }} selectedValue={this.state.currency} onValueChange={this.selectCurrency}>
+            <Picker
+              mode="dropdown"
+              style={{ width: 250, height: 50 }}
+              selectedValue={this.state.currency}
+              onValueChange={this.selectCurrency.bind(this)}>
                {Step.currenciesArray.map((item, index) => {
-                  return (<Picker.Item label={item} value={index} key={index} />);
+                  return (<Picker.Item label={item} value={`key${index}`} key={index} />);
                 })}
             </Picker>
-            <Text style = {styles.currencyText}>{this.state.currency}</Text>
          </View>;
 
     let inputs;
     let buttons;
-
+    console.log(this.state)
     switch (this.props.currentIndex) {
       case 1:
         inputs = <View style={styles.containerInner}>
           {currencyDropDown}
           <TextInput
             style={styles.input}
-            placeholder="0"
+            placeholder='0'
+            clearTextOnFocus={true}
             keyboardType='numeric'
-            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ pricePerPack: val }) : ''}
+            onFocus={()=>this.setState({ pricePerPack: '' })}
+            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ pricePerPack: val }) : 0}
             onEndEditing={this.selectPricePerPack}
+            value={this.state.pricePerPack}
           />
         </View>;
         buttons = <View><LinearGradient
@@ -110,7 +129,6 @@ class Step extends Component {
                   colors={['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      dissabled={this.props.isLast}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>
@@ -120,10 +138,12 @@ class Step extends Component {
         inputs = <View>
           <TextInput
             style={styles.input}
-            placeholder="0"
+            placeholder='0'
             keyboardType='numeric'
-            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ ciggarettesPerDay: val }) : ''}
+            onFocus={()=>this.setState({ ciggarettesPerDay: '' })}
+            onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ ciggarettesPerDay: val }) : 0}
             onEndEditing={this.selectCiggarettes}
+            value={this.state.ciggarettesPerDay}
           />
         </View>;
         buttons =  <View><LinearGradient
@@ -132,7 +152,6 @@ class Step extends Component {
                   colors={['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      dissabled={this.props.isLast}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>
@@ -143,7 +162,6 @@ class Step extends Component {
                   colors={['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      dissabled={this.props.isfirst}
                       onPress={this.props.prevStep}>
                       <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
                     </TouchableOpacity>
@@ -166,7 +184,6 @@ class Step extends Component {
                 colors={['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
-                    dissabled={this.props.isLast}
                     onPress={this.props.nextStep}>
                     <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                   </TouchableOpacity>
@@ -177,7 +194,6 @@ class Step extends Component {
                 colors={['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
-                    dissabled={this.props.isfirst}
                     onPress={this.props.prevStep}>
                     <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
                   </TouchableOpacity>
@@ -187,6 +203,7 @@ class Step extends Component {
       break;
     }
 
+    console.log(this.state)
     return (
       <View
         style={styles.inputContainer}>
@@ -210,6 +227,7 @@ class Wizzard extends Component {
       prevLabel: 'PREV',
       isLast: false,
       isFirts: false,
+      invalidData: false,
       userData: {},
       completedSteps: Array(this.props.children.length),
     };
@@ -223,14 +241,16 @@ class Wizzard extends Component {
     if (this.state.index !== this.props.children.length - 1) {
       this.setState(prevState => ({
         index: prevState.index + 1,
-        nextLabel: prevState.index === 3 ? 'BEGIN' : 'NEXT',
+        nextLabel: prevState.index === 2 ? 'BEGIN' : 'NEXT',
         isLast: this.state.index === this.props.children.length - 1,
         isfirst: this.state.index === 0,
       }));
       this.state.completedSteps[this.state.index] = true;
-    } else if (this.state.index === 2) {
+    } else if (this.state.index === 2 && Object.keys(this.state.userData).length === 5) {
       createUser(this.state.userData);
       saveUser(this.state.userData);
+    } else {
+      this.setState({ invalidData: true });
     }
   }
 
@@ -244,6 +264,8 @@ class Wizzard extends Component {
       }));
       this.state.completedSteps[this.state.index] = false;
     }
+
+    this.setState({ invalidData: false });
   }
 
   _updateUser(newState) {
@@ -262,8 +284,9 @@ class Wizzard extends Component {
             <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
               {index + 1}
             </Text>
-        </View>)}
+            </View>)}
         </View>
+        <Text style={styles.errorText}>{this.state.invalidData ? 'You haven\'t completed whole steps. Goback and fill missing data': '' }</Text>
         {React.Children.map(this.props.children, (el, index) => {
           if (index === this.state.index) {
             return React.cloneElement(el, {
@@ -271,6 +294,7 @@ class Wizzard extends Component {
               nextStep: this._nextStep,
               prevStep: this._prevStep,
               updateUser: this._updateUser,
+              userData: this.state.userData,
               prevLabel: this.state.prevLabel,
               nextLabel: this.state.nextLabel,
               isfirst: this.state.index === 0,
@@ -290,6 +314,7 @@ const styles = StyleSheet.create({
     },
 
   container: {
+    flex: 2,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -299,9 +324,8 @@ const styles = StyleSheet.create({
 
   imageHolder: {
     flex: 1,
-    flexDirection: 'row',
     maxWidth: '100%',
-    maxHeight: '20%',
+    flexDirection: 'row',
     justifyContent: 'flex-end',
   },
 
@@ -310,15 +334,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     flex: 1,
-    maxHeight: '5%',
-    paddingTop: 10,
-    paddingBottom: 10,
+    maxHeight: '10%',
+    paddingTop: 20,
+    paddingBottom: 20,
   },
 
   containerInner: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  errorText: {
+    fontSize: 14,
+    padding: 15,
+    textTransform: 'capitalize',
+    color: '#ff5100',
+    textAlign: 'center',
   },
 
   containerTitle: {

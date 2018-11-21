@@ -21,21 +21,23 @@ export default class CalendarTr extends Component{
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
     let dates =  this._getSelectedRange(moment().format(), '#57c279', user.endingDate);
+
     this.state = {
       pills: pills.count,
       daysSinceStart,
-      dissabled: user.dissabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       pillsTakenToday,
-      lastPillTaken: null,
+      disabled: user.disabled && user.lastPillTaken ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
+      lastPillTaken: user.lastPillTaken,
       dates,
     };
   }
 
   _increasePills() {
-    let pills = PillStore.getPills();
-    console.log('in method');
-    if (!this.state.dissabled) {
-      let sum = this.state.pillsTakenToday + pills.count;
+    if (!this.state.disabled) {
+      let pills = PillStore.getPills();
+      let sum = this.state.pillsTakenToday + 1;
+      console.log(sum)
+
       this.setState({
         pills: pills.count,
         pillsTakenToday: sum,
@@ -45,12 +47,14 @@ export default class CalendarTr extends Component{
   }
 
   _dozeHandler() {
-    this.setState({ dissabled: true });
+    this.setState({ disabled: true });
+    const user = UserStore.getUser();
+    let sum = user.pillsTakenToday + this.state.pills;
+    console.log(sum)
     addNewUserProps({
-      pillsTakenToday: this.state.pillsTakenToday,
+      pillsTakenToday: sum,
       lastPillTaken: this.state.lastPillTaken,
-      dissabled: true });
-
+      disabled: true, });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
@@ -78,8 +82,8 @@ export default class CalendarTr extends Component{
 
   _getUserData() {
     const jsonUser = UserStore.getUser();
-    this._getSelectedRange(jsonUser.startingDate);
-    const datesObjects = this._getSelectedRange(jsonUser.startingDate);
+
+    const datesObjects = this._getSelectedRange(moment().format(), '#57c279', jsonUser.endingDate);
     this.setState({
       dates: datesObjects,
     });
@@ -87,6 +91,7 @@ export default class CalendarTr extends Component{
 
   componentDidMount() {
     UserStore.on('user-updated', this._getUserData);
+    UserStore.on('user-created', this._getUserData);
     PillStore.on('pills-increased', this._increasePills);
     UserStore.on('user-saved', () => loadUser());
     PillStore.on('day-doze-reached', this._dozeHandler);
@@ -94,13 +99,14 @@ export default class CalendarTr extends Component{
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUserData);
+    UserStore.removeListener('user-created', this._getUserData);
     PillStore.removeListener('pills-increased', this._increasePills);
     UserStore.removeListener('user-saved', () => loadUser());
     PillStore.removeListener('day-doze-reached', this._dozeHandler);
   }
 
   render() {
-    console.warn(UserStore.getUser())
+    console.log(this.state)
     return (
         <ScrollView >
           <ImageBackground
@@ -154,7 +160,7 @@ export default class CalendarTr extends Component{
                 <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
                   {this.state.pills}/6
                 </Text>
-                <PillsButton dissabled={this.state.dissabled} />
+                <PillsButton disabled={this.state.disabled} />
               </View>
             </View>
         </ScrollView>

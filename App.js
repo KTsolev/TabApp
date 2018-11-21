@@ -20,6 +20,39 @@ export default class tabexapp extends Component {
       notificationCount: 0,
     };
 
+
+PushNotification.configure({
+
+    // (optional) Called when Token is generated (iOS and Android)
+    onRegister: function(token) {
+        console.log( 'TOKEN:', token );
+    },
+
+    // (required) Called when a remote or local notification is opened or received
+    onNotification: this._notificationHandler.bind(this),
+
+    // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
+    senderID: "YOUR GCM (OR FCM) SENDER ID",
+
+    // IOS ONLY (optional): default: all - Permissions to register.
+    permissions: {
+        alert: true,
+        badge: true,
+        sound: true,
+    },
+
+    // Should the initial notification be popped automatically
+    // default: true
+    popInitialNotification: true,
+
+    /**
+      * (optional) default: true
+      * - Specified if permissions (ios) and token (android and ios) will requested or not,
+      * - if not, you must call PushNotificationsHandler.requestPermissions() later
+      */
+    requestPermissions: true,
+});
+
     this._setUser = this._setUser.bind(this);
     this._loadUser = this._loadUser.bind(this);
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
@@ -54,35 +87,54 @@ export default class tabexapp extends Component {
   }
 
   _handleAppStateChange(appState) {
-    this.setState({ notificationCount: this.state.notificationCount + 1 });
-    if (appState === 'foreground') {
-      return;
+
+    if (appState === 'background') {
+      this.setState({ notificationCount: this.state.notificationCount + 1 });
+      let bigText = '';
+      let message = '';
+      let button1 = '';
+      let button2 = '';
+      let user = UserStore.getUser();
+      console.log('from notifications', user.lastPillTaken)
+      if (!user)
+        return;
+
+      if (moment().diff(moment(user.lastPillTaken), 'day') >= 3) {
+        bigText = 'Hey it seems you missed your pills';
+        message = 'Do you want to reset your treatment?';
+        button1 = 'Reset';
+        button2 = 'Take Pill';
+      } else {
+        bigText = 'Get one closer to smoke-free life by taking your tabex now.';
+        message = 'Get one closer to smoke-free life';
+        button1 = 'I took my pill';
+        button2 = 'Open app';
+      }
+
+      console.log('PushNotification running in background');
+
+      let date = moment().add(30, 'min').toDate();
+      console.log(date);
+
+      if (Platform === 'ios') {
+        date = notificationSchedule.toISOString();
+      }
+
+      PushNotification.localNotificationSchedule({
+        id: Date.now(),
+        bigText, // (optional) default: 'message' prop
+        date,
+        title: 'Tabex Tracking', // (optional)
+        message, // (required)
+        largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
+        smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
+        subText: 'Tabex tracking', // (optional) default: none
+        color: 'blue',
+        backgroundColor: 'darkBlue',
+        actions: `[${button1}, ${button2}]`,  // (Android only) See the doc for notification actions to know more
+      });
+      PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
     }
-
-    console.log('PushNotification running in background');
-
-    let date = moment().add(5, 'm').toDate();
-    console.log(date);
-
-    if (Platform === 'ios') {
-      date = notificationSchedule.toISOString();
-    }
-
-    PushNotification.localNotificationSchedule({
-      id: Date.now(),
-      bigText: 'Get one closer to smoke-free life by taking your tabex now.', // (optional) default: 'message' prop
-      date,
-      title: 'Tabex Tracking', // (optional)
-      message: 'Get one closer to smoke-free life', // (required)
-      largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
-      smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
-      subText: 'Tabex tracking', // (optional) default: none
-      color: 'blue',
-      backgroundColor: 'darkBlue',
-      repeatType: 'hour',
-      actions: `['I took my pill', 'Open app']`,  // (Android only) See the doc for notification actions to know more
-    });
-    PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
   }
 
   componentDidMount() {

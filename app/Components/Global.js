@@ -17,8 +17,8 @@ export default class Global extends Component{
       region: {
           latitude: 46.8507116,
           longitude: 12.3533676,
-          latitudeDelta: 1.2,
-          longitudeDelta: 0.8,
+          latitudeDelta: 2.2,
+          longitudeDelta: 3.5,
         },
       markerPositions: [
         {
@@ -102,8 +102,9 @@ export default class Global extends Component{
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
              region={this.state.region}>
-              {this.state.markerPositions.map(marker => (
+              {this.state.markerPositions.map((marker, index) => (
                 <Marker
+                  key={index}
                   coordinate={marker.coordinates}
                   title={marker.title}
                 />

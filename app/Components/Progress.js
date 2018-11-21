@@ -11,10 +11,11 @@ export default class ProgressScreen extends Component{
     super(props);
     const user = UserStore.getUser();
     console.log(user);
-    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday > 180 ? 180 : user.pillsTakenToday : 1;
+    const pillsTakenToday = user.pillsTakenToday ? Number(user.pillsTakenToday) > 180 ? 180 : Number(user.pillsTakenToday) : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const leftDays = 30 - daysSinceStart;
+    const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
     const leftPills = 180 - pillsTakenToday;
@@ -30,6 +31,7 @@ export default class ProgressScreen extends Component{
       leftPills,
       leftDays,
       daysWidth,
+      currency,
       daysMargin,
       pillsWidth,
       pillsMargin,
@@ -43,13 +45,14 @@ export default class ProgressScreen extends Component{
   _getUserInfo() {
     const user = UserStore.getUser();
     console.log(user);
-    const pills = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    const pills = user.pillsTakenToday ? Number(user.pillsTakenToday) : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const leftDays = 30 - daysSinceStart;
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
     const leftPills = 180 - pills;
+    const currency = user.currency.split('-')[1];
     const pillsWidth = Math.round((((180 - pills) / 180) * 100));
     const pillsMargin = Math.round(((pills / 180) * 100));
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
@@ -62,6 +65,7 @@ export default class ProgressScreen extends Component{
       timeSinceStart,
       daysSinceStart,
       leftDays,
+      currency,
       daysWidth,
       daysMargin,
       pills,
@@ -115,7 +119,7 @@ export default class ProgressScreen extends Component{
               end={{ x: 0.3, y: 1 }}
               colors={['#56c17b', '#2ca5af']}
               style={styles.barGreen}>
-              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin : 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
+              <TouchableOpacity disabled={true} style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin : 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
                   <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
               </TouchableOpacity>
             </LinearGradient>
@@ -135,7 +139,7 @@ export default class ProgressScreen extends Component{
               end={{ x: 0.3, y: 1 }}
               colors={['#ac66ea', '#3655bb']}
               style={styles.barPurple}>
-              <TouchableOpacity style={[styles.innerBar, { marginLeft: `${this.state.daysMargin ? this.state.daysMargin : 0}%`, width: `${this.state.daysWidth ? this.state.daysWidth : 100}%` }]}>
+              <TouchableOpacity disabled={true} style={[styles.innerBar, { marginLeft: `${this.state.daysMargin ? this.state.daysMargin : 0}%`, width: `${this.state.daysWidth ? this.state.daysWidth : 100}%` }]}>
                   <Text style={styles.innerBarText}>{this.state.leftDays} days left</Text>
               </TouchableOpacity>
             </LinearGradient>
@@ -146,15 +150,15 @@ export default class ProgressScreen extends Component{
           </View>
         </View >
         <View style={styles.infoArea}>
-          <TouchableOpacity style={styles.moneyArea}>
+          <TouchableOpacity disabled={true} style={styles.moneyArea}>
             <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
-            <Text style={styles.areaText}>{this.state.currecny} saved</Text>
+            <Text style={styles.areaText}>{this.state.currency} saved</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.ciggarettesArea}>
+          <TouchableOpacity disabled={true} style={styles.ciggarettesArea}>
             <Text style={styles.areaTextBolded}>{this.state.notSomked}</Text>
             <Text style={styles.areaTextSmaller}>ciggarettes not smoked</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.daysArea}>
+          <TouchableOpacity disabled={true} style={styles.daysArea}>
             <Text style={styles.areaTextBolded}>{this.state.daysSinceStart}</Text>
             <Text style={styles.areaTextSmaller}>days smoke free</Text>
           </TouchableOpacity>

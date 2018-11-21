@@ -31,7 +31,8 @@ export function addNewUserProps(data) {
 };
 
 export function saveUser(data) {
-  console.warn(data)
+  console.log('save data')
+  console.log(data)
   saveData('userData', data);
   setTimeout(() => {
     dispatcher.dispatch({

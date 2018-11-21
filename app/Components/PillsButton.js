@@ -5,14 +5,21 @@ import { increasePills } from '../data/FluxActions';
 
 export default class PillsButton extends Component {
   render() {
-    return (
-      <TouchableOpacity
-        style={this.props.dissabled ? styles.buttonDissabled : styles.button}
-        dissabled={this.props.dissabled}
-        onPress={() => increasePills()}>
-        <Text style={styles.buttonText}>+1</Text>
-      </TouchableOpacity>
-    );
+    let button;
+    if (this.props.disabled) {
+      return (<TouchableOpacity
+            style={styles.buttonDisabled}
+            disabled={this.props.disabled}>
+              <Text style={styles.buttonText}>+1</Text>
+          </TouchableOpacity>);
+    } else {
+      return (<TouchableOpacity
+            style={styles.button}
+            disabled={this.props.disabled}
+            onPress={() => increasePills()}>
+            <Text style={styles.buttonText}>+1</Text>
+          </TouchableOpacity>);
+    }
   }
 }
 
@@ -36,7 +43,7 @@ const styles = StyleSheet.create({
     zIndex: 15,
   },
 
-  buttonDissabled: {
+  buttonDisabled: {
     padding: 10,
     borderRadius: 50,
     width: 50,

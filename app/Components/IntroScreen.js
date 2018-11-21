@@ -30,8 +30,8 @@ export default class IntroScreen extends Component {
   RenderTemplate() {
     if (this.state.goToSteps) {
       return <Wizzard finishSetUpUser={this.props.finishSetUpUser}>
-      <Wizzard.Step>How much you pay for pack of cigarettes?</Wizzard.Step>
-      <Wizzard.Step>How many cigarettes you smoke per day?</Wizzard.Step>
+      <Wizzard.Step>How much do you pay for pack of cigarettes?</Wizzard.Step>
+      <Wizzard.Step>How many cigarettes do you smoke per day?</Wizzard.Step>
       <Wizzard.Step>When do you want to start your Tabex Treatmen?</Wizzard.Step>
       </Wizzard>;
     }

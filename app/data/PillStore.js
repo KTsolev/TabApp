@@ -8,7 +8,7 @@ class PillStore extends EventEmmiter {
     this.pillsData = {
       count: 1,
       lastPillTaken: null,
-      showResetModal: false,
+      dissabled: false,
     };
   }
 
@@ -18,7 +18,7 @@ class PillStore extends EventEmmiter {
 
   increasePills() {
     if (this.pillsData.count >= 6) {
-      console.warn('dispaching event');
+      this.pillsData.dissabled = true;
       this.emit('day-doze-reached');
     } else {
       this.pillsData.count = this.pillsData.count + 1;

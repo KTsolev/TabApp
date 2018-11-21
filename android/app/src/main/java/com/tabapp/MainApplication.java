@@ -2,6 +2,8 @@ package com.tabapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.airbnb.android.react.maps.MapsPackage;
+import com.rota.rngmaps.RNGMapsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -24,8 +26,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new MapsPackage(),
+            new RNGMapsPackage(),
             new ReactNativePushNotificationPackage(),
-             new MapsPackage(),
             new LinearGradientPackage()
       );
     }
