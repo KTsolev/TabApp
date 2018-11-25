@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
 import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
@@ -8,7 +8,9 @@ export default class TermsAndConditions extends Component {
 
   render() {
     return (
-        <View style={styles.container}>
+      <LinearGradient
+        style={styles.container}
+        colors={['#fff', '#ddf1fc']}>
           <View style={styles.imageHolder}>
             <Image
               style={styles.rightImage}
@@ -30,7 +32,7 @@ export default class TermsAndConditions extends Component {
                   <Text style={styles.buttonText}>START</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </View>
+      </LinearGradient>
     );
   }
 }
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
 
   leftImage: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: 4,
     alignSelf: 'center',
     left: '-10%',
     top: -20,
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
 
   rightImage: {
     position: 'absolute',
-    zIndex: -2,
+    zIndex: 2,
     alignSelf: 'center',
     right: '-10%',
     top: -20,

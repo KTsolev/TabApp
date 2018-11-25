@@ -41,16 +41,20 @@ export default class Tips extends Component{
         <Image
           style={styles.logo}
           resizeMode='contain'
-          source={require('../imgs/tracking.png')}/>
-        <View style={styles.containerInner}>
-          <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
-            {this.state.currentTip}
-          </Text>
-        </View>
+          source={require('../imgs/trackingi.png')}/>
+          <View style={styles.containerInner}>
+            <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
+              {this.state.currentTip}
+            </Text>
+            <Image
+              style={styles.speechTail}
+              resizeMode='contain'
+              source={require('../imgs/speech-tail.png')} />
+          </View>
         <Image
-        style={styles.characteLogo}
-        resizeMode='contain'
-        source={require('../imgs/character.png')}/>
+          style={styles.characteLogo}
+          resizeMode='contain'
+          source={require('../imgs/character.png')}/>
         <Image
           style={styles.bottomLogo}
           resizeMode='contain'
@@ -62,40 +66,52 @@ export default class Tips extends Component{
 
 const styles = StyleSheet.create({
   backgroundImage: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
 
+  bubbleImage: {
+    resizeMode: 'contain',
+  },
+
   logo: {
     marginTop: 20,
     maxWidth: 200,
-    maxHeight: 250,
+    maxHeight: '15%',
   },
 
   bottomLogo: {
     maxWidth: 200,
-    maxHeight: 250,
+    maxHeight: '15%',
   },
 
   characteLogo: {
     maxWidth: 200,
-    maxHeight: 250,
+    maxHeight: '40%',
   },
 
   containerInner: {
     flex: 2,
+    position: 'relative',
     flexDirection: 'column',
     maxWidth: '90%',
-    maxHeight: '35%',
+    maxHeight: '30%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#fff',
     borderRadius: 50,
     padding: 25,
     marginTop: 20,
     marginBottom: 20,
+  },
+
+  speechTail: {
+    position: 'absolute',
+    bottom: -35,
+    width: 60,
+    height: 60,
+    left: '15%',
   },
 });

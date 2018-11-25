@@ -20,7 +20,6 @@ export default class TermsAndConditions extends Component {
   onChangeHandler() {
     this.setState({
       aggreed: !this.state.aggreed,
-      showTerm: !this.state.showTerm,
     });
 
     if (!this.state.aggreed) {
@@ -41,9 +40,6 @@ export default class TermsAndConditions extends Component {
         <Text style={styles.containerText}>
           To continue you must aggree to Sopharma AD
         </Text>
-        <Hyperlink onPress={this.onPressHandler}>
-          <Text style={styles.link}>Terms of Services and Polices.</Text>
-        </Hyperlink>
       </View>;
 
     const terms = <ScrollView style={styles.scrollView}>
@@ -55,45 +51,49 @@ export default class TermsAndConditions extends Component {
           Donec vel lobortis neque. Mauris non sagittis arcu. Donec risus orci, interdum sit amet magna ut, commodo eleifend sapien. Morbi malesuada neque et turpis tempus, a rutrum lacus vulputate. Phasellus in aliquam tellus. Aliquam vitae mollis ligula. Morbi in auctor mauris, sit amet cursus ante. Nulla egestas est vitae sodales tempus. Vivamus euismod magna nec iaculis varius.
         </Text>
         <TouchableOpacity
-          dissabled={this.state.aggreed}
-          onPress={()=> this.setState({ showTerm: false })}>
+          onPress={() => this.setState({ showTerm: false })}>
           <LinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          colors={this.state.activeColors}
+          colors={['#009fea', '#0544a8']}
           style={styles.termsButton}>
                 <Text style={styles.buttonText} >Accept</Text>
           </LinearGradient>
         </TouchableOpacity>
     </ScrollView>;
 
-    const view = <View style={styles.container}>
-        <Text style={styles.containerTitle}>Terms and Conditions</Text>
-        <CheckBox
-          title={checkBoxText}
-          style={styles.checkBox}
-          type='font-awellsome'
-          uncheckedColor='#c5c5c5'
-          uncheckedIcon='square'
-          checkedColor='#0643a6'
-          checkedIcon='check-square'
-          onPress={this.onChangeHandler.bind(this)}
-          checked={this.state.aggreed}
-        />
-        <TouchableOpacity
-          dissabled={this.state.aggreed}
-          onPress={this.onPressHandler.bind(this)}
-          >
-          <LinearGradient
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          colors={this.state.activeColors}
-          style={styles.button}>
-              <Text style={styles.buttonText} >CONTINUE</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>;
-
+    const view =
+        <LinearGradient
+          style={styles.container}
+          colors={['#fff', '#ddf1fc']} >
+          <Text style={styles.containerTitle}>Terms and Conditions</Text>
+          <CheckBox
+            title={checkBoxText}
+            style={styles.checkBox}
+            type='font-awellsome'
+            uncheckedColor='#c5c5c5'
+            uncheckedIcon='square'
+            checkedColor='#0643a6'
+            checkedIcon='check-square'
+            onPress={this.onChangeHandler.bind(this)}
+            checked={this.state.aggreed}
+          />
+          <TouchableOpacity onPress={() => this.setState({ showTerm: true })}>
+            <Text style={styles.link}>Terms of Services and Polices.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            dissabled={this.state.aggreed}
+            onPress={this.onPressHandler.bind(this)}
+            >
+            <LinearGradient
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            colors={this.state.activeColors}
+            style={styles.button}>
+                <Text style={styles.buttonText} >CONTINUE</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </LinearGradient>;
     return this.state.showTerm ? terms : view;
   }
 }
@@ -102,8 +102,16 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
-    textAlign: 'center',
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 20,
+    paddingBottom: 20,
+    textAlign: 'justify',
+  },
+
+  listText: {
+    textAlign: 'justify',
+    fontSize: 14,
   },
 
   container: {
@@ -163,7 +171,7 @@ const styles = StyleSheet.create({
       borderRadius: 50,
       borderWidth: 1,
       borderColor: '#fff',
-  },
+    },
 
   buttonText: {
     color: '#fff',

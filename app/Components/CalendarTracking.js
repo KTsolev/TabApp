@@ -19,13 +19,13 @@ export default class CalendarTr extends Component{
     const user = UserStore.getUser();
     let pills = PillStore.getPills();
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const pillsTakenToday = user.pillsTakenToday ? user.pillsTakenToday : 1;
+    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) : 1;
     let dates =  this._getSelectedRange(moment().format(), '#57c279', user.endingDate);
 
     this.state = {
-      pills: pills.count,
+      pills: Number(user.pills) || pills.count,
       daysSinceStart,
-      pillsTakenToday,
+      pillsTaken,
       disabled: user.disabled && user.lastPillTaken ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       lastPillTaken: user.lastPillTaken,
       dates,
@@ -35,12 +35,12 @@ export default class CalendarTr extends Component{
   _increasePills() {
     if (!this.state.disabled) {
       let pills = PillStore.getPills();
-      let sum = this.state.pillsTakenToday + 1;
+      let sum = this.state.pillsTaken + 1;
       console.log(sum)
 
       this.setState({
         pills: pills.count,
-        pillsTakenToday: sum,
+        pillsTaken: sum,
         lastPillTaken: pills.lastPillTaken,
       });
     }
@@ -49,10 +49,10 @@ export default class CalendarTr extends Component{
   _dozeHandler() {
     this.setState({ disabled: true });
     const user = UserStore.getUser();
-    let sum = user.pillsTakenToday + this.state.pills;
+    let sum = Number(user.pillsTaken) + this.state.pills;
     console.log(sum)
     addNewUserProps({
-      pillsTakenToday: sum,
+      pillsTaken: sum,
       lastPillTaken: this.state.lastPillTaken,
       disabled: true, });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
@@ -82,7 +82,7 @@ export default class CalendarTr extends Component{
 
   _getUserData() {
     const jsonUser = UserStore.getUser();
-
+    console.log(moment().format())
     const datesObjects = this._getSelectedRange(moment().format(), '#57c279', jsonUser.endingDate);
     this.setState({
       dates: datesObjects,
@@ -112,7 +112,7 @@ export default class CalendarTr extends Component{
           <ImageBackground
             source={require('../imgs/rectangle.png')}
             style={styles.backgroundImage}>
-            <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
+            <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
             <Calendar
                 style={styles.calendar}
                 startFromMonday={true}
@@ -121,7 +121,7 @@ export default class CalendarTr extends Component{
                 theme={{
                   arrowColor: 'white',
                   monthTextColor: 'white',
-                  calendarBackground: '#00adf5',
+                  calendarBackground: '#0187e6',
                   textSectionTitleColor: '#fff',
                   selectedDayBackgroundColor: '#57c279',
                   selectedDayTextColor: '#ffffff',
@@ -135,32 +135,33 @@ export default class CalendarTr extends Component{
                   textDayFontFamily: 'monospace',
                   textMonthFontFamily: 'monospace',
                   textDayHeaderFontFamily: 'monospace',
-                  textMonthFontWeight: 'bold',
-                  textDayFontSize: 16,
-                  textMonthFontSize: 16,
-                  textDayHeaderFontSize: 16,
-                  marginTop: -50,
+                  textDayFontSize: 14,
+                  textMonthFontSize: 14,
+                  textDayHeaderFontSize: 14,
                 }}
               />
             </ImageBackground>
-            <View style={styles.containerInner}>
-              <View style={styles.headerColumn}>
-                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
-                <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>days smoke free</Text>
-              </View>
-              <View style={styles.innerRow}>
-                <Image style={styles.img} source={require('../imgs/pill.png')}/>
-                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, textAlign: 'right' }}>6 pills/day</Text>
-              </View>
-              <View style={styles.innerRow}>
-                <Image style={styles.img} source={require('../imgs/clock.png')}/>
-                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, textAlign: 'right' }}>2 hours</Text>
-              </View>
-              <View style={styles.lastRow}>
-                <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
-                  {this.state.pills}/6
-                </Text>
-                <PillsButton disabled={this.state.disabled} />
+            <View style={styles.container}>
+              <View style={styles.containerInner}>
+                <View style={styles.headerColumn}>
+                  <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>{this.state.daysSinceStart}</Text>
+                  <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>days smoke free</Text>
+                </View>
+                <View style={styles.innerRow}>
+                  <Image style={styles.img} source={require('../imgs/pill.png')}/>
+                  <Text style={{ fontSize: 14, color: '#0648aa', paddingLeft: 30 }}>6 pills/day</Text>
+                </View>
+                <Divider style={styles.divider}/>
+                <View style={styles.innerRow}>
+                  <Image style={styles.img} source={require('../imgs/clock.png')}/>
+                  <Text style={{ fontSize: 14, color: '#0648aa', paddingLeft: 30 }}>2 hours</Text>
+                </View>
+                <View style={styles.lastRow}>
+                  <Text style={{ fontSize: 14, color: '#0648aa', flex: 1, marginRight: 15, textAlign: 'right' }}>
+                    {this.state.pills}/6
+                  </Text>
+                  <PillsButton disabled={this.state.disabled} />
+                </View>
               </View>
             </View>
         </ScrollView>
@@ -168,16 +169,33 @@ export default class CalendarTr extends Component{
   }
 }
 const styles = StyleSheet.create({
+  container: {
+    flex: 2,
+    width: '100%',
+    height: '100%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+
   calendar: {
     flex: 1,
-    maxHeight: 450,
-    maxWidth: '90%',
-    padding: 20,
+    maxWidth: '100%',
+    padding: 10,
     marginBottom: 70,
-    alignSelf: 'center',
+    alignSelf: 'stretch',
+  },
+
+  divider: {
+    width: '70%',
+    height: 1,
+    marginTop: 5,
+    marginBottom: 5,
+    backgroundColor: '#959595',
   },
 
   backgroundImage: {
+    flex: 2,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
@@ -194,32 +212,36 @@ const styles = StyleSheet.create({
 
   containerInner: {
     flex: 1,
+    width: '80%',
+    height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
     padding: 15,
     margin: 15,
     alignItems: 'center',
+    alignSelf: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
-    shadowColor: '#000000',
-    shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-    shadowRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 15, height: 15 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 5,
     shadowOpacity: 1.0,
   },
 
   logo: {
     width: 150,
-    height: 100,
-    marginTop: -30,
+    height: '10%',
+    marginTop: 30,
+    marginBottom: 10,
     resizeMode: 'contain',
   },
 
   img: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
+    alignSelf: 'flex-end',
     resizeMode: 'contain',
   },
 
@@ -232,8 +254,6 @@ const styles = StyleSheet.create({
     maxHeight: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 2,
-    borderColor: '#0648aa',
   },
 
   lastRow: {
@@ -249,10 +269,12 @@ const styles = StyleSheet.create({
   headerColumn: {
     flex: 1,
     maxWidth: '100%',
-    maxHeight: 50,
+    maxHeight: 70,
     flexDirection: 'column',
     paddingLeft: 5,
     paddingRight: 5,
+    paddingBottom: 10,
+    paddingTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },

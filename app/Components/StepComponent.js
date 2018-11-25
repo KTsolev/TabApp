@@ -12,6 +12,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  ImageBackground,
   Picker,
   TextInput } from 'react-native';
 
@@ -95,7 +96,6 @@ class Step extends Component {
   render() {
     const currencyDropDown = <View>
             <Picker
-              mode="dropdown"
               style={{ width: 250, height: 50 }}
               selectedValue={this.state.currency}
               onValueChange={this.selectCurrency.bind(this)}>
@@ -107,11 +107,10 @@ class Step extends Component {
 
     let inputs;
     let buttons;
-    console.log(this.state)
+
     switch (this.props.currentIndex) {
       case 1:
-        inputs = <View style={styles.containerInner}>
-          {currencyDropDown}
+        inputs = <View>
           <TextInput
             style={styles.input}
             placeholder='0'
@@ -122,6 +121,7 @@ class Step extends Component {
             onEndEditing={this.selectPricePerPack}
             value={this.state.pricePerPack}
           />
+          {currencyDropDown}
         </View>;
         buttons = <View><LinearGradient
                   start={{ x: 0, y: 0 }}
@@ -203,10 +203,8 @@ class Step extends Component {
       break;
     }
 
-    console.log(this.state)
     return (
-      <View
-        style={styles.inputContainer}>
+        <View style={styles.inputContainer}>
           <Text style={styles.containerTitle}>
             {this.props.children}
           </Text>
@@ -232,6 +230,7 @@ class Wizzard extends Component {
       completedSteps: Array(this.props.children.length),
     };
 
+    this.state.completedSteps[0] = true;
     this._nextStep = this._nextStep.bind(this);
     this._prevStep = this._prevStep.bind(this);
     this._updateUser = this._updateUser.bind(this);
@@ -239,14 +238,14 @@ class Wizzard extends Component {
 
   _nextStep() {
     if (this.state.index !== this.props.children.length - 1) {
+      this.state.completedSteps[this.state.index + 1] = true;
       this.setState(prevState => ({
         index: prevState.index + 1,
         nextLabel: prevState.index === 2 ? 'BEGIN' : 'NEXT',
         isLast: this.state.index === this.props.children.length - 1,
         isfirst: this.state.index === 0,
       }));
-      this.state.completedSteps[this.state.index] = true;
-    } else if (this.state.index === 2 && Object.keys(this.state.userData).length === 5) {
+    } else if (this.state.index > 2 && Object.keys(this.state.userData).length === 5) {
       createUser(this.state.userData);
       saveUser(this.state.userData);
     } else {
@@ -256,13 +255,13 @@ class Wizzard extends Component {
 
   _prevStep() {
     if (this.state.index > 0) {
+      this.state.completedSteps[this.state.index] = false;
       this.setState(prevState => ({
         index: prevState.index - 1,
         isfirst: this.state.index === 0,
-        prevLabel: prevState.index === 3 ? 'BEGIN' : 'PREVIOUS',
+        prevLabel: prevState.index === 3 ? 'BEGIN' : 'PREV',
         isLast: this.state.index === this.props.children.length - 1,
       }));
-      this.state.completedSteps[this.state.index] = false;
     }
 
     this.setState({ invalidData: false });
@@ -279,83 +278,119 @@ class Wizzard extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
-            <Divider style={styles.beforeHeaderTextElem}></Divider>
-            <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
-              {index + 1}
-            </Text>
-            </View>)}
+          <ImageBackground source={require('../imgs/photo.png')} style={styles.headerBackground} >
+              <Image source={require('../imgs/tabex-logo.png')} style={styles.image} />
+          </ImageBackground>
         </View>
-        <Text style={styles.errorText}>{this.state.invalidData ? 'You haven\'t completed whole steps. Goback and fill missing data': '' }</Text>
-        {React.Children.map(this.props.children, (el, index) => {
-          if (index === this.state.index) {
-            return React.cloneElement(el, {
-              currentIndex: this.state.index + 1,
-              nextStep: this._nextStep,
-              prevStep: this._prevStep,
-              updateUser: this._updateUser,
-              userData: this.state.userData,
-              prevLabel: this.state.prevLabel,
-              nextLabel: this.state.nextLabel,
-              isfirst: this.state.index === 0,
-              isLast: this.state.index === this.props.children.length - 1,
-            });
-          }
-          return null;
-        })}
-        <Image source={require('../imgs/leaves.png')} style={styles.imageHolder} />
+        <View style={styles.mainContainer}>
+          <View style={styles.titleContainer}>
+            {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
+              <Divider style={styles.beforeHeaderTextElem}></Divider>
+              <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
+                {index + 1}
+              </Text>
+            </View>)}
+          </View>
+          <View style={styles.buttonsContainer}>
+            <Text style={styles.errorText}> {this.state.invalidData ? 'You haven\'t completed whole step. Goback and fill missing data': '' }</Text>
+            {React.Children.map(this.props.children, (el, index) => {
+              if (index === this.state.index) {
+                return React.cloneElement(el, {
+                  currentIndex: this.state.index + 1,
+                  nextStep: this._nextStep,
+                  prevStep: this._prevStep,
+                  updateUser: this._updateUser,
+                  userData: this.state.userData,
+                  prevLabel: this.state.prevLabel,
+                  nextLabel: this.state.nextLabel,
+                  isfirst: this.state.index === 0,
+                  isLast: this.state.index === this.props.children.length - 1,
+                });
+              }
+
+              return null;
+            })}
+          </View>
+        </View>
+        <View style={styles.imageHolder}>
+          <Image source={require('../imgs/leaves.png')}  style={styles.footerImage}/>
+        </View>
       </View>);
   }
 }
 
 const styles = StyleSheet.create({
-  currencyText: {
-      marginBottom: 5,
-    },
-
   container: {
-    flex: 2,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
+    flex: 1,
+    width: '100%',
+    height: '100%',
     backgroundColor: '#ddf1fd',
+  },
+
+  mainContainer: {
+    flex: 1,
+    maxHeight: '61%',
   },
 
   imageHolder: {
     flex: 1,
-    maxWidth: '100%',
-    flexDirection: 'row',
+    maxHeight: '10%',
     justifyContent: 'flex-end',
+    resizeMode: 'cover',
   },
 
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
     flex: 1,
-    maxHeight: '10%',
-    paddingTop: 20,
-    paddingBottom: 20,
+    maxHeight: '29%',
   },
 
-  containerInner: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+  titleContainer: {
+    height: '10%',
+    marginTop: 20,
+    flexDirection: 'row',
+  },
+
+  buttonsContainer: {
+    height: '90%',
+  },
+
+  headerBackground: {
+    flex: 1,
+    alignSelf: 'stretch',
+    resizeMode: 'contain',
+  },
+
+  image: {
+    width: 250,
+    height: 120,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+
+  currencyText: {
+      marginBottom: 5,
+    },
+
+  footerImage: {
+    width: '100%',
+    height: '100%',
+    paddingTop: 20,
+    resizeMode: 'cover',
   },
 
   errorText: {
     fontSize: 14,
-    padding: 15,
+    padding: 10,
     textTransform: 'capitalize',
     color: '#ff5100',
     textAlign: 'center',
   },
 
   containerTitle: {
-    fontSize: 22,
+    fontSize: 18,
     padding: 15,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
     textTransform: 'capitalize',
     color: '#0643a7',
     textAlign: 'center',
@@ -384,10 +419,13 @@ const styles = StyleSheet.create({
   },
 
   input: {
+    padding: 5,
     maxWidth: '40%',
+    minWidth: 250,
+    minHeight: 30,
+    marginTop: 15,
+    marginBottom: 15,
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
     paddingLeft: 45,
     paddingRight: 45,
     borderRadius: 50,
@@ -398,11 +436,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: 2,
-    top: 0,
+    top: '50%',
     marginLeft: -10,
     marginRight: -10,
     borderColor: '#99d7b9',
     borderWidth: 1,
+  },
+
+  inputContainer: {
+    height: '90%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 
   headerItem: {
@@ -423,12 +467,14 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    maxWidth: '70%',
-    alignSelf: 'center',
-    padding: 10,
-    marginTop: 20,
-    marginBottom: 20,
+    padding: 5,
+    minWidth: 250,
+    minHeight: 30,
+    marginTop: 15,
+    marginBottom: 15,
     borderRadius: 50,
+    alignSelf: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#fff',
   },
@@ -436,29 +482,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     textAlign: 'center',
-    paddingRight: 50,
-    paddingLeft: 50,
-  },
-
-  inputContainer: {
-    maxWidth: '100%',
-    maxHeight: '70%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-  },
-
-  mainBackgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
   },
 
   datePicker: {
-    marginTop: 20,
-    padding: 10,
-    maxWidth: '80%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 5,
+    minWidth: 250,
+    minHeight: 30,
+    marginTop: 15,
+    marginBottom: 15,
     borderRadius: 50,
     backgroundColor: '#fff',
   },

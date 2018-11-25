@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Image, ScrollView } from 'react-native';
 import TermsAndConditions from './TermsAndConditions';
 import StartScreen from './StartScreen';
@@ -37,34 +37,60 @@ export default class IntroScreen extends Component {
     }
 
     if (this.state.agreed) {
-      return <StartScreen parentStepsHandler={this.goToStepsHandler}/>;
-    }
-
-    return <TermsAndConditions onParentChangeHandler={this.onChangeHandler} />;
-  }
-
-  render() {
-    let template = this.RenderTemplate();
-    return (
-      <View style={styles.container}>
+      return <View style={styles.container}>
         <ImageBackground
           style={styles.backgroundImage}
-          source={require('../imgs/main-background.png')}>
+          source={require('../imgs/background.png')}>
           <Image
             style={styles.logo}
             resizeMode='contain'
             source={require('../imgs/tabex-logo.png')}/>
-          {template}
+          <View style={styles.innerContainer}>
+            <StartScreen parentStepsHandler={this.goToStepsHandler}/>
+          </View>
         </ImageBackground>
-      </View>
-    );
+      </View>;
+    }
+
+    return <View style={styles.container}>
+      <ImageBackground
+        style={styles.backgroundImage}
+        source={require('../imgs/main-background.png')}>
+        <Image
+          style={styles.logo}
+          resizeMode='contain'
+          source={require('../imgs/tabex-logo.png')}/>
+        <View style={styles.innerContainer}>
+          <TermsAndConditions onParentChangeHandler={this.onChangeHandler} />
+        </View>
+      </ImageBackground>
+    </View>;
+  }
+
+  render() {
+    let template = this.RenderTemplate();
+    return template;
   }
 }
 
 const styles = StyleSheet.create({
   logo: {
     width: 300,
-    height: 200,
+    height: '10%',
+    marginBottom: 20,
+    marginTop: 20,
+  },
+
+  wrapper: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#fff',
+  },
+
+  backgroundBottomImg: {
+    width: '50%',
+    height: '50%',
+    resizeMode: 'contain',
   },
 
   backgroundImage: {
@@ -78,5 +104,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: '100%',
     height: '100%',
+  },
+
+  innerContainer: {
+    flex: 1,
+    height: '90%',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

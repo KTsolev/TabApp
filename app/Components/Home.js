@@ -3,10 +3,10 @@ import PercentageCircle from 'react-native-percentage-circle';
 import PillsButton from './PillsButton';
 import moment from 'moment';
 import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import { Divider } from 'react-native-elements';
 import { addNewUserProps, saveUser, loadUser, } from '../data/FluxActions';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
-
 
 export default class Home extends Component {
   constructor(props) {
@@ -20,41 +20,43 @@ export default class Home extends Component {
     const notSmoked = (user.ciggarettesPerDay * daysSinceStart);
     const endingDate = user.endingDate;
     const currency = user.currency.split('-')[1];
+    let disabled = user.disabled ? moment().diff(moment(user.lastPillTaken), 'days') > 0 ? false : true : false;
+    console.log(moment().format())
 
     this.state = {
-      pills: 1,
-      pillsTakenToday: user.pillsTakenToday,
+      pills: Number(user.pills) || 1,
+      pillsTaken: Number(user.pillsTaken) || 1,
       lastPillTaken: user.lastPillTaken,
       timeSinceStart,
       daysSinceStart,
       endingDate,
-      disabled: user.disabled ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
       currency,
+      disabled,
       notSmoked,
       moneySaved,
     };
-    console.log(user)
+    console.log(moment().diff(moment(user.lastPillTaken), 'days'));
+    console.log(user);
     this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
-
   }
 
   _incrementPills() {
     let pills = PillStore.getPills();
+
     if (!this.state.disabled) {
-      let sum = this.state.pillsTakenToday + 1;
+      let sum = this.state.pillsTaken + 1;
       console.log(sum)
       this.setState({
         pills: pills.count,
-        pillsTakenToday: sum,
+        pillsTaken: sum,
         lastPillTaken: pills.lastPillTaken,
       });
 
       addNewUserProps({
-        pillsTakenToday: this.state.pillsTakenToday,
-        lastPillTaken: this.state.lastPillTaken,
-        disabled: false });
+        pills: pills.count,
+        pillsTaken: pills.count,});
       setTimeout(() => saveUser(UserStore.getUser()), 1000);
     }
   }
@@ -63,7 +65,8 @@ export default class Home extends Component {
     console.warn('doze-reached');
     this.setState({ disabled: true });
     addNewUserProps({
-      pillsTakenToday: this.state.pillsTakenToday,
+      pills: 1,
+      pillsTaken: this.state.pillsTaken,
       lastPillTaken: this.state.lastPillTaken,
       disabled: true });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
@@ -82,10 +85,12 @@ export default class Home extends Component {
       startingDate,
       daysSinceStart,
       endingDate,
+      pills: Number(jsonUser.pills),
+      pillsTaken: Number(jsonUser.pillsTaken),
       currency,
-      pricePerPack: jsonUser.pricePerPack ? jsonUser.pricePerPack: this.state.pricePerPack,
-      ciggarettesPerDay: jsonUser.ciggarettesPerDay ? jsonUser.ciggarettesPerDay : this.state.ciggarettesPerDay,
-      pillsTakenToday: jsonUser.pillsTakenToday ? jsonUser.pillsTakenToday : this.state.pillsTakenToday,
+      pricePerPack: jsonUser.pricePerPack ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
+      ciggarettesPerDay: jsonUser.ciggarettesPerDay ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
+      pillsTaken: jsonUser.pillsTaken ? Number(jsonUser.pillsTaken) : Number(this.state.pillsTaken),
     });
   }
 
@@ -107,48 +112,50 @@ export default class Home extends Component {
     console.log(this.state);
 
     return (
-      <View style={styles.headerContainer}>
+      <View style={styles.container}>
         <ImageBackground
           style={styles.backgroundImage}
           source={require('../imgs/rectangle.png')}>
-          <Image style={styles.logo} source={require('../imgs/tracking.png')}/>
+          <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
           <PercentageCircle
             radius={75}
             percent={this.state.daysSinceStart}
             innerColor={'#0187e6'}
             bgcolor={'#3498db'}
+            height={'25%'}
             borderWidth={5}
             color={'#d3ebfb'}>
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>{this.state.daysSinceStart}</Text>
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>DAYS</Text>
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
           </PercentageCircle>
+          <Divider style={styles.divider}/>
           <View style={styles.headerRow}>
             <PillsButton disabled={this.state.disabled} />
             <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
           </View>
           </ImageBackground>
-        <View style={styles.container}>
+        <View style={styles.infoContainer}>
           <View style={styles.containerInner}>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>quit date:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>quit date:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
               { moment(this.state.endingDate).format('DD/MM/YYYY') }
               </Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>time since:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>time since:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>money saved:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>money saved:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
                 {`${this.state.moneySaved} ${this.state.currency}`}
               </Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'left' }}>not smoked:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>not smoked:</Text>
+              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
                 {this.state.notSmoked}
               </Text>
             </View>
@@ -161,10 +168,8 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
+    flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
   },
 
@@ -177,14 +182,18 @@ const styles = StyleSheet.create({
 
   logo: {
     width: 150,
-    height: 100,
+    height: '10%',
+    marginTop: 20,
+    marginBottom: 20,
     resizeMode: 'contain',
   },
 
-  headerContainer: {
-    flexDirection: 'column',
+  infoContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
+    height: '55%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 5,
   },
 
   headerText: {
@@ -195,39 +204,45 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  divider: {
+    width: '80%',
+    height: 1,
+    marginTop: 15,
+    marginBottom: 15,
+    backgroundColor: '#fff',
+  },
+
   containerInner: {
+    flex: 1,
     flexDirection: 'column',
-    flex: 2,
+    maxHeight: '90%',
+    width: '80%',
     padding: 25,
-    margin: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
-    shadowColor: '#000000',
-    shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-    shadowRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 15, height: 15 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 5,
     shadowOpacity: 1.0,
   },
 
   headerRow: {
     flexDirection: 'row',
+    height: '10%',
     justifyContent: 'center',
     alignItems: 'center',
     margin: 15,
   },
 
   innerRow: {
-    width: '100%',
+    height: 80,
     flex: 1,
-    height: 70,
     flexDirection: 'row',
     padding: 5,
     justifyContent: 'space-between',
-    borderColor: '#0648aa',
-    borderBottomWidth: 2,
+    borderColor: '#959595',
+    borderBottomWidth: 1,
   },
 });

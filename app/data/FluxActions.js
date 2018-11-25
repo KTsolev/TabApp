@@ -1,5 +1,6 @@
 import dispatcher from '../data/FluxDispatcher';
 import { saveData, getData, clearData } from './StoreService';
+import { AsyncStorage } from 'react-native';
 
 export function increasePills() {
   dispatcher.dispatch({
@@ -30,42 +31,29 @@ export function addNewUserProps(data) {
   });
 };
 
-export function saveUser(data) {
-  console.log('save data')
-  console.log(data)
-  saveData('userData', data);
-  setTimeout(() => {
-    dispatcher.dispatch({
-      type: 'user-saved',
-    });
-  }, 1000);
+export async function saveUser(data) {
+  try {
+    await AsyncStorage.setItem('userData', JSON.stringify(data));
+    setTimeout(() => {
+      dispatcher.dispatch({
+        type: 'user-saved',
+      });
+    }, 1000);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-export function loadUser() {
-  getData('userData').then((data) => {
+export async function loadUser() {
+  try {
+    let data = await AsyncStorage.getItem('userData');
+    console.log(data)
     let jsonData = JSON.parse(data);
     dispatcher.dispatch({
         type: 'recieved-user-data',
         data: jsonData,
       });
-  });
-};
-
-export function savePillsData(data) {
-  saveData('pillsData', data);
-  setTimeout(() => {
-    dispatcher.dispatch({
-      type: 'pills-saved',
-    });
-  }, 1000);
-};
-
-export function loadPillsData() {
-  getData('pillsData').then((data) => {
-    let jsonData = JSON.parse(data);
-    dispatcher.dispatch({
-        type: 'recieved-pills-data',
-        data: jsonData,
-      });
-  });
+  } catch (err) {
+    console.log(err);
+  }
 };

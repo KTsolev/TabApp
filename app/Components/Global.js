@@ -97,8 +97,8 @@ export default class Global extends Component{
         <Image
           style={styles.logo}
           resizeMode='contain'
-          source={require('../imgs/tracking.png')}/>
-            <MapView
+          source={require('../imgs/trackingi.png')}/>
+          <MapView
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
              region={this.state.region}>

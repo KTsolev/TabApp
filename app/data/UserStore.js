@@ -22,6 +22,8 @@ class UserStore extends EventEmmiter {
   }
 
   addNewData(user) {
+    this.userData.pillsTaken += 1;
+    user.pillsTaken = this.userData.pillsTaken;
     this.userData = Object.assign(this.userData, user);
     console.log('from add pills');
     console.log(this.userData);

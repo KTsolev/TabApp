@@ -11,16 +11,16 @@ export default class ProgressScreen extends Component{
     super(props);
     const user = UserStore.getUser();
     console.log(user);
-    const pillsTakenToday = user.pillsTakenToday ? Number(user.pillsTakenToday) > 180 ? 180 : Number(user.pillsTakenToday) : 1;
+    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const leftDays = 30 - daysSinceStart;
     const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
-    const leftPills = 180 - pillsTakenToday;
-    const pillsWidth = Math.round((((180 - pillsTakenToday) / 180) * 100));
-    const pillsMargin = Math.round((pillsTakenToday / 180) * 100);
+    const leftPills = 180 - pillsTaken;
+    const pillsWidth = Math.round((((180 - pillsTaken) / 180) * 100));
+    const pillsMargin = Math.round((pillsTaken / 180) * 100);
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
     const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
     const notSomked = user.ciggarettesPerDay * daysSinceStart;
@@ -45,7 +45,7 @@ export default class ProgressScreen extends Component{
   _getUserInfo() {
     const user = UserStore.getUser();
     console.log(user);
-    const pills = user.pillsTakenToday ? Number(user.pillsTakenToday) : 1;
+    const pills = user.pillsTaken ? Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const leftDays = 30 - daysSinceStart;
@@ -91,11 +91,11 @@ export default class ProgressScreen extends Component{
       <ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/background.png')}>
-        <View style={styles.headerContainer}>
+        <View style={styles.container}>
           <Image
             style={styles.logo}
             resizeMode='contain'
-            source={require('../imgs/tracking.png')}/>
+            source={require('../imgs/trackingi.png')}/>
         </View>
         <View style={styles.headerContainer}>
           <PercentageCircle
@@ -169,47 +169,55 @@ export default class ProgressScreen extends Component{
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   logo: {
+    flex: 1,
     maxWidth: 200,
-    maxHeight: 250,
+    maxHeight: '10%',
     marginTop: 50,
     marginBottom: 50,
   },
 
   img: {
-    width: 30,
-    height: 28,
-    padding: 5,
-    marginLeft: -10,
+    width: 25,
+    height: 25,
     marginTop: 10,
+    resizeMode: 'contain',
   },
 
   headerContainer: {
+    flex: 1,
+    maxHeight: '20%',
     flexDirection: 'row',
     justifyContent: 'center',
-    maxHeight: 150,
   },
 
   tabBarRow: {
-    margin: 15,
-    width: '90%',
+    flex: 1,
+    maxHeight: '15%',
+    padding: 20,
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
   imageHolder: {
     width: '10%',
     height: 70,
-    flexDirection: 'column',
   },
 
   tabBarHolder: {
     width: '90%',
     height: 70,
-    flexDirection: 'column',
   },
 
   backgroundImage: {
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     justifyContent: 'flex-start',
     flex: 1,
   },
@@ -217,10 +225,9 @@ const styles = StyleSheet.create({
   barGreen: {
     marginTop: 11,
     marginRight: 10,
-    width: 310,
+    width: '100%',
     height: 'auto',
     borderWidth: 2,
-    marginLeft: -5,
     borderColor: '#56c17b',
     borderRadius: 50,
   },
@@ -228,10 +235,9 @@ const styles = StyleSheet.create({
   barPurple: {
     marginTop: 11,
     marginRight: 10,
-    width: 310,
+    width: '100%',
     height: 'auto',
     borderWidth: 2,
-    marginLeft: -5,
     borderColor: '#ac66ea',
     borderRadius: 50,
   },
@@ -279,7 +285,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     paddingRight: 10,
+    maxHeight: '40%',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
@@ -287,31 +295,40 @@ const styles = StyleSheet.create({
   moneyArea: {
     padding: 4,
     height: 'auto',
-    width: 95,
-    height: 95,
+    width: '33%',
+    marginTop: 20,
+    marginBottom: 20,
+    height: '80%',
     borderWidth: 2,
     borderColor: '#d0f190',
-    borderRadius: 50,
+    justifyContent: 'center',
+    borderRadius: 100,
   },
 
   ciggarettesArea: {
     padding: 4,
     height: 'auto',
-    width: 95,
-    height: 95,
+    width: '33%',
+    marginTop: 20,
+    marginBottom: 20,
+    height: '80%',
     borderWidth: 2,
     borderColor: '#2ca5af',
-    borderRadius: 50,
+    justifyContent: 'center',
+    borderRadius: 100,
   },
 
   daysArea: {
     padding: 4,
     height: 'auto',
-    width: 95,
-    height: 95,
+    width: '33%',
+    marginTop: 20,
+    marginBottom: 20,
+    height: '80%',
     borderWidth: 2,
     borderColor: '#af67eb',
-    borderRadius: 50,
+    justifyContent: 'center',
+    borderRadius: 100,
   },
 
   areaText: {
