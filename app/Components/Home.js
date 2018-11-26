@@ -21,22 +21,20 @@ export default class Home extends Component {
     const endingDate = user.endingDate;
     const currency = user.currency.split('-')[1];
     let disabled = user.disabled ? moment().diff(moment(user.lastPillTaken), 'days') > 0 ? false : true : false;
-    console.log(moment().format())
 
     this.state = {
       pills: Number(user.pills) || 1,
       pillsTaken: Number(user.pillsTaken) || 1,
       lastPillTaken: user.lastPillTaken,
-      timeSinceStart,
-      daysSinceStart,
+      timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
+      daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       endingDate,
       currency,
-      disabled,
-      notSmoked,
-      moneySaved,
+      disabled: timeSinceStart < 0 ? true : disabled,
+      notSmoked: notSmoked < 0 ? 0 : notSmoked,
+      moneySaved: moneySaved < 0 ? 0 : moneySaved,
     };
-    console.log(moment().diff(moment(user.lastPillTaken), 'days'));
-    console.log(user);
+
     this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
@@ -47,7 +45,6 @@ export default class Home extends Component {
 
     if (!this.state.disabled) {
       let sum = this.state.pillsTaken + 1;
-      console.log(sum)
       this.setState({
         pills: pills.count,
         pillsTaken: sum,
@@ -62,7 +59,6 @@ export default class Home extends Component {
   }
 
   _dozeHandler() {
-    console.warn('doze-reached');
     this.setState({ disabled: true });
     addNewUserProps({
       pills: 1,
@@ -79,7 +75,6 @@ export default class Home extends Component {
     const daysSinceStart = moment().diff(moment(startingDate), 'days');
     const endingDate = jsonUser.endingDate;
     const currency = jsonUser.currency.split('-')[1];
-    console.log(jsonUser)
     this.setState({
       timeSinceStart,
       startingDate,
@@ -88,8 +83,8 @@ export default class Home extends Component {
       pills: Number(jsonUser.pills),
       pillsTaken: Number(jsonUser.pillsTaken),
       currency,
-      pricePerPack: jsonUser.pricePerPack ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
-      ciggarettesPerDay: jsonUser.ciggarettesPerDay ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
+      pricePerPack: jsonUser.pricePerPack && Number(jsonUser.pricePerPack) > 0 ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
+      ciggarettesPerDay: jsonUser.ciggarettesPerDay && Number(jsonUser.ciggarettesPerDay) > 0 ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
       pillsTaken: jsonUser.pillsTaken ? Number(jsonUser.pillsTaken) : Number(this.state.pillsTaken),
     });
   }
@@ -109,8 +104,6 @@ export default class Home extends Component {
   }
 
   render() {
-    console.log(this.state);
-
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -138,24 +131,24 @@ export default class Home extends Component {
         <View style={styles.infoContainer}>
           <View style={styles.containerInner}>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>quit date:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'left' }}>quit date:</Text>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'right' }}>
               { moment(this.state.endingDate).format('DD/MM/YYYY') }
               </Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>time since:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'left' }}>time since:</Text>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'right' }}>{this.state.timeSinceStart}</Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>money saved:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'left' }}>money saved:</Text>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'right' }}>
                 {`${this.state.moneySaved} ${this.state.currency}`}
               </Text>
             </View>
             <View style={styles.innerRow}>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'left' }}>not smoked:</Text>
-              <Text style={{ fontSize: 16, color: '#0648aa', textAlign: 'right' }}>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'left' }}>not smoked:</Text>
+              <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'right' }}>
                 {this.state.notSmoked}
               </Text>
             </View>
@@ -217,7 +210,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     maxHeight: '90%',
     width: '80%',
-    padding: 25,
+    padding: 12,
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
     shadowColor: '#000',

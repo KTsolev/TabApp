@@ -21,15 +21,10 @@ export default class Tips extends Component{
 
   randomTipGenerator() {
     let index = Math.floor(Math.random() * (this.state.tips.length - 1));
-    console.log(index);
-    console.log(this.state.tips[index]);
-
-
     return this.state.tips[index];
   }
 
   componentDidMount() {
-    console.log(this.randomTipGenerator());
     this.setState({ currentTip: this.randomTipGenerator() });
   }
 
@@ -37,7 +32,7 @@ export default class Tips extends Component{
     return (
       <ImageBackground
         style={styles.backgroundImage}
-        source={require('../imgs/background.png')}>
+        source={require('../imgs/backgroud12.png')}>
         <Image
           style={styles.logo}
           resizeMode='contain'

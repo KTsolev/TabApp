@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
@@ -11,14 +11,25 @@ export default class Global extends Component{
   constructor(props) {
     super(props);
     const jsonUser = UserStore.getUser();
-
+    let coeficient =  moment().diff(moment(jsonUser.startingDate), 'days');
+    const window = Dimensions.get('window');
+    const { width, height }  = window;
+    const LATITUDE_DELTA = 1.5;
+    const ASPECT_RATIO = (width / height);
+    const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
     this.state = {
-      peopleArroundGLobe: 135565 + moment().diff(moment(jsonUser.startingDate), 'days'),
+      peopleArroundGLobe: coeficient < 0 ? 135565 : 135565 + coeficient,
+      initialRegion: {
+          latitude: 47.810175,
+          longitude: 13.045552,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        },
       region: {
           latitude: 46.8507116,
           longitude: 12.3533676,
-          latitudeDelta: 2.2,
-          longitudeDelta: 3.5,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
         },
       markerPositions: [
         {
@@ -93,7 +104,7 @@ export default class Global extends Component{
     return (
       <ImageBackground
         style={styles.backgroundImage}
-        source={require('../imgs/background.png')}>
+        source={require('../imgs/backgroud12.png')}>
         <Image
           style={styles.logo}
           resizeMode='contain'
@@ -101,6 +112,8 @@ export default class Global extends Component{
           <MapView
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
+             loadingEnabled={true}
+             initialRegion={this.state.initialRegion}
              region={this.state.region}>
               {this.state.markerPositions.map((marker, index) => (
                 <Marker

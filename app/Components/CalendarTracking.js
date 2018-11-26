@@ -20,13 +20,14 @@ export default class CalendarTr extends Component{
     let pills = PillStore.getPills();
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
     const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) : 1;
-    let dates =  this._getSelectedRange(moment().format(), '#57c279', user.endingDate);
-
+    let startDate = daysSinceStart < 0 ? user.startingDate : moment().format();
+    let dates =  this._getSelectedRange(user.startingDate, user.endingDate);
+    let disabled = user.disabled && user.lastPillTaken ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false;
     this.state = {
       pills: Number(user.pills) || pills.count,
-      daysSinceStart,
+      daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       pillsTaken,
-      disabled: user.disabled && user.lastPillTaken ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false,
+      disabled: daysSinceStart < 0 ? true : disabled,
       lastPillTaken: user.lastPillTaken,
       dates,
     };
@@ -36,7 +37,6 @@ export default class CalendarTr extends Component{
     if (!this.state.disabled) {
       let pills = PillStore.getPills();
       let sum = this.state.pillsTaken + 1;
-      console.log(sum)
 
       this.setState({
         pills: pills.count,
@@ -50,7 +50,6 @@ export default class CalendarTr extends Component{
     this.setState({ disabled: true });
     const user = UserStore.getUser();
     let sum = Number(user.pillsTaken) + this.state.pills;
-    console.log(sum)
     addNewUserProps({
       pillsTaken: sum,
       lastPillTaken: this.state.lastPillTaken,
@@ -58,18 +57,90 @@ export default class CalendarTr extends Component{
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
-  _getSelectedRange(startDate, color, endingDate) {
+  _getSelectedRange(startDate, endDate) {
+
     let minDate = moment(startDate);
-    let maxDate = endingDate ? moment(endingDate) : moment();
+    let maxDate = endDate ? moment(endDate) : moment();
     let range  = [];
-    while (minDate.isSameOrBefore(maxDate)) {
+    if (moment().isAfter(minDate, 'days')) {
+      while (minDate.isSameOrBefore(maxDate)) {
+          range.push({
+            date: minDate.format('YYYY-MM-DD'),
+            selected: true,
+            marked: true,
+            customStyles: {
+              container: minDate.isSameOrBefore(moment(), 'days') ? {
+                backgroundColor:  minDate.isSame(moment(), 'days') ? '#40a30f' : '#57c279',
+              } : { backgroundColor:  '#0187e6'},
+              text: {
+                color: 'white',
+              },
+            },
+          });
+        minDate.add(1, 'day');
+      }
+    }
+
+    if (range.length === 0) {
       range.push({
-          date: minDate.format('YYYY-MM-DD'),
-          startingDay: true,
+          date: moment(startDate).format('YYYY-MM-DD'),
           selected: true,
           marked: true,
+          customStyles: {
+              container: {
+                backgroundColor: '#008c2c',
+                border: '2px solid green',
+              },
+              text: {
+                color: 'white',
+              },
+            },
         });
-      minDate.add(1, 'day');
+
+      range.push({
+            date: moment(endDate).format('YYYY-MM-DD'),
+            selected: true,
+            marked: true,
+            customStyles: {
+                container: {
+                  backgroundColor: '#008c2c',
+                  border: '2px solid green',
+                },
+                text: {
+                  color: 'white',
+                },
+              },
+          });
+    } else {
+      range[0] = {
+          date: moment(startDate).format('YYYY-MM-DD'),
+          selected: true,
+          marked: true,
+          customStyles: {
+              container: {
+                backgroundColor: '#008c2c',
+                border: '2px solid green',
+              },
+              text: {
+                color: 'white',
+              },
+            },
+        };
+
+      range[range.length - 1] = {
+            date: moment(endDate).format('YYYY-MM-DD'),
+            selected: true,
+            marked: true,
+            customStyles: {
+                container: {
+                  backgroundColor: '#008c2c',
+                  border: '2px solid green',
+                },
+                text: {
+                  color: 'white',
+                },
+              },
+          };
     }
 
     const objectArray = range.reduce((obj, item) => {
@@ -82,8 +153,8 @@ export default class CalendarTr extends Component{
 
   _getUserData() {
     const jsonUser = UserStore.getUser();
-    console.log(moment().format())
-    const datesObjects = this._getSelectedRange(moment().format(), '#57c279', jsonUser.endingDate);
+    const datesObjects = this._getSelectedRange(jsonUser.startingDate, jsonUser.endingDate);
+
     this.setState({
       dates: datesObjects,
     });
@@ -106,7 +177,6 @@ export default class CalendarTr extends Component{
   }
 
   render() {
-    console.log(this.state)
     return (
         <ScrollView >
           <ImageBackground
@@ -117,19 +187,18 @@ export default class CalendarTr extends Component{
                 style={styles.calendar}
                 startFromMonday={true}
                 allowRangeSelection={true}
+                markingType={'custom'}
                 markedDates={this.state.dates ? this.state.dates : {}}
                 theme={{
                   arrowColor: 'white',
                   monthTextColor: 'white',
                   calendarBackground: '#0187e6',
                   textSectionTitleColor: '#fff',
-                  selectedDayBackgroundColor: '#57c279',
                   selectedDayTextColor: '#ffffff',
                   todayTextColor: '#fff',
                   dayTextColor: '#fff',
                   textDisabledColor: '#d9e1e8',
                   dotColor: '#2d4150',
-                  selectedDotColor: '#57c279',
                   arrowColor: 'white',
                   monthTextColor: 'white',
                   textDayFontFamily: 'monospace',
@@ -180,14 +249,14 @@ const styles = StyleSheet.create({
 
   calendar: {
     flex: 1,
-    maxWidth: '100%',
-    padding: 10,
+    maxWidth: '90%',
+    padding: 20,
+    alignSelf: 'center',
     marginBottom: 70,
-    alignSelf: 'stretch',
   },
 
   divider: {
-    width: '70%',
+    width: '65%',
     height: 1,
     marginTop: 5,
     marginBottom: 5,
@@ -212,11 +281,11 @@ const styles = StyleSheet.create({
 
   containerInner: {
     flex: 1,
-    width: '80%',
+    width: '85%',
     height: '100%',
     flexDirection: 'column',
     justifyContent: 'center',
-    padding: 15,
+    padding: 20,
     margin: 15,
     alignItems: 'center',
     alignSelf: 'center',

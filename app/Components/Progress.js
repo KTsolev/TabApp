@@ -10,11 +10,10 @@ export default class ProgressScreen extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    console.log(user);
     const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 1;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const leftDays = 30 - daysSinceStart;
+    const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
     const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
@@ -23,20 +22,20 @@ export default class ProgressScreen extends Component{
     const pillsMargin = Math.round((pillsTaken / 180) * 100);
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
     const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
-    const notSomked = user.ciggarettesPerDay * daysSinceStart;
+    const notSmoked = user.ciggarettesPerDay * daysSinceStart;
 
     this.state = {
-      timeSinceStart,
-      daysSinceStart,
+      timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
+      daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       leftPills,
       leftDays,
-      daysWidth,
-      currency,
-      daysMargin,
+      daysWidth: daysSinceStart < 0 ? 0 : daysWidth,
+      daysMargin: daysSinceStart < 0 ? 0 : daysMargin,
       pillsWidth,
       pillsMargin,
-      moneySaved,
-      notSomked,
+      currency,
+      moneySaved: daysSinceStart < 0 ? 0 : moneySaved,
+      notSmoked: daysSinceStart < 0 ? 0 : notSmoked,
     };
 
     this._getUserInfo = this._getUserInfo.bind(this);
@@ -44,11 +43,10 @@ export default class ProgressScreen extends Component{
 
   _getUserInfo() {
     const user = UserStore.getUser();
-    console.log(user);
     const pills = user.pillsTaken ? Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const leftDays = 30 - daysSinceStart;
+    const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
     const leftPills = 180 - pills;
@@ -57,22 +55,22 @@ export default class ProgressScreen extends Component{
     const pillsMargin = Math.round(((pills / 180) * 100));
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
     const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
-    const notSomked = user.ciggarettesPerDay * daysSinceStart;
+    const notSmoked = user.ciggarettesPerDay * daysSinceStart;
 
     this.setState({
-      user,
+      timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
+      daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       leftPills,
-      timeSinceStart,
-      daysSinceStart,
       leftDays,
+      daysWidth: daysSinceStart < 0 ? 0 : daysWidth,
+      daysMargin: daysSinceStart < 0 ? 0 : daysMargin,
+      moneySaved: daysSinceStart < 0 ? 0 : moneySaved,
+      notSmoked: daysSinceStart < 0 ? 0 : notSmoked,
+      user,
       currency,
-      daysWidth,
-      daysMargin,
       pills,
       pillsWidth,
       pillsMargin,
-      moneySaved,
-      notSomked,
     });
   }
 
@@ -90,11 +88,10 @@ export default class ProgressScreen extends Component{
     return (
       <ImageBackground
         style={styles.backgroundImage}
-        source={require('../imgs/background.png')}>
+        source={require('../imgs/backgroud12.png')}>
         <View style={styles.container}>
           <Image
             style={styles.logo}
-            resizeMode='contain'
             source={require('../imgs/trackingi.png')}/>
         </View>
         <View style={styles.headerContainer}>
@@ -155,7 +152,7 @@ export default class ProgressScreen extends Component{
             <Text style={styles.areaText}>{this.state.currency} saved</Text>
           </TouchableOpacity>
           <TouchableOpacity disabled={true} style={styles.ciggarettesArea}>
-            <Text style={styles.areaTextBolded}>{this.state.notSomked}</Text>
+            <Text style={styles.areaTextBolded}>{this.state.notSmoked}</Text>
             <Text style={styles.areaTextSmaller}>ciggarettes not smoked</Text>
           </TouchableOpacity>
           <TouchableOpacity disabled={true} style={styles.daysArea}>
@@ -177,11 +174,11 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    flex: 1,
-    maxWidth: 200,
-    maxHeight: '10%',
-    marginTop: 50,
-    marginBottom: 50,
+    width: 150,
+    height: '10%',
+    marginTop: 30,
+    marginBottom: 10,
+    resizeMode: 'contain',
   },
 
   img: {
@@ -294,7 +291,7 @@ const styles = StyleSheet.create({
 
   moneyArea: {
     padding: 4,
-    height: 'auto',
+    height: '100%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
@@ -307,7 +304,7 @@ const styles = StyleSheet.create({
 
   ciggarettesArea: {
     padding: 4,
-    height: 'auto',
+    height: '100%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
@@ -320,7 +317,7 @@ const styles = StyleSheet.create({
 
   daysArea: {
     padding: 4,
-    height: 'auto',
+    height: '100%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
