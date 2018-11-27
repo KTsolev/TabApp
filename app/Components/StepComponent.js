@@ -5,7 +5,7 @@
   import React, { Component } from 'react';
   import { Divider } from 'react-native-elements';
   import { createUser, saveUser, } from '../data/FluxActions';
-
+  import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
   import {
     StyleSheet,
     Text,
@@ -15,6 +15,13 @@
     ImageBackground,
     Picker,
     TextInput } from 'react-native';
+
+    import {
+      widthPercentageToDP as wp,
+      heightPercentageToDP as hp,
+      listenOrientationChange as loc,
+      removeOrientationListener as rol
+    } from 'react-native-responsive-screen';
 
   class Step extends Component {
     static currenciesArray = [
@@ -89,6 +96,14 @@
 
     _toggleDateTimePicker() {
       this.setState({ isDateTimePickerVisible: true });
+    }
+
+    componentDidMount() {
+      loc(this);
+    }
+
+    componentWillUnMount() {
+      rol();
     }
 
     render() {
@@ -278,85 +293,89 @@
       });
     }
 
+    componentDidMount() {
+      loc(this);
+    }
+
+    componentWillUnMount() {
+      rol();
+    }
+
     render() {
       return (
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <ImageBackground source={require('../imgs/photo.png')} style={styles.headerBackground} >
-                <Image source={require('../imgs/tabex-logo.png')} style={styles.image} />
-            </ImageBackground>
-          </View>
-          <View style={styles.mainContainer}>
-            <View style={styles.titleContainer}>
-              {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
-                <Divider style={styles.beforeHeaderTextElem}></Divider>
-                <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
-                  {index + 1}
-                </Text>
-              </View>)}
+        <KeyboardAwareScrollView style={styles.container}>
+            <View style={styles.headerContainer}>
+              <ImageBackground source={require('../imgs/photo.png')} style={styles.headerBackground} >
+                  <Image source={require('../imgs/tabex-logo.png')} style={styles.image} />
+              </ImageBackground>
             </View>
-            <View style={styles.buttonsContainer}>
-              <Text style={styles.errorText}> {this.state.invalidData ? 'You haven\'t completed whole step. Goback and fill missing data': '' }</Text>
-              {React.Children.map(this.props.children, (el, index) => {
-                if (index === this.state.index) {
-                  return React.cloneElement(el, {
-                    currentIndex: this.state.index + 1,
-                    nextStep: this._nextStep,
-                    prevStep: this._prevStep,
-                    updateUser: this._updateUser,
-                    userData: this.state.userData,
-                    prevLabel: this.state.prevLabel,
-                    nextLabel: this.state.nextLabel,
-                    isfirst: this.state.index === 0,
-                    isLast: this.state.index === this.props.children.length - 1,
-                  });
-                }
+            <View style={styles.mainContainer}>
+              <View style={styles.titleContainer}>
+                {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
+                  <Divider style={styles.beforeHeaderTextElem}></Divider>
+                  <Text style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
+                    {index + 1}
+                  </Text>
+                </View>)}
+              </View>
+              <View style={styles.buttonsContainer}>
+                <Text style={styles.errorText}> {this.state.invalidData ? 'You haven\'t completed whole step. Goback and fill missing data': '' }</Text>
+                {React.Children.map(this.props.children, (el, index) => {
+                  if (index === this.state.index) {
+                    return React.cloneElement(el, {
+                      currentIndex: this.state.index + 1,
+                      nextStep: this._nextStep,
+                      prevStep: this._prevStep,
+                      updateUser: this._updateUser,
+                      userData: this.state.userData,
+                      prevLabel: this.state.prevLabel,
+                      nextLabel: this.state.nextLabel,
+                      isfirst: this.state.index === 0,
+                      isLast: this.state.index === this.props.children.length - 1,
+                    });
+                  }
 
-                return null;
-              })}
+                  return null;
+                })}
+              </View>
             </View>
-          </View>
-          <View style={styles.imageHolder}>
-            <Image source={require('../imgs/leaves.png')}  style={styles.footerImage}/>
-          </View>
-        </View>);
+            <View style={styles.imageHolder}>
+              <Image source={require('../imgs/leaves.png')}  style={styles.footerImage}/>
+            </View>
+        </KeyboardAwareScrollView>);
     }
   }
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      width: '100%',
-      height: '100%',
       backgroundColor: '#ddf1fd',
     },
 
     mainContainer: {
       flex: 1,
-      maxHeight: '61%',
+      maxHeight: '60%',
     },
 
     imageHolder: {
       flex: 1,
-      maxHeight: '8%',
-      marginTop: 50,
+      maxHeight: '10%',
       justifyContent: 'flex-end',
-      resizeMode: 'contain',
     },
 
     headerContainer: {
       flex: 1,
-      maxHeight: '29%',
+      maxHeight: '30%',
     },
 
     titleContainer: {
-      height: '10%',
+      maxHeight: '10%',
       marginTop: 20,
       flexDirection: 'row',
     },
 
     buttonsContainer: {
-      height: '90%',
+      maxHeight: '90%',
     },
 
     headerBackground: {
@@ -379,7 +398,7 @@
     footerImage: {
       width: '100%',
       height: '100%',
-      resizeMode: 'cover',
+      padding: 35,
     },
 
     errorText: {
@@ -394,7 +413,6 @@
       fontSize: 18,
       padding: 15,
       marginBottom: 10,
-      alignSelf: 'flex-start',
       textTransform: 'capitalize',
       color: '#0643a7',
       textAlign: 'center',

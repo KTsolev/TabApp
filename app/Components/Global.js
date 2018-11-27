@@ -26,8 +26,8 @@ export default class Global extends Component{
           longitudeDelta: LONGITUDE_DELTA,
         },
       region: {
-          latitude: 46.8507116,
-          longitude: 12.3533676,
+          latitude: 47.810175,
+          longitude: 13.045552,
           latitudeDelta: LATITUDE_DELTA,
           longitudeDelta: LONGITUDE_DELTA,
         },

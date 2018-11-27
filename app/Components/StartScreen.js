@@ -3,8 +3,21 @@ import { StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity } from
 import { CheckBox, Button } from 'react-native-elements';
 import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  listenOrientationChange as loc,
+  removeOrientationListener as rol
+} from 'react-native-responsive-screen';
 
 export default class TermsAndConditions extends Component {
+  componentDidMount() {
+    loc(this);
+  }
+
+  componentWillUnMount() {
+    rol();
+  }
 
   render() {
     return (
@@ -41,8 +54,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    maxWidth: '90%',
-    maxHeight: '60%',
+    maxWidth: wp('90%'),
+    maxHeight: hp('60%'),
     padding: 35,
     justifyContent: 'center',
     alignItems: 'center',
@@ -53,8 +66,8 @@ const styles = StyleSheet.create({
   imageHolder: {
     position: 'relative',
     flexDirection: 'row',
-    maxWidth: '100%',
-    maxHeight: '30%',
+    maxWidth: wp('100%'),
+    maxHeight: hp('30%'),
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -64,7 +77,7 @@ const styles = StyleSheet.create({
     zIndex: 4,
     alignSelf: 'center',
     left: '-10%',
-    top: -20,
+    top: -10,
     width: 70,
     height: 70,
   },

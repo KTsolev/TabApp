@@ -7,6 +7,8 @@ import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
+import Orientation from 'react-native-orientation';
+
 
 export default class CalendarTr extends Component{
   constructor(props) {
@@ -15,6 +17,7 @@ export default class CalendarTr extends Component{
     this._increasePills = this._increasePills.bind(this);
     this._getSelectedRange = this._getSelectedRange.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
+    this._orientationDidChange = this._orientationDidChange.bind(this);
 
     const user = UserStore.getUser();
     let pills = PillStore.getPills();
@@ -22,7 +25,8 @@ export default class CalendarTr extends Component{
     const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) : 1;
     let startDate = daysSinceStart < 0 ? user.startingDate : moment().format();
     let dates =  this._getSelectedRange(user.startingDate, user.endingDate);
-    let disabled = user.disabled && user.lastPillTaken ? moment(user.lastPillTaken).isBefore(moment(), 'day') ? false : true : false;
+    let disabled = user.disabled ? moment().diff(moment(user.lastPillTaken), 'days') > 0 ? false : true : false;
+
     this.state = {
       pills: Number(user.pills) || pills.count,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
@@ -160,12 +164,17 @@ export default class CalendarTr extends Component{
     });
   }
 
+  _orientationDidChange(orientation) {
+    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+  }
+
   componentDidMount() {
     UserStore.on('user-updated', this._getUserData);
     UserStore.on('user-created', this._getUserData);
     PillStore.on('pills-increased', this._increasePills);
     UserStore.on('user-saved', () => loadUser());
     PillStore.on('day-doze-reached', this._dozeHandler);
+    Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
@@ -174,11 +183,12 @@ export default class CalendarTr extends Component{
     PillStore.removeListener('pills-increased', this._increasePills);
     UserStore.removeListener('user-saved', () => loadUser());
     PillStore.removeListener('day-doze-reached', this._dozeHandler);
+    Orientation.removeOrientationListener(this._orientationDidChange);
   }
 
   render() {
     return (
-        <ScrollView >
+        <ScrollView style={styles.container}>
           <ImageBackground
             source={require('../imgs/rectangle.png')}
             style={styles.backgroundImage}>
@@ -239,12 +249,8 @@ export default class CalendarTr extends Component{
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
-    width: '100%',
-    height: '100%',
+    flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'stretch',
   },
 
   calendar: {

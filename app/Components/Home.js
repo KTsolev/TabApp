@@ -7,6 +7,7 @@ import { Divider } from 'react-native-elements';
 import { addNewUserProps, saveUser, loadUser, } from '../data/FluxActions';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
+import Orientation from 'react-native-orientation';
 
 export default class Home extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ export default class Home extends Component {
       timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       endingDate,
+      isLandScape: false,
       currency,
       disabled: timeSinceStart < 0 ? true : disabled,
       notSmoked: notSmoked < 0 ? 0 : notSmoked,
@@ -38,6 +40,7 @@ export default class Home extends Component {
     this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
+    this._orientationDidChange = this._orientationDidChange.bind(this);
   }
 
   _incrementPills() {
@@ -80,8 +83,9 @@ export default class Home extends Component {
       startingDate,
       daysSinceStart,
       endingDate,
+      isLandScape: false,
       pills: Number(jsonUser.pills),
-      pillsTaken: Number(jsonUser.pillsTaken),
+      pillsTaken: Number(jsonUser.pillsTaken) || 1,
       currency,
       pricePerPack: jsonUser.pricePerPack && Number(jsonUser.pricePerPack) > 0 ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
       ciggarettesPerDay: jsonUser.ciggarettesPerDay && Number(jsonUser.ciggarettesPerDay) > 0 ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
@@ -89,11 +93,21 @@ export default class Home extends Component {
     });
   }
 
+  _orientationDidChange(orientation) {
+    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+  }
+
+  componentWillMount() {
+    const initial = Orientation.getInitialOrientation();
+    this._orientationDidChange(initial);
+  }
+
   componentDidMount() {
     UserStore.on('user-updated', this._getUser);
     PillStore.on('pills-increased', this._incrementPills);
     UserStore.on('user-saved', () => loadUser());
     PillStore.on('day-doze-reached', this._dozeHandler);
+    Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
@@ -101,11 +115,12 @@ export default class Home extends Component {
     PillStore.removeListener('pills-increased', this._incrementPills);
     UserStore.removeListener('user-saved', () => loadUser());
     PillStore.removeListener('day-doze-reached', this._dozeHandler);
+    Orientation.removeOrientationListener(this._orientationDidChange);
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={this.state.isLandScape ? styles.rowContainer : styles.container}>
         <ImageBackground
           style={styles.backgroundImage}
           source={require('../imgs/rectangle.png')}>
@@ -123,12 +138,12 @@ export default class Home extends Component {
               <Text style={{ fontSize: 16, color: '#d3ebfb' }}>smoke free</Text>
           </PercentageCircle>
           <Divider style={styles.divider}/>
-          <View style={styles.headerRow}>
+          <View style={ this.state.isLandScape ? styles.headerRowElevated : styles.headerRow }>
             <PillsButton disabled={this.state.disabled} />
             <Text style={styles.headerText}>{this.state.pills} / 6 pills taken</Text>
           </View>
           </ImageBackground>
-        <View style={styles.infoContainer}>
+        <View style={ this.state.isLandScape ? styles.infoContainerBigger : styles.infoContainer }>
           <View style={styles.containerInner}>
             <View style={styles.innerRow}>
               <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'left' }}>quit date:</Text>
@@ -163,7 +178,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+  },
+
+  rowContainer: {
+    flex: 1,
+    flexDirection: 'row',
   },
 
   backgroundImage: {
@@ -183,10 +202,19 @@ const styles = StyleSheet.create({
 
   infoContainer: {
     flex: 1,
-    height: '55%',
+    height: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  infoContainerBigger: {
+    flex: 1,
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 5,
+    alignSelf: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 
   headerText: {
@@ -227,6 +255,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 15,
+  },
+
+  headerRowElevated: {
+    flexDirection: 'row',
+    height: '10%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 15,
+    marginBottom: 30,
   },
 
   innerRow: {

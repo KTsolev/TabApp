@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  listenOrientationChange as loc,
+  removeOrientationListener as rol
+} from 'react-native-responsive-screen';
 
 export default class TermsAndConditions extends Component {
   constructor(props) {
@@ -33,6 +39,14 @@ export default class TermsAndConditions extends Component {
     if (this.state.aggreed) {
       this.props.onParentChangeHandler(this.state.aggreed);
     }
+  }
+
+  componentDidMount() {
+    loc(this);
+  }
+
+  componentWillUnMount() {
+    rol();
   }
 
   render() {
@@ -117,8 +131,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    maxWidth: '90%',
-    maxHeight: '50%',
+    maxWidth: wp('90%'),
+    maxHeight: hp('60%'),
     padding: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -144,8 +158,8 @@ const styles = StyleSheet.create({
   },
 
   checkBox: {
-    width: '100%',
-    height: '100%',
+    width: wp('100%'),
+    height: hp('100%'),
   },
 
   link: {

@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
+import Orientation from 'react-native-orientation';
 
 export default class ProgressScreen extends Component{
   constructor(props) {
@@ -39,6 +40,7 @@ export default class ProgressScreen extends Component{
     };
 
     this._getUserInfo = this._getUserInfo.bind(this);
+    this._orientationDidChange = this._orientationDidChange.bind(this);
   }
 
   _getUserInfo() {
@@ -62,6 +64,7 @@ export default class ProgressScreen extends Component{
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       leftPills,
       leftDays,
+      isLandScape: false,
       daysWidth: daysSinceStart < 0 ? 0 : daysWidth,
       daysMargin: daysSinceStart < 0 ? 0 : daysMargin,
       moneySaved: daysSinceStart < 0 ? 0 : moneySaved,
@@ -74,18 +77,112 @@ export default class ProgressScreen extends Component{
     });
   }
 
+  _orientationDidChange(orientation) {
+    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+  }
+
+  componentWillMount() {
+    const initial = Orientation.getInitialOrientation();
+    this._orientationDidChange(initial);
+  }
+
   componentDidMount() {
     UserStore.on('user-updated', this._getUserInfo);
     UserStore.on('user-saved', () => loadUser());
+    Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUserInfo);
     UserStore.removeListener('user-saved', () => loadUser());
+    Orientation.removeOrientationListener(this._orientationDidChange);
   }
 
   render() {
-    return (
+    return this.state.isLandScape ?
+      <ImageBackground
+        style={styles.rowContainer}
+        source={require('../imgs/backgroud12.png')}>
+        <View style={{flex: 1, width: '50%',  alignItems: 'stretch', justifyContent: 'flex-start'}}>
+          <View style={styles.rowContainer}>
+            <Image
+            style={styles.logo}
+            source={require('../imgs/trackingi.png')}/>
+          </View>
+
+          <View style={styles.rowHeaderContainer}>
+            <PercentageCircle
+              radius={60}
+              percent={this.state.daysMargin}
+              innerColor={'#d3ebfb'}
+              bgcolor={'#d3ebfb'}
+              borderWidth={5}
+              color={'#3caf9c'}>
+              <Text style={{ fontSize: 22, color: '#002157' }}>{`${this.state.daysMargin}%`}</Text>
+              <Text style={{ fontSize: 16, color: '#002157' }}>completed</Text>
+            </PercentageCircle>
+          </View>
+        </View>
+        <View style={{flex: 1, width: '50%', alignItems: 'stretch', justifyContent: 'center'}}>
+          <View style={styles.tabBarRow}>
+            <View style={styles.imageHolder}>
+              <Image style={styles.img} source={require('../imgs/pill-smaller.png')} />
+            </View>
+            <View style={styles.tabBarHolder}>
+              <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 1 }}
+                colors={['#56c17b', '#2ca5af']}
+                style={styles.barGreen}>
+                <TouchableOpacity disabled={true} style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin : 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
+                    <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+              <View style={styles.barBottomRow}>
+                <Text style={styles.barLeftText}>0</Text>
+                <Text style={styles.barRightText}>180</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.tabBarRow}>
+            <View style={styles.imageHolder}>
+              <Image style={styles.img} source={require('../imgs/heart.png')} />
+            </View>
+            <View style={styles.tabBarHolder}>
+              <LinearGradient
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.3, y: 1 }}
+                colors={['#ac66ea', '#3655bb']}
+                style={styles.barPurple}>
+                <TouchableOpacity disabled={true} style={[styles.innerBar, { marginLeft: `${this.state.daysMargin ? this.state.daysMargin : 0}%`, width: `${this.state.daysWidth ? this.state.daysWidth : 100}%` }]}>
+                    <Text style={styles.innerBarText}>{this.state.leftDays} days left</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+              <View style={styles.barBottomRow}>
+                <Text style={styles.barLeftText}>0</Text>
+                <Text style={styles.barRightText}>30</Text>
+              </View>
+            </View>
+          </View >
+
+          <View style={styles.infoArea}>
+            <TouchableOpacity disabled={true} style={styles.moneyArea}>
+              <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
+              <Text style={styles.areaText}>{this.state.currency} saved</Text>
+            </TouchableOpacity>
+            <TouchableOpacity disabled={true} style={styles.ciggarettesArea}>
+              <Text style={styles.areaTextBolded}>{this.state.notSmoked}</Text>
+              <Text style={styles.areaTextSmaller}>ciggarettes not smoked</Text>
+            </TouchableOpacity>
+            <TouchableOpacity disabled={true} style={styles.daysArea}>
+              <Text style={styles.areaTextBolded}>{this.state.daysSinceStart}</Text>
+              <Text style={styles.areaTextSmaller}>days smoke free</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ImageBackground>
+      :
       <ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/backgroud12.png')}>
@@ -160,8 +257,7 @@ export default class ProgressScreen extends Component{
             <Text style={styles.areaTextSmaller}>days smoke free</Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
-    );
+      </ImageBackground>;
   }
 }
 
@@ -171,6 +267,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  rowContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    resizeMode: 'cover',
+    alignItems: 'flex-start',
   },
 
   logo: {
@@ -193,6 +296,13 @@ const styles = StyleSheet.create({
     maxHeight: '20%',
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+
+  rowHeaderContainer: {
+    flex: 1,
+    maxHeight: '20%',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
 
   tabBarRow: {

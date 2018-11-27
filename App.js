@@ -20,38 +20,29 @@ export default class tabexapp extends Component {
       notificationCount: 0,
     };
 
+    PushNotification.configure({
 
-PushNotification.configure({
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: this._notificationHandler.bind(this),
 
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function(token) {
-        console.log( 'TOKEN:', token );
-    },
+        // IOS ONLY (optional): default: all - Permissions to register.
+        permissions: {
+            alert: true,
+            badge: true,
+            sound: true,
+          },
 
-    // (required) Called when a remote or local notification is opened or received
-    onNotification: this._notificationHandler.bind(this),
+        // Should the initial notification be popped automatically
+        // default: true
+        popInitialNotification: true,
 
-    // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-    senderID: "YOUR GCM (OR FCM) SENDER ID",
-
-    // IOS ONLY (optional): default: all - Permissions to register.
-    permissions: {
-        alert: true,
-        badge: true,
-        sound: true,
-    },
-
-    // Should the initial notification be popped automatically
-    // default: true
-    popInitialNotification: true,
-
-    /**
-      * (optional) default: true
-      * - Specified if permissions (ios) and token (android and ios) will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      */
-    requestPermissions: true,
-});
+        /**
+          * (optional) default: true
+          * - Specified if permissions (ios) and token (android and ios) will requested or not,
+          * - if not, you must call PushNotificationsHandler.requestPermissions() later
+          */
+        requestPermissions: true,
+      });
 
     this._setUser = this._setUser.bind(this);
     this._loadUser = this._loadUser.bind(this);
@@ -113,26 +104,26 @@ PushNotification.configure({
 
       console.log('PushNotification running in background');
 
-      let date = moment().add(30, 'min').toDate();
+      let date = moment().add(10, 'min').toDate();
       console.log(date);
 
       if (Platform === 'ios') {
         date = notificationSchedule.toISOString();
       }
 
-      PushNotification.localNotificationSchedule({
+      PushNotification.localNotification({
         id: Date.now(),
-        bigText, // (optional) default: 'message' prop
+        bigText: 'This is mdg', // (optional) default: 'message' prop
         date,
         title: 'Tabex Tracking', // (optional)
-        message, // (required)
+        message: 'You have a maassaaggee', // (required)
         largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
         smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
         subText: 'Tabex tracking', // (optional) default: none
         color: 'blue',
         backgroundColor: 'darkBlue',
-        actions: `[${button1}, ${button2}]`,  // (Android only) See the doc for notification actions to know more
       });
+
       PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
     }
   }
