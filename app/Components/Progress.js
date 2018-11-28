@@ -78,15 +78,12 @@ export default class ProgressScreen extends Component{
   }
 
   _orientationDidChange(orientation) {
-    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+    this.setState({ isLandScape: orientation === 'LANDSCAPE' });
   }
 
   componentWillMount() {
     const initial = Orientation.getInitialOrientation();
-    this._orientationDidChange(initial);
-  }
-
-  componentDidMount() {
+    this.setState({ isLandScape: initial === 'LANDSCAPE' });
     UserStore.on('user-updated', this._getUserInfo);
     UserStore.on('user-saved', () => loadUser());
     Orientation.addOrientationListener(this._orientationDidChange);
@@ -99,16 +96,14 @@ export default class ProgressScreen extends Component{
   }
 
   render() {
-    return this.state.isLandScape ?
-      <ImageBackground
+    if (this.state.isLandScape) {
+      return <ImageBackground
         style={styles.rowContainer}
         source={require('../imgs/backgroud12.png')}>
-        <View style={{flex: 1, width: '50%',  alignItems: 'stretch', justifyContent: 'flex-start'}}>
-          <View style={styles.rowContainer}>
-            <Image
-            style={styles.logo}
-            source={require('../imgs/trackingi.png')}/>
-          </View>
+        <View style={{ flex: 1, width: '50%',  height: '100%', alignItems: 'stretch', justifyContent: 'flex-start' }}>
+        <Image
+        style={[styles.logo, {height: '30%'}]}
+        source={require('../imgs/trackingi.png')}/>
 
           <View style={styles.rowHeaderContainer}>
             <PercentageCircle
@@ -123,8 +118,8 @@ export default class ProgressScreen extends Component{
             </PercentageCircle>
           </View>
         </View>
-        <View style={{flex: 1, width: '50%', alignItems: 'stretch', justifyContent: 'center'}}>
-          <View style={styles.tabBarRow}>
+        <View style={{flex: 1, width: '50%', height: '100%', alignItems: 'stretch', justifyContent: 'center'}}>
+          <View style={[styles.tabBarRow, { maxHeight: '33%' }]}>
             <View style={styles.imageHolder}>
               <Image style={styles.img} source={require('../imgs/pill-smaller.png')} />
             </View>
@@ -145,7 +140,7 @@ export default class ProgressScreen extends Component{
             </View>
           </View>
 
-          <View style={styles.tabBarRow}>
+          <View style={[styles.tabBarRow, { maxHeight: '33%' }]}>
             <View style={styles.imageHolder}>
               <Image style={styles.img} source={require('../imgs/heart.png')} />
             </View>
@@ -166,31 +161,29 @@ export default class ProgressScreen extends Component{
             </View>
           </View >
 
-          <View style={styles.infoArea}>
+          <View style={[styles.infoArea, { maxHeight: '33%' }]}>
             <TouchableOpacity disabled={true} style={styles.moneyArea}>
-              <Text style={styles.areaTextBolded}>{this.state.moneySaved}</Text>
-              <Text style={styles.areaText}>{this.state.currency} saved</Text>
+              <Text style={[styles.areaTextBolded, {fontSize: 12}]}>{this.state.moneySaved}</Text>
+              <Text style={[styles.areaText, { fontSize: 12 }]}>{this.state.currency} saved</Text>
             </TouchableOpacity>
             <TouchableOpacity disabled={true} style={styles.ciggarettesArea}>
-              <Text style={styles.areaTextBolded}>{this.state.notSmoked}</Text>
-              <Text style={styles.areaTextSmaller}>ciggarettes not smoked</Text>
+              <Text style={[styles.areaTextBolded, { fontSize: 12 }]}>{this.state.notSmoked}</Text>
+              <Text style={[styles.areaTextSmaller, { fontSize: 12 }]}>ciggarettes not smoked</Text>
             </TouchableOpacity>
             <TouchableOpacity disabled={true} style={styles.daysArea}>
-              <Text style={styles.areaTextBolded}>{this.state.daysSinceStart}</Text>
-              <Text style={styles.areaTextSmaller}>days smoke free</Text>
+              <Text style={[styles.areaTextBolded, { fontSize: 12 }]}>{this.state.daysSinceStart}</Text>
+              <Text style={[styles.areaTextSmaller, { fontSize: 12 }]}>days smoke free</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ImageBackground>
-      :
-      <ImageBackground
+    } else {
+      return <ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/backgroud12.png')}>
-        <View style={styles.container}>
-          <Image
-            style={styles.logo}
-            source={require('../imgs/trackingi.png')}/>
-        </View>
+        <Image
+        style={styles.logo}
+        source={require('../imgs/trackingi.png')}/>
         <View style={styles.headerContainer}>
           <PercentageCircle
             radius={60}
@@ -205,7 +198,7 @@ export default class ProgressScreen extends Component{
         </View>
         <View style={styles.tabBarRow}>
           <View style={styles.imageHolder}>
-            <Image style={styles.img} source={require('../imgs/pill-smaller.png')} />
+            <Image style={[styles.img, { paddingRight: 25 }]} source={require('../imgs/pill-smaller.png')} />
           </View>
           <View style={styles.tabBarHolder}>
             <LinearGradient
@@ -225,7 +218,7 @@ export default class ProgressScreen extends Component{
         </View>
         <View style={styles.tabBarRow}>
           <View style={styles.imageHolder}>
-            <Image style={styles.img} source={require('../imgs/heart.png')} />
+            <Image style={[styles.img, { paddingRight: 25 }]} source={require('../imgs/heart.png')} />
           </View>
           <View style={styles.tabBarHolder}>
             <LinearGradient
@@ -258,10 +251,17 @@ export default class ProgressScreen extends Component{
           </TouchableOpacity>
         </View>
       </ImageBackground>;
+    }
   }
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    resizeMode: 'contain',
+    justifyContent: 'flex-start',
+    flex: 1,
+  },
+
   container: {
     flex: 1,
     resizeMode: 'cover',
@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
     height: '10%',
     marginTop: 30,
     marginBottom: 10,
+    alignSelf: 'center',
     resizeMode: 'contain',
   },
 
@@ -300,9 +301,9 @@ const styles = StyleSheet.create({
 
   rowHeaderContainer: {
     flex: 1,
-    maxHeight: '20%',
+    maxHeight: '50%',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
 
   tabBarRow: {
@@ -321,12 +322,6 @@ const styles = StyleSheet.create({
   tabBarHolder: {
     width: '90%',
     height: 70,
-  },
-
-  backgroundImage: {
-    resizeMode: 'contain',
-    justifyContent: 'flex-start',
-    flex: 1,
   },
 
   barGreen: {

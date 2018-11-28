@@ -94,15 +94,12 @@ export default class Home extends Component {
   }
 
   _orientationDidChange(orientation) {
-    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+    this.setState({ isLandScape: orientation === 'LANDSCAPE' });
   }
 
   componentWillMount() {
     const initial = Orientation.getInitialOrientation();
-    this._orientationDidChange(initial);
-  }
-
-  componentDidMount() {
+    this.setState({ isLandScape: initial === 'LANDSCAPE' });
     UserStore.on('user-updated', this._getUser);
     PillStore.on('pills-increased', this._incrementPills);
     UserStore.on('user-saved', () => loadUser());
@@ -236,9 +233,10 @@ const styles = StyleSheet.create({
   containerInner: {
     flex: 1,
     flexDirection: 'column',
-    maxHeight: '90%',
+    maxHeight: '95%',
     width: '80%',
-    padding: 12,
+    margin: 5,
+    padding: 20,
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
     shadowColor: '#000',

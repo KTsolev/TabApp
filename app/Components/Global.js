@@ -5,20 +5,25 @@ import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
+import Orientation from 'react-native-orientation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 
 export default class Global extends Component{
   constructor(props) {
     super(props);
+
     const jsonUser = UserStore.getUser();
-    let coeficient =  moment().diff(moment(jsonUser.startingDate), 'days');
     const window = Dimensions.get('window');
     const { width, height }  = window;
     const LATITUDE_DELTA = 1.5;
     const ASPECT_RATIO = (width / height);
     const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+    let coeficient =  moment().diff(moment(jsonUser.startingDate), 'days');
+
     this.state = {
       peopleArroundGLobe: coeficient < 0 ? 135565 : 135565 + coeficient,
+      isLandScape: false,
       initialRegion: {
           latitude: 47.810175,
           longitude: 13.045552,
@@ -79,7 +84,11 @@ export default class Global extends Component{
     };
 
     this._getUserStartingDate = this._getUserStartingDate.bind(this);
+    this._orientationDidChange = this._orientationDidChange.bind(this);
+  }
 
+  _orientationDidChange(orientation) {
+    this.setState({ isLandScape: orientation === 'LANDSCAPE' });
   }
 
   _getUserStartingDate() {
@@ -90,19 +99,69 @@ export default class Global extends Component{
     });
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    const initial = Orientation.getInitialOrientation();
+    this.setState({ isLandScape: initial === 'LANDSCAPE' });
     UserStore.on('user-updated', this._getUserStartingDate);
     UserStore.on('user-saved', () => loadUser());
+    Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUserStartingDate);
     UserStore.removeListener('user-saved', () => loadUser());
+    Orientation.removeOrientationListener(this._orientationDidChange);
   }
 
   render() {
-    return (
-      <ImageBackground
+    if (this.state.isLandScape) {
+      return (
+        <ImageBackground
+        style={[styles.backgroundImage, { flexDirection: 'row' }]}
+        source={require('../imgs/backgroud12.png')}>
+          <View style={{ flex: 1, width: '50%' }}>
+              <MapView
+                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+                 style={[styles.map, { height: 350, width: 250, alignSelf: 'center' }]}
+                 loadingEnabled={true}
+                 initialRegion={this.state.initialRegion}
+                 region={this.state.region}>
+                  {this.state.markerPositions.map((marker, index) => (
+                    <Marker
+                      key={index}
+                      coordinate={marker.coordinates}
+                      title={marker.title}
+                    />
+                  ))}
+               </MapView>
+          </View>
+          <View style={{ flex: 1, width: '50%', alignItems: 'flex-start' }}>
+          <Image
+            style={[styles.logo, { alignSelf: 'center' }]}
+            resizeMode='contain'
+            source={require('../imgs/trackingi.png')}/>
+          <View style={[styles.containerInner, { flex: 2,  maxHeight: '90%', padding: 40 }]}>
+            <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
+              {this.state.peopleArroundGLobe}
+            </Text>
+            <Text style={{ marginTop: 5, fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
+              people arround the world quit smoking today
+            </Text>
+            <View style={styles.innerRow}>
+              <Image
+                style={styles.img}
+                resizeMode='contain'
+                source={require('../imgs/pin.png')}/>
+              <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+                {this.state.peopleArroundGLobe}
+                people in 7 different countries and 2 continents quit smoking today.
+              </Text>
+            </View>
+          </View>
+        </View>
+      </ImageBackground>);
+    } else {
+      return (<ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/backgroud12.png')}>
         <Image
@@ -136,12 +195,13 @@ export default class Global extends Component{
                 resizeMode='contain'
                 source={require('../imgs/pin.png')}/>
               <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-                {this.state.peopleArroundGLobe} people in 7 different countries and 2 continents quit smoking today.
+                {this.state.peopleArroundGLobe}
+                people in 7 different countries and 2 continents quit smoking today.
               </Text>
             </View>
           </View>
-      </ImageBackground>
-    );
+      </ImageBackground>);
+    }
   }
 }
 

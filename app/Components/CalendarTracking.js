@@ -9,8 +9,7 @@ import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
 import Orientation from 'react-native-orientation';
 
-
-export default class CalendarTr extends Component{
+export default class CalendarTracking extends Component{
   constructor(props) {
     super(props);
     this._getUserData = this._getUserData.bind(this);
@@ -31,6 +30,7 @@ export default class CalendarTr extends Component{
       pills: Number(user.pills) || pills.count,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       pillsTaken,
+      isLandScape: false,
       disabled: daysSinceStart < 0 ? true : disabled,
       lastPillTaken: user.lastPillTaken,
       dates,
@@ -74,8 +74,10 @@ export default class CalendarTr extends Component{
             marked: true,
             customStyles: {
               container: minDate.isSameOrBefore(moment(), 'days') ? {
-                backgroundColor:  minDate.isSame(moment(), 'days') ? '#40a30f' : '#57c279',
-              } : { backgroundColor:  '#0187e6'},
+                backgroundColor:  minDate.isSame(moment(), 'days') ? '#57c279' : '#2ca5af',
+              } : {
+                backgroundColor:  '#0187e6',
+              },
               text: {
                 color: 'white',
               },
@@ -92,8 +94,9 @@ export default class CalendarTr extends Component{
           marked: true,
           customStyles: {
               container: {
-                backgroundColor: '#008c2c',
-                border: '2px solid green',
+                backgroundColor: '#0187e6',
+                borderColor: '#57c279',
+                borderWidth: 2,
               },
               text: {
                 color: 'white',
@@ -107,8 +110,9 @@ export default class CalendarTr extends Component{
             marked: true,
             customStyles: {
                 container: {
-                  backgroundColor: '#008c2c',
-                  border: '2px solid green',
+                  backgroundColor: '#0187e6',
+                  borderColor: '#57c279',
+                  borderWidth: 2,
                 },
                 text: {
                   color: 'white',
@@ -122,8 +126,10 @@ export default class CalendarTr extends Component{
           marked: true,
           customStyles: {
               container: {
-                backgroundColor: '#008c2c',
-                border: '2px solid green',
+                backgroundColor: '#0187e6',
+                borderColor: '#57c279',
+                borderWidth: 2,
+                elevation: 4,
               },
               text: {
                 color: 'white',
@@ -137,8 +143,10 @@ export default class CalendarTr extends Component{
             marked: true,
             customStyles: {
                 container: {
-                  backgroundColor: '#008c2c',
-                  border: '2px solid green',
+                  backgroundColor: '#0187e6',
+                  borderColor: '#57c279',
+                  borderWidth: 2,
+                  elevation: 4,
                 },
                 text: {
                   color: 'white',
@@ -165,7 +173,7 @@ export default class CalendarTr extends Component{
   }
 
   _orientationDidChange(orientation) {
-    this.setState({ isLandScape: orientation === 'LANDSCAPE'});
+    this.setState({ isLandScape: orientation === 'LANDSCAPE' });
   }
 
   componentDidMount() {
@@ -192,33 +200,64 @@ export default class CalendarTr extends Component{
           <ImageBackground
             source={require('../imgs/rectangle.png')}
             style={styles.backgroundImage}>
-            <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
-            <Calendar
-                style={styles.calendar}
-                startFromMonday={true}
-                allowRangeSelection={true}
-                markingType={'custom'}
-                markedDates={this.state.dates ? this.state.dates : {}}
-                theme={{
-                  arrowColor: 'white',
-                  monthTextColor: 'white',
-                  calendarBackground: '#0187e6',
-                  textSectionTitleColor: '#fff',
-                  selectedDayTextColor: '#ffffff',
-                  todayTextColor: '#fff',
-                  dayTextColor: '#fff',
-                  textDisabledColor: '#d9e1e8',
-                  dotColor: '#2d4150',
-                  arrowColor: 'white',
-                  monthTextColor: 'white',
-                  textDayFontFamily: 'monospace',
-                  textMonthFontFamily: 'monospace',
-                  textDayHeaderFontFamily: 'monospace',
-                  textDayFontSize: 14,
-                  textMonthFontSize: 14,
-                  textDayHeaderFontSize: 14,
-                }}
-              />
+              <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
+                <Calendar
+                    style={styles.calendar}
+                    startFromMonday={true}
+                    allowRangeSelection={true}
+                    markingType={'custom'}
+                    markedDates={this.state.dates ? this.state.dates : {}}
+                    theme={{
+                      arrowColor: 'white',
+                      monthTextColor: 'white',
+                      calendarBackground: '#0187e6',
+                      textSectionTitleColor: '#fff',
+                      selectedDayTextColor: '#ffffff',
+                      todayTextColor: '#fff',
+                      dayTextColor: '#fff',
+                      textDisabledColor: '#d9e1e8',
+                      dotColor: '#2d4150',
+                      arrowColor: 'white',
+                      monthTextColor: 'white',
+                      textDayFontFamily: 'monospace',
+                      textMonthFontFamily: 'monospace',
+                      textDayHeaderFontFamily: 'monospace',
+                      textDayFontSize: 14,
+                      textMonthFontSize: 14,
+                      textDayHeaderFontSize: 14,
+                      'stylesheet.calendar.main': {
+                        week: {
+                           marginTop: 3,
+                           marginBottom: 3,
+                           flexDirection: 'row',
+                           justifyContent: 'space-around'
+                         },
+                      },
+                      'stylesheet.calendar.header': {
+                        monthText: {
+                          fontSize: 14,
+                          fontFamily: 'monospace',
+                          fontWeight: 'normal',
+                          color: '#fff',
+                          margin: 2,
+                        },
+                        week: {
+                          marginTop: 3,
+                          flexDirection: 'row',
+                          justifyContent: 'space-around',
+                        },
+                        dayHeader: {
+                          marginTop: 2,
+                          marginBottom: 2,
+                          width: 32,
+                          textAlign: 'center',
+                          fontSize: 12,
+                          fontFamily: 'monospace',
+                          color: '#fff',
+                        },
+                      },
+                    }}
+                  />
             </ImageBackground>
             <View style={styles.container}>
               <View style={styles.containerInner}>
@@ -255,10 +294,10 @@ const styles = StyleSheet.create({
 
   calendar: {
     flex: 1,
-    maxWidth: '90%',
-    padding: 20,
+    width: '80%',
+    height: '60%',
+    marginBottom: 220,
     alignSelf: 'center',
-    marginBottom: 70,
   },
 
   divider: {
@@ -270,10 +309,10 @@ const styles = StyleSheet.create({
   },
 
   backgroundImage: {
-    flex: 2,
+    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    alignContent: 'center',
     resizeMode: 'contain',
   },
 
@@ -288,11 +327,12 @@ const styles = StyleSheet.create({
   containerInner: {
     flex: 1,
     width: '85%',
-    height: '100%',
+    height: '80%',
     flexDirection: 'column',
     justifyContent: 'center',
     padding: 20,
     margin: 15,
+    marginTop: -120,
     alignItems: 'center',
     alignSelf: 'center',
     backgroundColor: '#f1f1f1',
