@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
@@ -7,6 +6,17 @@ import moment from 'moment';
 import UserStore from '../data/UserStore';
 import Orientation from 'react-native-orientation';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import {
+  View,
+  Text,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Linking,
+  LinkingIOS,
+  Dimensions } from 'react-native';
 
 export default class Global extends Component{
   constructor(props) {
@@ -136,10 +146,13 @@ export default class Global extends Component{
                </MapView>
           </View>
           <View style={{ flex: 1, width: '50%', alignItems: 'flex-start' }}>
-          <Image
-            style={[styles.logo, { alignSelf: 'center' }]}
-            resizeMode='contain'
-            source={require('../imgs/trackingi.png')}/>
+            <TouchableOpacity
+              style={{justifyContent: 'center', alignSelf: 'center'}}
+              onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+              <Image
+                style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
+                source={require('../imgs/trackingi.png')} />
+            </TouchableOpacity>
           <View style={[styles.containerInner, { flex: 2,  maxHeight: '90%', padding: 40 }]}>
             <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
               {this.state.peopleArroundGLobe}
@@ -164,10 +177,12 @@ export default class Global extends Component{
       return (<ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/backgroud12.png')}>
-        <Image
-          style={styles.logo}
-          resizeMode='contain'
-          source={require('../imgs/trackingi.png')}/>
+        <TouchableOpacity
+          onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+          <Image
+            style={styles.logo}
+            source={require('../imgs/trackingi.png')} />
+        </TouchableOpacity>
           <MapView
              provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
@@ -218,6 +233,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     maxWidth: 200,
     maxHeight: 250,
+    alignSelf: 'center',
+    resizeMode: 'contain',
   },
 
   map: {

@@ -32,6 +32,7 @@ export function addNewUserProps(data) {
 };
 
 export async function saveUser(data) {
+  console.log(data)
   try {
     await AsyncStorage.setItem('userData', JSON.stringify(data));
     setTimeout(() => {
@@ -43,6 +44,7 @@ export async function saveUser(data) {
     console.log(err);
   }
 };
+
 
 export async function loadUser() {
   try {
@@ -56,4 +58,23 @@ export async function loadUser() {
   } catch (err) {
     console.log(err);
   }
+};
+
+export async function deleteUser() {
+  try {
+    await AsyncStorage.clear();
+    setTimeout(() => {
+      dispatcher.dispatch({
+        type: 'delete-user',
+      });
+    }, 1000);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export function resetCompleted() {
+  dispatcher.dispatch({
+      type: 'reset-completed',
+  });
 };

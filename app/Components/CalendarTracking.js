@@ -1,6 +1,16 @@
 import React, { Component } from 'react';
 import PillsButton from './PillsButton';
-import { View, Text, Image, ImageBackground, StyleSheet, ScrollView } from 'react-native';
+import { View,
+  Text,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+  Linking,
+  LinkingIOS
+      } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
@@ -37,29 +47,34 @@ export default class CalendarTracking extends Component{
     };
   }
 
-  _increasePills() {
-    if (!this.state.disabled) {
-      let pills = PillStore.getPills();
-      let sum = this.state.pillsTaken + 1;
+_increasePills() {
+    let pills = PillStore.getPills();
 
+    if (!this.state.disabled) {
+      let sum = this.state.pillsTaken + 1;
       this.setState({
         pills: pills.count,
         pillsTaken: sum,
         lastPillTaken: pills.lastPillTaken,
       });
+
+      addNewUserProps({
+        pills: pills.count,
+        pillsTaken: pills.count,});
+      setTimeout(() => saveUser(UserStore.getUser()), 1000);
     }
   }
 
   _dozeHandler() {
     this.setState({ disabled: true });
-    const user = UserStore.getUser();
-    let sum = Number(user.pillsTaken) + this.state.pills;
     addNewUserProps({
-      pillsTaken: sum,
+      pills: 1,
+      pillsTaken: this.state.pillsTaken,
       lastPillTaken: this.state.lastPillTaken,
-      disabled: true, });
+      disabled: true });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
+
 
   _getSelectedRange(startDate, endDate) {
 
@@ -165,6 +180,11 @@ export default class CalendarTracking extends Component{
 
   _getUserData() {
     const jsonUser = UserStore.getUser();
+    
+    if (!jsonUser) {
+    	return;
+    }
+    
     const datesObjects = this._getSelectedRange(jsonUser.startingDate, jsonUser.endingDate);
 
     this.setState({
@@ -177,7 +197,6 @@ export default class CalendarTracking extends Component{
   }
 
   componentDidMount() {
-    UserStore.on('user-updated', this._getUserData);
     UserStore.on('user-created', this._getUserData);
     PillStore.on('pills-increased', this._increasePills);
     UserStore.on('user-saved', () => loadUser());
@@ -186,7 +205,6 @@ export default class CalendarTracking extends Component{
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-updated', this._getUserData);
     UserStore.removeListener('user-created', this._getUserData);
     PillStore.removeListener('pills-increased', this._increasePills);
     UserStore.removeListener('user-saved', () => loadUser());
@@ -196,11 +214,17 @@ export default class CalendarTracking extends Component{
 
   render() {
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={this.state.isLandScape ? styles.rowContainer : styles.container }>
           <ImageBackground
             source={require('../imgs/rectangle.png')}
             style={styles.backgroundImage}>
-              <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
+              <TouchableOpacity
+                style={styles.logoHollder}
+                onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+                <Image
+                  style={styles.logo}
+                  source={require('../imgs/trackingi.png')} />
+              </TouchableOpacity>
                 <Calendar
                     style={styles.calendar}
                     startFromMonday={true}
@@ -292,6 +316,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
 
+  rowContainer: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+
   calendar: {
     flex: 1,
     width: '80%',
@@ -345,11 +374,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 1.0,
   },
 
-  logo: {
+  logoHollder: {
+    marginTop: 20,
+    marginBottom: 20,
     width: 150,
     height: '10%',
-    marginTop: 30,
-    marginBottom: 10,
+  },
+
+  logo: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
 

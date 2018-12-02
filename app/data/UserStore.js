@@ -36,7 +36,7 @@ class UserStore extends EventEmmiter {
       case 'user-new-props-added':
         this.addNewData(action.data);
         break;
-      case 'user-deleted':
+      case 'delete-user':
         this.deleteUser();
         break;
       case 'show-modal':

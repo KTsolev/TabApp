@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import { View,
+  Text,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Linking,
+  LinkingIOS
+      } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
@@ -11,9 +20,9 @@ export default class ProgressScreen extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 1;
+    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
-    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days') < 0 ? 30: moment().diff(moment(user.startingDate), 'days');
     const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
     const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
@@ -44,7 +53,7 @@ export default class ProgressScreen extends Component{
   }
 
   _getUserInfo() {
-    const user = UserStore.getUser();
+     const user = UserStore.getUser();
     const pills = user.pillsTaken ? Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
@@ -101,9 +110,13 @@ export default class ProgressScreen extends Component{
         style={styles.rowContainer}
         source={require('../imgs/backgroud12.png')}>
         <View style={{ flex: 1, width: '50%',  height: '100%', alignItems: 'stretch', justifyContent: 'flex-start' }}>
-        <Image
-        style={[styles.logo, {height: '30%'}]}
-        source={require('../imgs/trackingi.png')}/>
+          <TouchableOpacity
+            style={styles.logoHollder}
+            onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+            <Image
+              style={styles.logo}
+              source={require('../imgs/trackingi.png')} />
+          </TouchableOpacity>
 
           <View style={styles.rowHeaderContainer}>
             <PercentageCircle
@@ -181,9 +194,13 @@ export default class ProgressScreen extends Component{
       return <ImageBackground
         style={styles.backgroundImage}
         source={require('../imgs/backgroud12.png')}>
-        <Image
-        style={styles.logo}
-        source={require('../imgs/trackingi.png')}/>
+        <TouchableOpacity
+          style={styles.logoHollder}
+          onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+          <Image
+            style={styles.logo}
+            source={require('../imgs/trackingi.png')} />
+        </TouchableOpacity>
         <View style={styles.headerContainer}>
           <PercentageCircle
             radius={60}
@@ -276,12 +293,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
 
-  logo: {
+  logoHollder: {
     width: 150,
     height: '10%',
     marginTop: 30,
     marginBottom: 10,
     alignSelf: 'center',
+  },
+
+  logo: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
 

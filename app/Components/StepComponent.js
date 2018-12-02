@@ -5,7 +5,6 @@
   import React, { Component } from 'react';
   import { Divider } from 'react-native-elements';
   import { createUser, saveUser, } from '../data/FluxActions';
-  import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
   import {
     StyleSheet,
     Text,
@@ -13,6 +12,7 @@
     Image,
     TouchableOpacity,
     ImageBackground,
+    Keyboard,
     Picker,
     TextInput } from 'react-native';
 
@@ -47,20 +47,15 @@
 
     constructor(props) {
       super(props);
-      let index = Step.currenciesArray.indexOf(props.userData.currency);
+      
       this.state = {
-        currency: `key${index}` || 'key0',
+        currency: 'key0',
         pricePerPack: props.userData.pricePerPack || 0,
         ciggarettesPerDay: props.userData.ciggarettesPerDay || 0,
         startingDate: props.userData.startingDate || '',
         isDateTimePickerVisible: false,
+        activeColors: ['#009fea', '#0544a8'],
       };
-
-      if (!this.state.disabled) {
-        this.setState({ activeColors: ['#009fea', '#0544a8'] });
-      } else {
-        this.setState({ activeColors: ['#e3f3fd', '#e7e7e7'] });
-      }
 
       this.selectCurrency = this.selectCurrency.bind(this);
       this.selectPricePerPack = this.selectPricePerPack.bind(this);
@@ -111,7 +106,7 @@
               <Picker
                 style={{ width: 250, height: 50 }}
                 selectedValue={this.state.currency}
-                onValueChange={this.selectCurrency.bind(this)}>
+                onValueChange={this.selectCurrency}>
                  {Step.currenciesArray.map((item, index) => {
                     return (<Picker.Item label={item} value={`key${index}`} key={index} />);
                   })}
@@ -134,7 +129,7 @@
               onFocus={()=>this.setState({ pricePerPack: '' })}
               onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ pricePerPack: val }) : 0}
               onEndEditing={this.selectPricePerPack}
-              value={this.state.pricePerPack}
+              value={this.state.pricePerPack.toString()}
             />
             {currencyDropDown}
           </View>;
@@ -160,7 +155,7 @@
               onFocus={()=>this.setState({ ciggarettesPerDay: '' })}
               onChangeText={(val) => !Number.isNaN(val) && val > 0 ? this.setState({ ciggarettesPerDay: val }) : 0}
               onEndEditing={this.selectCiggarettes}
-              value={this.state.ciggarettesPerDay}
+              value={this.state.ciggarettesPerDay.toString()}
             />
           </View>;
           buttons =  <View><LinearGradient
@@ -245,6 +240,7 @@
         prevLabel: 'PREV',
         isLast: false,
         isFirts: false,
+        keyboardShown: false,
         invalidData: false,
         userData: {},
         completedSteps: Array(this.props.children.length),
@@ -254,6 +250,8 @@
       this._nextStep = this._nextStep.bind(this);
       this._prevStep = this._prevStep.bind(this);
       this._updateUser = this._updateUser.bind(this);
+      this._keyboardDidHide = this._keyboardDidHide.bind(this);
+      this._keyboardDidShow = this._keyboardDidShow.bind(this);
     }
 
     _nextStep() {
@@ -293,17 +291,30 @@
       });
     }
 
+    _keyboardDidShow () {
+      this.setState({ keyboardShown: true });
+    }
+
+    _keyboardDidHide () {
+      this.setState({ keyboardShown: false });
+    }
+
+
     componentDidMount() {
       loc(this);
+      this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+      this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     }
 
     componentWillUnMount() {
       rol();
+      this.keyboardDidShowListener.remove();
+      this.keyboardDidHideListener.remove();
     }
 
     render() {
       return (
-        <KeyboardAwareScrollView style={styles.container}>
+        <View  style={this.state.keyboardShown ? [styles.container, {position: "absolute", zIndex: -5}] : styles.container}>
             <View style={styles.headerContainer}>
               <ImageBackground source={require('../imgs/photo.png')} style={styles.headerBackground} >
                   <Image source={require('../imgs/tabex-logo.png')} style={styles.image} />
@@ -342,7 +353,7 @@
             <View style={styles.imageHolder}>
               <Image source={require('../imgs/leaves.png')}  style={styles.footerImage}/>
             </View>
-        </KeyboardAwareScrollView>);
+        </View>);
     }
   }
 
@@ -360,6 +371,8 @@
     imageHolder: {
       flex: 1,
       maxHeight: '10%',
+      paddingTop: 5,
+      alignItems: 'flex-end',
       justifyContent: 'flex-end',
     },
 
@@ -398,7 +411,6 @@
     footerImage: {
       width: '100%',
       height: '100%',
-      padding: 35,
     },
 
     errorText: {

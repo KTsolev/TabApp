@@ -5,7 +5,9 @@ import MainNavigator from './app/Components/Navigator';
 import Spinner from './app/Components/Spinner';
 import moment from 'moment';
 import UserStore from './app/data/UserStore';
-import { loadUser } from './app/data/FluxActions';
+import PillStore from './app/data/PillStore';
+import { loadUser, deleteUser, pillsMissed, resetCompleted } from './app/data/FluxActions';
+import Dialog, { DialogTitle, DialogButton, DialogContent } from 'react-native-popup-dialog';
 
 let PushNotification = require('react-native-push-notification');
 
@@ -17,6 +19,7 @@ export default class tabexapp extends Component {
     this.state = {
       isUserSet: false,
       isUserLoading: true,
+      showDialog: false,
       notificationCount: 0,
     };
 
@@ -46,12 +49,28 @@ export default class tabexapp extends Component {
 
     this._setUser = this._setUser.bind(this);
     this._loadUser = this._loadUser.bind(this);
+    this._toggleModal = this._toggleModal.bind(this);
     this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   _loadUser() {
     const user = UserStore.getUser();
-    this._setUser({ isFinished: user !== undefined && user !== null, isUserLoading: !(user !== undefined && user !== null) })
+    this._setUser({
+      isFinished: user !== undefined && user !== null,
+      isUserLoading: !(user !== undefined && user !== null),
+    });
+    if (user) {
+      this.setState({
+        isFinished: true,
+        isUserLoading: false,
+        hideDialog: false,
+      });
+       
+      if (moment().diff(moment(user.lastPillTaken), 'days') >= 3) {
+        pillsMissed(true);
+      }
+
+    }
   }
 
   _setUser(val) {
@@ -77,31 +96,23 @@ export default class tabexapp extends Component {
     }
   }
 
+  _toggleModal() {
+     let pilsData = PillStore.getPills();
+     
+     if (!pilsData)
+      return;
+     
+     this.setState({
+      isFinished: false,
+      isUserLoading: false,
+      showDialog: pilsData.showResetModal,
+    });
+  }
+
   _handleAppStateChange(appState) {
 
     if (appState === 'background') {
       this.setState({ notificationCount: this.state.notificationCount + 1 });
-      let bigText = '';
-      let message = '';
-      let button1 = '';
-      let button2 = '';
-      let user = UserStore.getUser();
-      console.log('from notifications', user.lastPillTaken)
-      if (!user)
-        return;
-
-      if (moment().diff(moment(user.lastPillTaken), 'day') >= 3) {
-        bigText = 'Hey it seems you missed your pills';
-        message = 'Do you want to reset your treatment?';
-        button1 = 'Reset';
-        button2 = 'Take Pill';
-      } else {
-        bigText = 'Get one closer to smoke-free life by taking your tabex now.';
-        message = 'Get one closer to smoke-free life';
-        button1 = 'I took my pill';
-        button2 = 'Open app';
-      }
-
       console.log('PushNotification running in background');
 
       let date = moment().add(10, 'min').toDate();
@@ -135,6 +146,9 @@ export default class tabexapp extends Component {
     UserStore.on('user-saved', () => loadUser());
     UserStore.on('user-updated', this._loadUser);
     UserStore.on('user-created', this._loadUser);
+    UserStore.on('user-updated', this._loadUser);
+    PillStore.on('pills-missed', this._toggleModal);
+    PillStore.on('reset-completed', this._toggleModal);
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
@@ -145,15 +159,41 @@ export default class tabexapp extends Component {
     UserStore.removeListener('user-saved', () => loadUser());
     UserStore.removeListener('user-created', this._loadUser);
     UserStore.removeListener('user-updated', this._loadUser);
+    PillStore.removeListener('pills-missed', this._toggleModal);
+    PillStore.removeListener('reset-completed', this._toggleModal);
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
   render() {
+    // if (this.state.showDialog) {
+    //   return <Dialog
+    //   visible={this.state.showDialog}
+    //   width={'90%'}
+    //   dialogTitle={<DialogTitle 
+    //   textStyle={{fontSize: 18, padding: 20, color: '#d15b1b'}}
+    //   title="Hey it seems you missed quite few pills!" />
+    //   actions={[
+    //     <DialogButton
+    //       text="Do you want to reset your treatment?"
+    //       textStyle={{color: '#d62b4d', padding: 15}}
+    //       onPress={() => {
+    //         deleteUser();
+    //         resetCompleted();
+    //       }}/>,
+    //     <DialogButton
+    //       text="Take a pill!"
+    //       textStyle={{color: '#1b39d1', padding: 15}}
+    //       onPress={() => <MainNavigator />}
+    //       />
+    //       ]}>
+    //   </Dialog>
+    // }
+    
     if (this.state.isUserLoading) {
       return <Spinner hide={ this.state.isUserLoading }/>;
     }
 
-    if (this.state.isUserSet) {
+    if (this.state.isUserSet && !this.state.showDialog) {
       return <MainNavigator />;
     }
 

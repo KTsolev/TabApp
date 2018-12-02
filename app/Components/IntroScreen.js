@@ -23,7 +23,6 @@ export default class IntroScreen extends Component {
   }
 
   goToStepsHandler() {
-    saveData({ agreed: this.state.agreed });
     this.setState({ goToSteps: !this.state.goToSteps, });
   }
 

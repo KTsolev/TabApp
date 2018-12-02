@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import PercentageCircle from 'react-native-percentage-circle';
 import PillsButton from './PillsButton';
 import moment from 'moment';
-import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { addNewUserProps, saveUser, loadUser, } from '../data/FluxActions';
 import UserStore from '../data/UserStore';
 import PillStore from '../data/PillStore';
 import Orientation from 'react-native-orientation';
+import {
+  Platform,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  Linking,
+  LinkingIOS } from 'react-native';
 
 export default class Home extends Component {
   constructor(props) {
@@ -25,7 +34,7 @@ export default class Home extends Component {
 
     this.state = {
       pills: Number(user.pills) || 1,
-      pillsTaken: Number(user.pillsTaken) || 1,
+      pillsTaken: user.pillsTaken ? Number(user.pillsTaken) || 1 : 1,
       lastPillTaken: user.lastPillTaken,
       timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
@@ -43,7 +52,7 @@ export default class Home extends Component {
     this._orientationDidChange = this._orientationDidChange.bind(this);
   }
 
-  _incrementPills() {
+   _incrementPills() {
     let pills = PillStore.getPills();
 
     if (!this.state.disabled) {
@@ -85,7 +94,7 @@ export default class Home extends Component {
       endingDate,
       isLandScape: false,
       pills: Number(jsonUser.pills),
-      pillsTaken: Number(jsonUser.pillsTaken) || 1,
+      pillsTaken: jsonUser.pillsTaken ? Number(jsonUser.pillsTaken) || 1 : 1,
       currency,
       pricePerPack: jsonUser.pricePerPack && Number(jsonUser.pricePerPack) > 0 ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
       ciggarettesPerDay: jsonUser.ciggarettesPerDay && Number(jsonUser.ciggarettesPerDay) > 0 ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
@@ -121,7 +130,13 @@ export default class Home extends Component {
         <ImageBackground
           style={styles.backgroundImage}
           source={require('../imgs/rectangle.png')}>
-          <Image style={styles.logo} source={require('../imgs/trackingi.png')}/>
+          <TouchableOpacity
+            style={styles.logoHollder}
+            onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+            <Image
+              style={styles.logo}
+              source={require('../imgs/trackingi.png')} />
+          </TouchableOpacity>
           <PercentageCircle
             radius={75}
             percent={this.state.daysSinceStart}
@@ -189,11 +204,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-  logo: {
-    width: 150,
-    height: '10%',
+  logoHollder: {
     marginTop: 20,
     marginBottom: 20,
+    width: 150,
+    height: '10%',
+  },
+
+  logo: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
 

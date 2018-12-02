@@ -8,7 +8,8 @@ class PillStore extends EventEmmiter {
     this.pillsData = {
       count: 1,
       lastPillTaken: null,
-      dissabled: false,
+      disabled: false,
+      showResetModal: false,
     };
   }
 
@@ -18,17 +19,18 @@ class PillStore extends EventEmmiter {
 
   increasePills() {
     if (this.pillsData.count >= 6) {
-      this.pillsData.dissabled = true;
+      this.pillsData.disabled = true;
       this.emit('day-doze-reached');
     } else {
       this.pillsData.count = this.pillsData.count + 1;
-      this.pillsData.lastPillTaken = moment().format();
       this.emit('pills-increased');
     }
+    
+    this.pillsData.lastPillTaken = moment().format();
   }
 
-  forgotPills(pills) {
-    this.pillsData.showResetModal = true;
+  forgotPills() {
+    this.pillsData.showResetModal = !this.pillsData.showResetModal;
     this.emit('pills-missed');
   }
 
@@ -55,6 +57,14 @@ class PillStore extends EventEmmiter {
         this.createNewPillsData(action.data);
         this.emit('recieved-pills-data');
         break;
+      case 'pills-not-taken':
+          forgotPills();
+          this.emit('pills-missed');
+        break;
+      case 'reset-completed':
+        this.showResetModal = false;
+        this.emit('reset-completed');
+      break;  
       default:
         break;
     }

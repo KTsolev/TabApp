@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
-import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
 import Orientation from 'react-native-orientation';
+import {
+  View,
+  Text,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  Linking,
+  LinkingIOS,
+  Dimensions } from 'react-native';
 
 export default class Tips extends Component{
   constructor(props) {
@@ -53,17 +63,20 @@ export default class Tips extends Component{
             style={[styles.backgroundImage, { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', padding: 50 }]}
             source={require('../imgs/backgroud12.png')}>
             <View styles={{ flex: 1, width: '50%', justifyContent: 'center', alignContent: 'center' }}>
-              <Image
-                style={[styles.logo, { maxHeight: '50%' }]}
-                resizeMode='contain'
-                source={require('../imgs/trackingi.png')}/>
+              <TouchableOpacity
+                style={styles.logoHollder}
+                onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
+                <Image
+                  style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
+                  source={require('../imgs/trackingi.png')} />
+              </TouchableOpacity>
 
               <Image
                 style={[styles.bottomLogo, { maxHeight: '50%' }]}
                 resizeMode='contain'
                 source={require('../imgs/tabex-logo.png')}/>
             </View>
-            <View styles={{ flex: 1, width: '50%', justifyContent: 'center', alignContent: 'center' }}>
+            <View styles={{ flex: 1, width: '50%', padding: 50, justifyContent: 'center', alignContent: 'center' }}>
               <View style={[styles.containerInner, { maxWidth: '70%', maxHeight: '50%', padding: 10,  alignSelf: 'center' }]}>
                 <Text style={{ fontSize: 10, color: '#0648aa', textAlign: 'center' }}>
                   {this.state.currentTip}
@@ -85,10 +98,13 @@ export default class Tips extends Component{
           <ImageBackground
             style={styles.backgroundImage}
             source={require('../imgs/backgroud12.png')}>
+            <TouchableOpacity
+              style={styles.logoHollder}
+              onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
               <Image
-                style={styles.logo}
-                resizeMode='contain'
-                source={require('../imgs/trackingi.png')}/>
+                style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
+                source={require('../imgs/trackingi.png')} />
+            </TouchableOpacity>
               <View style={styles.containerInner}>
                 <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
                   {this.state.currentTip}
@@ -124,10 +140,19 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-  logo: {
+  logoHollder: {
     marginTop: 20,
-    maxWidth: 200,
-    maxHeight: '15%',
+    marginBottom: 20,
+    width: 150,
+    height: '15%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+
+  logo: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
 
   bottomLogo: {
@@ -137,7 +162,7 @@ const styles = StyleSheet.create({
 
   characteLogo: {
     maxWidth: 200,
-    maxHeight: '40%',
+    maxHeight: '30%',
   },
 
   containerInner: {
@@ -145,7 +170,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'column',
     maxWidth: '90%',
-    maxHeight: '30%',
+    maxHeight: '40%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',

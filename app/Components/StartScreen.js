@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, ImageBackground, TouchableOpacity } from 'react-native';
 import { CheckBox, Button } from 'react-native-elements';
-import Hyperlink from 'react-native-hyperlink';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   widthPercentageToDP as wp,
