@@ -13,7 +13,7 @@ export default class Spinner extends Component {
     return (
       <ImageBackground
         style={[styles.container, styles.horizontal]}
-        source={require('../imgs/background.png')}>
+        source={require('../imgs/main-background.png')}>
         <ActivityIndicator size="large" color="#dbc63d" animating={true} hidesWhenStopped={this.props.hide}/>
       </ImageBackground>
     );

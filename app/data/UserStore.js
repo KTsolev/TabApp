@@ -39,6 +39,9 @@ class UserStore extends EventEmmiter {
       case 'delete-user':
         this.deleteUser();
         break;
+      case 'reset-completed':
+        this.deleteUser();
+        break;
       case 'show-modal':
         break;
       case 'user-saving':
