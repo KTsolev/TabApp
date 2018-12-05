@@ -116,7 +116,7 @@ export default class tabexapp extends Component {
       this.setState({ notificationCount: this.state.notificationCount + 1 });
       console.log('PushNotification running in background');
 
-      let date = moment().add(10, 'min').toDate();
+      let date = moment().add(2, 'hours').toDate();
       console.log(date);
 
       if (Platform === 'ios') {
@@ -153,7 +153,8 @@ export default class tabexapp extends Component {
         showDialog: false,
         isUserSet: false,
         isUserLoading: false,
-      })});
+      });
+    });
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
@@ -170,7 +171,8 @@ export default class tabexapp extends Component {
         showDialog: false,
         isUserSet: false,
         isUserLoading: false,
-      })});
+      });
+    });
     AppState.removeEventListener('change', this._handleAppStateChange);
   }
 

@@ -52,7 +52,7 @@ export default class Home extends Component {
     this._orientationDidChange = this._orientationDidChange.bind(this);
   }
 
-   _incrementPills() {
+  _incrementPills() {
     let pills = PillStore.getPills();
 
     if (!this.state.disabled) {
@@ -65,7 +65,8 @@ export default class Home extends Component {
 
       addNewUserProps({
         pills: pills.count,
-        pillsTaken: pills.count,});
+        pillsTaken: pills.count,
+      });
       setTimeout(() => saveUser(UserStore.getUser()), 1000);
     }
   }
@@ -76,7 +77,8 @@ export default class Home extends Component {
       pills: 1,
       pillsTaken: this.state.pillsTaken,
       lastPillTaken: this.state.lastPillTaken,
-      disabled: true });
+      disabled: true,
+    });
     setTimeout(() => saveUser(UserStore.getUser()), 1000);
   }
 
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
 
   infoContainer: {
     flex: 1,
-    height: '60%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -255,16 +257,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     maxHeight: '95%',
     width: '80%',
-    margin: 5,
+    margin: 15,
     padding: 20,
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 15, height: 15 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
     elevation: 5,
-    shadowOpacity: 1.0,
   },
 
   headerRow: {

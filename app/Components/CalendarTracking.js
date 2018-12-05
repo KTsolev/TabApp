@@ -180,11 +180,11 @@ _increasePills() {
 
   _getUserData() {
     const jsonUser = UserStore.getUser();
-    
+
     if (!jsonUser) {
     	return;
     }
-    
+
     const datesObjects = this._getSelectedRange(jsonUser.startingDate, jsonUser.endingDate);
 
     this.setState({
@@ -243,9 +243,9 @@ _increasePills() {
                       dotColor: '#2d4150',
                       arrowColor: 'white',
                       monthTextColor: 'white',
-                      textDayFontFamily: 'monospace',
-                      textMonthFontFamily: 'monospace',
-                      textDayHeaderFontFamily: 'monospace',
+                      textDayFontFamily: 'Courier',
+                      textMonthFontFamily: 'Courier',
+                      textDayHeaderFontFamily: 'Courier',
                       textDayFontSize: 14,
                       textMonthFontSize: 14,
                       textDayHeaderFontSize: 14,
@@ -260,7 +260,7 @@ _increasePills() {
                       'stylesheet.calendar.header': {
                         monthText: {
                           fontSize: 14,
-                          fontFamily: 'monospace',
+                          fontFamily: 'Courier',
                           fontWeight: 'normal',
                           color: '#fff',
                           margin: 2,
@@ -276,7 +276,7 @@ _increasePills() {
                           width: 32,
                           textAlign: 'center',
                           fontSize: 12,
-                          fontFamily: 'monospace',
+                          fontFamily: 'Courier',
                           color: '#fff',
                         },
                       },
@@ -367,11 +367,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
     borderRadius: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 15, height: 15 },
-    shadowOpacity: 0.8,
-    shadowRadius: 10,
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
     elevation: 5,
-    shadowOpacity: 1.0,
   },
 
   logoHollder: {

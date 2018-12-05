@@ -5,7 +5,7 @@ import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../data/UserStore';
 import Orientation from 'react-native-orientation';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import {
   View,
   Text,
@@ -131,7 +131,6 @@ export default class Global extends Component{
         source={require('../imgs/backgroud12.png')}>
           <View style={{ flex: 1, width: '50%' }}>
               <MapView
-                 provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                  style={[styles.map, { height: 350, width: 250, alignSelf: 'center' }]}
                  loadingEnabled={true}
                  initialRegion={this.state.initialRegion}
@@ -184,7 +183,6 @@ export default class Global extends Component{
             source={require('../imgs/trackingi.png')} />
         </TouchableOpacity>
           <MapView
-             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
              style={styles.map}
              loadingEnabled={true}
              initialRegion={this.state.initialRegion}
@@ -238,7 +236,8 @@ const styles = StyleSheet.create({
   },
 
   map: {
-    height: 250,
+    minHeight: 250,
+    maxHeight: '50%',
     width: 350,
     marginBottom: 20,
     marginTop: 10,
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 2,
     maxWidth: '90%',
-    maxHeight: '50%',
+    maxHeight: '40%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f1f1f1',

@@ -418,11 +418,10 @@ const styles = StyleSheet.create({
 
   moneyArea: {
     padding: 4,
-    height: '100%',
+    height: '60%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
-    height: '80%',
     borderWidth: 2,
     borderColor: '#d0f190',
     justifyContent: 'center',
@@ -431,11 +430,10 @@ const styles = StyleSheet.create({
 
   ciggarettesArea: {
     padding: 4,
-    height: '100%',
+    height: '60%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
-    height: '80%',
     borderWidth: 2,
     borderColor: '#2ca5af',
     justifyContent: 'center',
@@ -444,11 +442,10 @@ const styles = StyleSheet.create({
 
   daysArea: {
     padding: 4,
-    height: '100%',
+    height: '60%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
-    height: '80%',
     borderWidth: 2,
     borderColor: '#af67eb',
     justifyContent: 'center',
@@ -456,14 +453,14 @@ const styles = StyleSheet.create({
   },
 
   areaText: {
-    fontSize: 18,
+    fontSize: 16,
     padding: 2,
     color: '#fff',
     textAlign: 'center',
   },
 
   areaTextBolded: {
-    fontSize: 18,
+    fontSize: 16,
     padding: 2,
     fontWeight: '600',
     color: '#fff',

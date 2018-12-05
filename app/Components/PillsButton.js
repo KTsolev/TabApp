@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     shadowColor: '#000000',
     shadowOffset: {
-        width: 0,
+        width: 3,
         height: 3,
       },
     shadowRadius: 5,
-    shadowOpacity: 1.0,
+    shadowOpacity: 0.4,
     zIndex: 15,
   },
 
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         height: 3,
       },
     shadowRadius: 5,
-    shadowOpacity: 1.0,
+    shadowOpacity: 0.4,
     zIndex: 15,
   },
 
