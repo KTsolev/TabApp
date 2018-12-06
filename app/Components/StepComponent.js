@@ -51,7 +51,7 @@ class Step extends Component {
     super(props);
 
     this.state = {
-      currency: 'key0',
+      currency: props.userData.currency || '',
       pricePerPack: props.userData.pricePerPack || 0,
       ciggarettesPerDay: props.userData.ciggarettesPerDay || 0,
       startingDate: props.userData.startingDate || '',
@@ -104,7 +104,6 @@ class Step extends Component {
   }
 
   render() {
-    console.log(this.state)
     const currencyDropDown = <Dropdown
        label='choose currency'
        value={this.state.currency}
@@ -122,7 +121,9 @@ class Step extends Component {
 
     switch (this.props.currentIndex) {
       case 1:
-        toDisable = this.state.currency === 'key0' && this.pricePerPack === 0;
+        toDisable = this.state.currency === '' && this.state.pricePerPack == 0;
+console.log(toDisable)
+console.log(this.state)
         inputs = <View>
           <TextInput
             style={styles.input}
