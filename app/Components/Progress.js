@@ -53,7 +53,7 @@ export default class ProgressScreen extends Component{
   }
 
   _getUserInfo() {
-     const user = UserStore.getUser();
+    const user = UserStore.getUser();
     const pills = user.pillsTaken ? Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
