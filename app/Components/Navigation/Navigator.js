@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Text, Image } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
-import Home from './Home';
-import CalendarTracking from './CalendarTracking';
-import ProgressScreen from './Progress';
-import Global from './Global';
-import Tips from './Tips';
+import Home from '../Home/Home';
+import CalendarTracking from '../Calendar/CalendarTracking';
+import ProgressScreen from '../Progress/Progress';
+import Global from '../Global/Global';
+import Tips from '../Tips/Tips';
 
 const MainNavigator = createBottomTabNavigator({
   Home: {
@@ -14,7 +14,7 @@ const MainNavigator = createBottomTabNavigator({
       tabBarLabel: 'Home',
       tabBarIcon: ({ tintColor }) => (<Image
               style={{ width: 30, height: 30 }}
-              source={require('../imgs/home.png')}/>),
+              source={require('../../imgs/home.png')}/>),
     },
   },
 
@@ -24,7 +24,7 @@ const MainNavigator = createBottomTabNavigator({
       tabBarLabel: 'Calendar',
       tabBarIcon: ({ tintColor }) => (<Image
               style={{ width: 30, height: 30 }}
-              source={require('../imgs/calendar.png')}/>),
+              source={require('../../imgs/calendar.png')}/>),
     },
   },
 
@@ -34,7 +34,7 @@ const MainNavigator = createBottomTabNavigator({
       tabBarLabel: 'Progress',
       tabBarIcon: ({ tintColor }) =>(<Image
             style={{ width: 30, height: 30 }}
-            source={require('../imgs/progress.png')}/>),
+            source={require('../../imgs/progress.png')}/>),
     },
   },
 
@@ -44,7 +44,7 @@ const MainNavigator = createBottomTabNavigator({
       tabBarLabel: 'Community',
       tabBarIcon: ({ tintColor }) => (<Image
             style={{ width: 30, height: 30 }}
-            source={require('../imgs/community.png')}/>),
+            source={require('../../imgs/community.png')}/>),
     },
   },
 
@@ -54,7 +54,7 @@ const MainNavigator = createBottomTabNavigator({
       tabBarLabel: 'Tips',
       tabBarIcon: ({ tintColor }) => (<Image
               style={{ width: 30, height: 30 }}
-              source={require('../imgs/tips.png')}/>),
+              source={require('../../imgs/tips.png')}/>),
     },
   },
 }, {

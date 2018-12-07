@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, AppState, Platform } from 'react-native';
-import IntroScreen from './app/Components/IntroScreen';
-import MainNavigator from './app/Components/Navigator';
-import Modal from './app/Components/Modal';
-import Spinner from './app/Components/Spinner';
+import IntroScreen from './app/Components/IntroScreen/IntroScreen';
+import MainNavigator from './app/Components/Navigation/Navigator';
+import Modal from './app/Components/Modal/Modal';
+import Spinner from './app/Components/Spinner/Spinner';
 import moment from 'moment';
 import UserStore from './app/data/UserStore';
 import PillStore from './app/data/PillStore';

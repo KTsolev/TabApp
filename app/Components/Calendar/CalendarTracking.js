@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import PillsButton from './PillsButton';
+import PillsButton from '../PillsButton/PillsButton';
 import { View,
   Text,
   Image,
   ImageBackground,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Platform,
@@ -13,11 +12,12 @@ import { View,
       } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
-import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser } from '../../data/FluxActions';
 import moment from 'moment';
-import UserStore from '../data/UserStore';
-import PillStore from '../data/PillStore';
+import UserStore from '../../data/UserStore';
+import PillStore from '../../data/PillStore';
 import Orientation from 'react-native-orientation';
+import styles from './styles';
 
 export default class CalendarTracking extends Component{
   constructor(props) {
@@ -216,14 +216,14 @@ _increasePills() {
     return (
         <ScrollView style={this.state.isLandScape ? styles.rowContainer : styles.container }>
           <ImageBackground
-            source={require('../imgs/rectangle.png')}
+            source={require('../../imgs/rectangle.png')}
             style={styles.backgroundImage}>
               <TouchableOpacity
                 style={styles.logoHollder}
                 onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
                 <Image
                   style={styles.logo}
-                  source={require('../imgs/trackingi.png')} />
+                  source={require('../../imgs/trackingi.png')} />
               </TouchableOpacity>
                 <Calendar
                     style={styles.calendar}
@@ -290,12 +290,12 @@ _increasePills() {
                   <Text style={{ fontSize: 16, color: '#0648aa', flex: 1, textAlign: 'center' }}>days smoke free</Text>
                 </View>
                 <View style={styles.innerRow}>
-                  <Image style={styles.img} source={require('../imgs/pill.png')}/>
+                  <Image style={styles.img} source={require('../../imgs/pill.png')}/>
                   <Text style={{ fontSize: 14, color: '#0648aa', paddingLeft: 30 }}>6 pills/day</Text>
                 </View>
                 <Divider style={styles.divider}/>
                 <View style={styles.innerRow}>
-                  <Image style={styles.img} source={require('../imgs/clock.png')}/>
+                  <Image style={styles.img} source={require('../../imgs/clock.png')}/>
                   <Text style={{ fontSize: 14, color: '#0648aa', paddingLeft: 30 }}>2 hours</Text>
                 </View>
                 <View style={styles.lastRow}>
@@ -310,120 +310,3 @@ _increasePills() {
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-
-  rowContainer: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-
-  calendar: {
-    flex: 1,
-    width: '80%',
-    height: '60%',
-    marginBottom: 220,
-    alignSelf: 'center',
-  },
-
-  divider: {
-    width: '65%',
-    height: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    backgroundColor: '#959595',
-  },
-
-  backgroundImage: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    alignContent: 'center',
-    resizeMode: 'contain',
-  },
-
-  headerText: {
-    color: '#fff',
-    fontSize: 18,
-    paddingLeft: 15,
-    paddingRight: 15,
-    textAlign: 'center',
-  },
-
-  containerInner: {
-    flex: 1,
-    width: '85%',
-    height: '80%',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 20,
-    margin: 15,
-    marginTop: -120,
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: '#f1f1f1',
-    borderRadius: 50,
-    shadowColor: '#000',
-    shadowOffset: { width: 10, height: 10 },
-    shadowOpacity: 0.4,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-
-  logoHollder: {
-    marginTop: 20,
-    marginBottom: 20,
-    width: 150,
-    height: '10%',
-  },
-
-  logo: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-
-  img: {
-    width: 30,
-    height: 30,
-    alignSelf: 'flex-end',
-    resizeMode: 'contain',
-  },
-
-  innerRow: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 5,
-    margin: 5,
-    maxWidth: '100%',
-    maxHeight: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  lastRow: {
-    flex: 1,
-    marginTop: 10,
-    marginRight: 20,
-    maxHeight: 90,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-
-  headerColumn: {
-    flex: 1,
-    maxWidth: '100%',
-    maxHeight: 70,
-    flexDirection: 'column',
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingBottom: 10,
-    paddingTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

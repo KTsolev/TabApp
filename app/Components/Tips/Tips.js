@@ -8,11 +8,11 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
-  StyleSheet,
   Platform,
   Linking,
   LinkingIOS,
   Dimensions } from 'react-native';
+import styles from './styles';
 
 export default class Tips extends Component{
   constructor(props) {
@@ -61,20 +61,20 @@ export default class Tips extends Component{
       return (
           <ImageBackground
             style={[styles.backgroundImage, { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', padding: 50 }]}
-            source={require('../imgs/backgroud12.png')}>
+            source={require('../../imgs/backgroud12.png')}>
             <View styles={{ flex: 1, width: '50%', justifyContent: 'center', alignContent: 'center' }}>
               <TouchableOpacity
                 style={styles.logoHollder}
                 onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
                 <Image
                   style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
-                  source={require('../imgs/trackingi.png')} />
+                  source={require('../../imgs/trackingi.png')} />
               </TouchableOpacity>
 
               <Image
                 style={[styles.bottomLogo, { maxHeight: '50%' }]}
                 resizeMode='contain'
-                source={require('../imgs/tabex-logo.png')}/>
+                source={require('../../imgs/tabex-logo.png')}/>
             </View>
             <View styles={{ flex: 1, width: '50%', padding: 50, justifyContent: 'center', alignContent: 'center' }}>
               <View style={[styles.containerInner, { maxWidth: '70%', maxHeight: '50%', padding: 10,  alignSelf: 'center' }]}>
@@ -84,12 +84,12 @@ export default class Tips extends Component{
                 <Image
                   style={styles.speechTail}
                   resizeMode='contain'
-                  source={require('../imgs/speech-tail.png')} />
+                  source={require('../../imgs/speech-tail.png')} />
               </View>
               <Image
                 style={[styles.characteLogo, { alignSelf: 'center' }]}
                 resizeMode='contain'
-                source={require('../imgs/character.png')}/>
+                source={require('../../imgs/character.png')}/>
             </View>
           </ImageBackground>
         );
@@ -97,13 +97,13 @@ export default class Tips extends Component{
       return (
           <ImageBackground
             style={styles.backgroundImage}
-            source={require('../imgs/backgroud12.png')}>
+            source={require('../../imgs/backgroud12.png')}>
             <TouchableOpacity
               style={styles.logoHollder}
               onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
               <Image
                 style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
-                source={require('../imgs/trackingi.png')} />
+                source={require('../../imgs/trackingi.png')} />
             </TouchableOpacity>
               <View style={styles.containerInner}>
                 <Text style={{ fontSize: 14, color: '#0648aa', textAlign: 'center' }}>
@@ -112,79 +112,18 @@ export default class Tips extends Component{
                 <Image
                   style={styles.speechTail}
                   resizeMode='contain'
-                  source={require('../imgs/speech-tail.png')} />
+                  source={require('../../imgs/speech-tail.png')} />
               </View>
               <Image
                 style={styles.characteLogo}
                 resizeMode='contain'
-                source={require('../imgs/character.png')}/>
+                source={require('../../imgs/character.png')}/>
               <Image
                 style={styles.bottomLogo}
                 resizeMode='contain'
-                source={require('../imgs/tabex-logo.png')}/>
+                source={require('../../imgs/tabex-logo.png')}/>
           </ImageBackground>
         );
     }
   }
 }
-
-const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-
-  bubbleImage: {
-    resizeMode: 'contain',
-  },
-
-  logoHollder: {
-    marginTop: 20,
-    marginBottom: 20,
-    width: 150,
-    height: '15%',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-
-  logo: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-
-  bottomLogo: {
-    maxWidth: 200,
-    maxHeight: '15%',
-  },
-
-  characteLogo: {
-    maxWidth: 200,
-    maxHeight: '30%',
-  },
-
-  containerInner: {
-    flex: 2,
-    position: 'relative',
-    flexDirection: 'column',
-    maxWidth: '90%',
-    maxHeight: '40%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 50,
-    padding: 25,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-
-  speechTail: {
-    position: 'absolute',
-    bottom: -35,
-    width: 60,
-    height: 60,
-    left: '15%',
-  },
-});

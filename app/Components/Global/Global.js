@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
-import { addNewUserProps, saveUser, loadUser } from '../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser } from '../../data/FluxActions';
 import moment from 'moment';
-import UserStore from '../data/UserStore';
+import UserStore from '../../data/UserStore';
 import Orientation from 'react-native-orientation';
 import MapView, { Marker } from 'react-native-maps';
+import styles from './styles';
 import {
   View,
   Text,
   Image,
   ImageBackground,
   TouchableOpacity,
-  StyleSheet,
   Platform,
   Linking,
   LinkingIOS,
@@ -128,7 +128,7 @@ export default class Global extends Component{
       return (
         <ImageBackground
         style={[styles.backgroundImage, { flexDirection: 'row' }]}
-        source={require('../imgs/backgroud12.png')}>
+        source={require('../../imgs/backgroud12.png')}>
           <View style={{ flex: 1, width: '50%' }}>
               <MapView
                  style={[styles.map, { height: 350, width: 250, alignSelf: 'center' }]}
@@ -150,7 +150,7 @@ export default class Global extends Component{
               onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
               <Image
                 style={[styles.logo, {justifyContent: 'center', alignSelf: 'center'}]}
-                source={require('../imgs/trackingi.png')} />
+                source={require('../../imgs/trackingi.png')} />
             </TouchableOpacity>
           <View style={[styles.containerInner, { flex: 2,  maxHeight: '90%', padding: 40 }]}>
             <Text style={{ marginTop: 5, fontSize: 18, color: '#0648aa', textAlign: 'center' }}>
@@ -163,7 +163,7 @@ export default class Global extends Component{
               <Image
                 style={styles.img}
                 resizeMode='contain'
-                source={require('../imgs/pin.png')}/>
+                source={require('../../imgs/pin.png')}/>
               <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
                 {this.state.peopleArroundGLobe}
                 people in 7 different countries and 2 continents quit smoking today.
@@ -175,12 +175,12 @@ export default class Global extends Component{
     } else {
       return (<ImageBackground
         style={styles.backgroundImage}
-        source={require('../imgs/backgroud12.png')}>
+        source={require('../../imgs/backgroud12.png')}>
         <TouchableOpacity
           onPress={() => Platform === 'ios' ? LinkingIOS.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf') : Linking.openURL('https://www.tabex.bg/links/TABEX_LEAFLET_ss3360.pdf')}>
           <Image
             style={styles.logo}
-            source={require('../imgs/trackingi.png')} />
+            source={require('../../imgs/trackingi.png')} />
         </TouchableOpacity>
           <MapView
              style={styles.map}
@@ -206,7 +206,7 @@ export default class Global extends Component{
               <Image
                 style={styles.img}
                 resizeMode='contain'
-                source={require('../imgs/pin.png')}/>
+                source={require('../../imgs/pin.png')}/>
               <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
                 {this.state.peopleArroundGLobe}
                 people in 7 different countries and 2 continents quit smoking today.
@@ -217,55 +217,3 @@ export default class Global extends Component{
     }
   }
 }
-
-const styles = StyleSheet.create({
-  backgroundImage: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-
-  logo: {
-    marginTop: 20,
-    marginBottom: 20,
-    maxWidth: 200,
-    maxHeight: 250,
-    alignSelf: 'center',
-    resizeMode: 'contain',
-  },
-
-  map: {
-    minHeight: 250,
-    maxHeight: '50%',
-    width: 350,
-    marginBottom: 20,
-    marginTop: 10,
-  },
-
-  img: {
-    width: 30,
-    height: 28,
-    padding: 5,
-    marginLeft: -10,
-  },
-
-  containerInner: {
-    flexDirection: 'column',
-    flex: 2,
-    maxWidth: '90%',
-    maxHeight: '40%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f1f1f1',
-    padding: 35,
-    marginBottom: 10,
-    borderRadius: 50,
-  },
-
-  innerRow: {
-    flexDirection: 'row',
-    width: '80%',
-    marginTop: 20,
-  },
-});
