@@ -1,37 +1,48 @@
 import { StyleSheet } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+  listenOrientationChange as loc,
+  removeOrientationListener as rol
+} from 'react-native-responsive-screen';
 
 export default styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: hp('100%'),
+    width: wp('100%'),
+    justifyContent: 'space-between',
     backgroundColor: '#ddf1fd',
   },
 
   mainContainer: {
     flex: 1,
-    maxHeight: '60%',
+    maxHeight: hp('60%'),
   },
 
   imageHolder: {
     flex: 1,
-    maxHeight: '10%',
-    paddingTop: 5,
+    flexDirection: 'row',
+    width: wp('100%'),
+    maxHeight: hp('10%'),
+    justifyContent: 'center',
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
+    resizeMode: 'cover',
   },
 
   headerContainer: {
     flex: 1,
-    maxHeight: '30%',
+    maxHeight: hp('30%'),
   },
 
   titleContainer: {
-    maxHeight: '10%',
+    maxHeight: hp('10%'),
     marginTop: 20,
     flexDirection: 'row',
   },
 
   buttonsContainer: {
-    maxHeight: '90%',
+    maxHeight: hp('90%'),
   },
 
   headerBackground: {
@@ -48,12 +59,7 @@ export default styles = StyleSheet.create({
   },
 
   currencyText: {
-      marginBottom: 5,
-    },
-
-  footerImage: {
-    width: '100%',
-    height: '100%',
+    marginBottom: 5,
   },
 
   errorText: {

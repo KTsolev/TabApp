@@ -13,7 +13,7 @@ const MainNavigator = createBottomTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Home',
       tabBarIcon: ({ tintColor }) => (<Image
-              style={{ width: 30, height: 30 }}
+              style={{ width: 30, height: 30, resizeMode: 'contain' }}
               source={require('../../imgs/home.png')}/>),
     },
   },
@@ -23,7 +23,7 @@ const MainNavigator = createBottomTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Calendar',
       tabBarIcon: ({ tintColor }) => (<Image
-              style={{ width: 30, height: 30 }}
+              style={{ width: 30, height: 30, resizeMode: 'contain' }}
               source={require('../../imgs/calendar.png')}/>),
     },
   },
@@ -33,7 +33,7 @@ const MainNavigator = createBottomTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Progress',
       tabBarIcon: ({ tintColor }) =>(<Image
-            style={{ width: 30, height: 30 }}
+            style={{ width: 30, height: 30, resizeMode: 'contain' }}
             source={require('../../imgs/progress.png')}/>),
     },
   },
@@ -43,7 +43,7 @@ const MainNavigator = createBottomTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Community',
       tabBarIcon: ({ tintColor }) => (<Image
-            style={{ width: 30, height: 30 }}
+            style={{ width: 30, height: 30, resizeMode: 'contain' }}
             source={require('../../imgs/community.png')}/>),
     },
   },
@@ -53,7 +53,7 @@ const MainNavigator = createBottomTabNavigator({
     navigationOptions: {
       tabBarLabel: 'Tips',
       tabBarIcon: ({ tintColor }) => (<Image
-              style={{ width: 30, height: 30 }}
+              style={{ width: 30, height: 30, resizeMode: 'contain' }}
               source={require('../../imgs/tips.png')}/>),
     },
   },

@@ -205,6 +205,7 @@ export default class Step extends Component {
         <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
+                disabled={toDisable || isValid}
                 colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
@@ -218,7 +219,6 @@ export default class Step extends Component {
                 colors={['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
-                    disabled={toDisable || isValid}
                     onPress={this.props.prevStep}>
                     <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
                   </TouchableOpacity>

@@ -145,8 +145,10 @@ export default styles = StyleSheet.create({
   },
 
   moneyArea: {
+    flex: 1,
     padding: 4,
-    height: '60%',
+    height: '100%',
+    maxHeight: '80%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
@@ -157,8 +159,10 @@ export default styles = StyleSheet.create({
   },
 
   ciggarettesArea: {
+    flex: 1,
     padding: 4,
-    height: '60%',
+    height: '100%',
+    maxHeight: '80%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,
@@ -169,8 +173,10 @@ export default styles = StyleSheet.create({
   },
 
   daysArea: {
+    flex: 1,
     padding: 4,
-    height: '60%',
+    height: '100%',
+    maxHeight: '80%',
     width: '33%',
     marginTop: 20,
     marginBottom: 20,

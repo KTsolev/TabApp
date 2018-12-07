@@ -11,6 +11,7 @@ import Step from './Step';
 import {
   Text,
   View,
+  ScrollView,
   Image,
   TouchableOpacity,
   ImageBackground,
@@ -107,53 +108,54 @@ class Wizzard extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <TouchableWithoutFeedback accessible={false} onPress={() => {
         Keyboard.dismiss();
         this.setState({ keyboardShown: false });
       }}>
-        <View style={this.state.keyboardShown ? [styles.container, { position: 'absolute', zIndex: -5 }] : styles.container}>
-            <View style={styles.headerContainer}>
-              <ImageBackground source={require('../../imgs/photo.png')} style={styles.headerBackground}>
-                  <Image source={require('../../imgs/tabex-logo.png')} style={styles.image} />
-              </ImageBackground>
-            </View>
-            <View style={styles.mainContainer}>
-              <View style={styles.titleContainer}>
-                {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
-                  <Divider style={styles.beforeHeaderTextElem}></Divider>
-                  <View style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
-                    <Text style={styles.innerText}>
-                      {index + 1}
-                    </Text>
-                  </View>
-                </View>)}
+        <ScrollView style={{ flex: 1, width: '100%', height: '100%' }}>
+            <View style={styles.container}>
+              <View style={styles.headerContainer}>
+                <ImageBackground source={require('../../imgs/photo.png')} style={styles.headerBackground}>
+                    <Image source={require('../../imgs/tabex-logo.png')} style={styles.image} />
+                </ImageBackground>
               </View>
-              <View style={styles.buttonsContainer}>
-                <Text style={styles.errorText}> {this.state.invalidData ? 'You haven\'t completed whole step. Goback and fill missing data': '' }</Text>
-                {React.Children.map(this.props.children, (el, index) => {
-                  if (index === this.state.index) {
-                    return React.cloneElement(el, {
-                      currentIndex: this.state.index + 1,
-                      nextStep: this._nextStep,
-                      prevStep: this._prevStep,
-                      updateUser: this._updateUser,
-                      userData: this.state.userData,
-                      prevLabel: this.state.prevLabel,
-                      nextLabel: this.state.nextLabel,
-                      isfirst: this.state.index === 0,
-                      isLast: this.state.index === this.props.children.length - 1,
-                    });
-                  }
+              <View style={styles.mainContainer}>
+                <View style={styles.titleContainer}>
+                  {React.Children.map(this.props.children, (el, index) => <View style={styles.headerItem}>
+                    <Divider style={styles.beforeHeaderTextElem}></Divider>
+                    <View style={this.state.completedSteps[index] ? styles.activeHeader : styles.headerText}>
+                      <Text style={styles.innerText}>
+                        {index + 1}
+                      </Text>
+                    </View>
+                  </View>)}
+                </View>
+                <View style={styles.buttonsContainer}>
+                  <Text style={styles.errorText}> {this.state.invalidData ? 'You haven\'t completed whole step. Goback and fill missing data': '' }</Text>
+                  {React.Children.map(this.props.children, (el, index) => {
+                    if (index === this.state.index) {
+                      return React.cloneElement(el, {
+                        currentIndex: this.state.index + 1,
+                        nextStep: this._nextStep,
+                        prevStep: this._prevStep,
+                        updateUser: this._updateUser,
+                        userData: this.state.userData,
+                        prevLabel: this.state.prevLabel,
+                        nextLabel: this.state.nextLabel,
+                        isfirst: this.state.index === 0,
+                        isLast: this.state.index === this.props.children.length - 1,
+                      });
+                    }
 
-                  return null;
-                })}
+                    return null;
+                  })}
+                </View>
               </View>
+              <Image source={require('../../imgs/leaves.png')}  style={styles.imageHolder}/>
             </View>
-            <View style={styles.imageHolder}>
-              <Image source={require('../../imgs/leaves.png')}  style={styles.footerImage}/>
-            </View>
-        </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     );
   }
