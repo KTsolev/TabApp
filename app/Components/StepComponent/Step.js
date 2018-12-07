@@ -104,20 +104,23 @@ export default class Step extends Component {
        label='choose currency'
        value={this.state.currency}
        selectedItemColor='#0544a8'
-       containerStyle={{ width: 250, height: 50, margin: 10  }}
+       containerStyle={{ width: 250, height: 50, margin: 10, alignSelf: 'center' }}
        data={Step.currenciesArray}
-       valueExtractor={({value}) => value}
        onChangeText={this.selectCurrency}
-       propsExtractor={({ props }, index) => props}
      />;
 
     let inputs;
     let buttons;
+    let errorText;
     let toDisable = true;
+    let isValid = false;
 
     switch (this.props.currentIndex) {
       case 1:
-        toDisable = this.state.currency === '' && this.state.pricePerPack == 0;
+        toDisable = this.state.currency === '' && this.state.pricePerPack === 0;
+        isValid = isNaN(`${this.state.pricePerPack}`);
+        errorText = <Text style={[styles.errorText, { textAlign: 'center' }]}>You have enter valid number for price per pack and currency option!</Text>
+
         inputs = <View>
           <TextInput
             style={styles.input}
@@ -130,14 +133,15 @@ export default class Step extends Component {
             value={`${this.state.pricePerPack}`}
           />
           {currencyDropDown}
+          {toDisable || isValid ? errorText : null}
         </View>;
         buttons = <View><LinearGradient
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  colors={toDisable ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
+                  colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      disabled={toDisable}
+                      disabled={toDisable || isValid}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>
@@ -145,6 +149,9 @@ export default class Step extends Component {
       break;
       case 2:
         toDisable = this.state.ciggarettesPerDay === 0;
+        isValid = isNaN(this.state.ciggarettesPerDay);
+        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>You have enter valid number for ciggarettes per day option!</Text>
+
         inputs = <View>
           <TextInput
             style={styles.input}
@@ -155,15 +162,15 @@ export default class Step extends Component {
             onEndEditing={this.selectCiggarettes}
             value={`${this.state.ciggarettesPerDay}`}
           />
+          {toDisable || isValid ? errorText : null}
         </View>;
         buttons =  <View><LinearGradient
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  colors={toDisable ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
-                  disabled={toDisable}
+                  colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      disabled={toDisable}
+                      disabled={toDisable || isValid}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>
@@ -180,10 +187,12 @@ export default class Step extends Component {
                   </LinearGradient></View>;
       break;
       case 3:
+        isValid = moment(this.state.startingDate).isBefore(moment(), 'days');
         toDisable = this.state.startingDate === '';
+        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>You have select valid data that is not prior to the current!</Text>
         inputs = <View style={styles.datePicker}>
         <TouchableOpacity onPress={this._toggleDateTimePicker}>
-          <Text style={[styles.buttonText, {color:'#000'}]}>{this.state.startingDate ? moment(this.state.startingDate).format('DD/MM/YYYY') : 'dd/mm/yyyy'}</Text>
+          <Text style={[styles.buttonText, {color:'#000'}]}> {this.state.startingDate ? moment(this.state.startingDate).format('DD/MM/YYYY') : 'dd/mm/yyyy'}</Text>
         </TouchableOpacity>
         <DateTimePicker
           isVisible={this.state.isDateTimePickerVisible}
@@ -191,10 +200,12 @@ export default class Step extends Component {
           onCancel={this._toggleDateTimePicker}
         />
       </View>;
-        buttons = <View><LinearGradient
+        buttons = <View>
+          {toDisable || isValid ? errorText : null}
+        <LinearGradient
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                colors={toDisable ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
+                colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
                     onPress={this.props.nextStep}>
@@ -207,6 +218,7 @@ export default class Step extends Component {
                 colors={['#009fea', '#0544a8']}
                 style={styles.button}>
                   <TouchableOpacity
+                    disabled={toDisable || isValid}
                     onPress={this.props.prevStep}>
                     <Text style={styles.buttonText}>{this.props.prevLabel}</Text>
                   </TouchableOpacity>

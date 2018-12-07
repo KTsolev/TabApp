@@ -111,11 +111,10 @@ class Wizzard extends Component {
       <TouchableWithoutFeedback accessible={false} onPress={() => {
         Keyboard.dismiss();
         this.setState({ keyboardShown: false });
-      }
-    }>
+      }}>
         <View style={this.state.keyboardShown ? [styles.container, { position: 'absolute', zIndex: -5 }] : styles.container}>
             <View style={styles.headerContainer}>
-              <ImageBackground source={require('../../imgs/photo.png')} style={styles.headerBackground} >
+              <ImageBackground source={require('../../imgs/photo.png')} style={styles.headerBackground}>
                   <Image source={require('../../imgs/tabex-logo.png')} style={styles.image} />
               </ImageBackground>
             </View>

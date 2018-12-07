@@ -107,6 +107,7 @@ export default styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
     textAlign: 'center',
+    alignSelf: 'center',
     paddingLeft: 45,
     paddingRight: 45,
     borderRadius: 50,
@@ -174,6 +175,7 @@ export default styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 50,
     backgroundColor: '#fff',
+    alignSelf: 'center',
   },
 
   datePickerText: {
