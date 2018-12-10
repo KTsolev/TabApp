@@ -43,6 +43,9 @@ export default styles = StyleSheet.create({
 
   buttonsContainer: {
     maxHeight: hp('90%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
 
   headerBackground: {
@@ -63,8 +66,8 @@ export default styles = StyleSheet.create({
   },
 
   errorText: {
-    fontSize: 14,
-    padding: 10,
+    fontSize: 10,
+    padding: 5,
     textTransform: 'capitalize',
     color: '#ff5100',
     textAlign: 'center',
@@ -110,8 +113,8 @@ export default styles = StyleSheet.create({
     maxWidth: '40%',
     minWidth: 250,
     minHeight: 30,
-    marginTop: 15,
-    marginBottom: 15,
+    marginTop: 5,
+    marginBottom: 5,
     textAlign: 'center',
     alignSelf: 'center',
     paddingLeft: 45,

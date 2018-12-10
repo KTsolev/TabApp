@@ -104,7 +104,7 @@ export default class Step extends Component {
        label='choose currency'
        value={this.state.currency}
        selectedItemColor='#0544a8'
-       containerStyle={{ width: 250, height: 50, margin: 10, alignSelf: 'center' }}
+       containerStyle={{ width: 250, height: 60, margin: 10, marginTop: -5, alignSelf: 'center' }}
        data={Step.currenciesArray}
        onChangeText={this.selectCurrency}
      />;
@@ -132,8 +132,8 @@ export default class Step extends Component {
             onEndEditing={this.selectPricePerPack}
             value={`${this.state.pricePerPack}`}
           />
-          {currencyDropDown}
           {toDisable || isValid ? errorText : null}
+          {currencyDropDown}
         </View>;
         buttons = <View><LinearGradient
                   start={{ x: 0, y: 0 }}
