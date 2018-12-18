@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TabApp</string>
+	<string>TabeksApp</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -53,6 +53,24 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>fontawesome</key>
+	<array>
+		<string>fa-solid-900.woff2</string>
+		<string>fa-solid-900.woff</string>
+		<string>fa-solid-900.ttf</string>
+		<string>fa-solid-900.svg</string>
+		<string>fa-solid-900.eot</string>
+		<string>fa-regular-400.woff2</string>
+		<string>fa-regular-400.woff</string>
+		<string>fa-regular-400.ttf</string>
+		<string>fa-regular-400.svg</string>
+		<string>fa-regular-400.eot</string>
+		<string>fa-brands-400.woff2</string>
+		<string>fa-brands-400.woff</string>
+		<string>fa-brands-400.ttf</string>
+		<string>fa-brands-400.svg</string>
+		<string>fa-brands-400.eot</string>
+	</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

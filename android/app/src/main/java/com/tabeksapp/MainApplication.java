@@ -1,4 +1,4 @@
-package com.tabapp;
+package com.tabeksapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;

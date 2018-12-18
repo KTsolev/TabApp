@@ -1,4 +1,4 @@
-package com.tabapp;
+package com.tabeksapp;
 
 import android.content.Intent;
 import com.facebook.react.ReactActivity;
@@ -12,7 +12,7 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "TabApp";
+        return "TabeksApp";
     }
 
     @Override

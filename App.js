@@ -82,9 +82,7 @@ export default class tabexapp extends Component {
   }
 
   _notificationHandler (notification) {
-    console.log('NOTIFICATION:', notification);
     const clicked = notification.userInteraction;
-    console.log(this.state.notificationCount);
 
     if (clicked) {
       this.setState({ notificationCount: this.state.notificationCount - 1 });
@@ -99,7 +97,6 @@ export default class tabexapp extends Component {
   }
 
   _toggleModal() {
-    console.warn('in toggle');
     let user = UserStore.getUser();
 
     this.setState({
@@ -112,12 +109,10 @@ export default class tabexapp extends Component {
 
   _handleAppStateChange(appState) {
 
-    if (appState === 'background') {
+    if (appState === 'background' || appState === 'inactive') {
       this.setState({ notificationCount: this.state.notificationCount + 1 });
-      console.log('PushNotification running in background');
 
       let date = moment().add(2, 'hours').toDate();
-      console.log(date);
 
       if (Platform === 'ios') {
         date = notificationSchedule.toISOString();
@@ -125,10 +120,10 @@ export default class tabexapp extends Component {
 
       PushNotification.localNotification({
         id: Date.now(),
-        bigText: 'This is mdg', // (optional) default: 'message' prop
+        bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
         date,
         title: 'Tabex Tracking', // (optional)
-        message: 'You have a maassaaggee', // (required)
+        message: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (required)
         largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
         smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
         subText: 'Tabex tracking', // (optional) default: none

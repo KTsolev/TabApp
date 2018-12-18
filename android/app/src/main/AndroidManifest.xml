@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tabapp">
+    package="com.tabeksapp">
     <uses-permission android:name="android.permission.INTERNET" />
     <permission android:name="com.maps.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
     <uses-permission android:name="com.maps.permission.MAPS_RECEIVE"/>
@@ -10,9 +10,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <permission
-        android:name="com.tabapp.permission.C2D_MESSAGE"
+        android:name="com.tabeksapp.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="com.tabapp.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.tabeksapp.permission.C2D_MESSAGE" />
     <!-- < Only if you're using GCM or localNotificationSchedule() > -->
 
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -50,7 +50,7 @@
         android:permission="com.google.android.c2dm.permission.SEND" >
         <intent-filter>
           <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-          <category android:name="com.tabapp" />
+          <category android:name="com.tabeksapp" />
         </intent-filter>
       </receiver>
       <!-- < Only if you're using GCM or localNotificationSchedule() > -->
