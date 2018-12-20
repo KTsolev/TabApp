@@ -8,6 +8,8 @@ import moment from 'moment';
 import UserStore from './app/data/UserStore';
 import PillStore from './app/data/PillStore';
 import { loadUser, deleteUser } from './app/data/FluxActions';
+import firebase from 'react-native-firebase';
+import { AsyncStorage } from 'react-native';
 
 let PushNotification = require('react-native-push-notification');
 
@@ -15,42 +17,16 @@ export default class tabexapp extends Component {
   constructor(props) {
     super(props);
     loadUser();
-
     this.state = {
-      isUserSet: false,
+      isFinished: true,
       isUserLoading: true,
       showDialog: false,
       notificationCount: 0,
     };
 
-    PushNotification.configure({
-
-        // (required) Called when a remote or local notification is opened or received
-        onNotification: this._notificationHandler.bind(this),
-
-        // IOS ONLY (optional): default: all - Permissions to register.
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true,
-          },
-
-        // Should the initial notification be popped automatically
-        // default: true
-        popInitialNotification: true,
-
-        /**
-          * (optional) default: true
-          * - Specified if permissions (ios) and token (android and ios) will requested or not,
-          * - if not, you must call PushNotificationsHandler.requestPermissions() later
-          */
-        requestPermissions: true,
-      });
-
     this._setUser = this._setUser.bind(this);
     this._loadUser = this._loadUser.bind(this);
     this._toggleModal = this._toggleModal.bind(this);
-    this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   _loadUser() {
@@ -81,21 +57,6 @@ export default class tabexapp extends Component {
     });
   }
 
-  _notificationHandler (notification) {
-    const clicked = notification.userInteraction;
-
-    if (clicked) {
-      this.setState({ notificationCount: this.state.notificationCount - 1 });
-      PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
-
-      if (Platform.OS === 'ios') {
-        PushNotification.cancelLocalNotifications({ id: notification.data.id });
-      } else {
-        PushNotification.cancelLocalNotifications({ id: notification.id });
-      }
-    }
-  }
-
   _toggleModal() {
     let user = UserStore.getUser();
 
@@ -107,35 +68,102 @@ export default class tabexapp extends Component {
     });
   }
 
-  _handleAppStateChange(appState) {
+  async checkPermission() {
+    const notification = new firebase.notifications.Notification()
+    .setNotificationId('notificationId')
+    .setTitle('My notification title')
+    .setBody('My notification body')
+    .setData({
+      key1: 'value1',
+      key2: 'value2',
+    });
+    console.log(notification)
+    const enabled = await firebase.messaging().hasPermission();
+    console.log('in check permission');
+    if (enabled) {
+      console.log('withs permission');
 
-    if (appState === 'background' || appState === 'inactive') {
-      this.setState({ notificationCount: this.state.notificationCount + 1 });
+      this.getToken().then(data => console.log(data));
+      const date = new Date();
+      date.setMinutes(date.getMinutes() + 1);
+      console.log(date.getTime())
+      firebase.notifications().scheduleNotification(notification, {
+          fireDate: date.getTime(),
+        });
 
-      let date = moment().add(2, 'hours').toDate();
-
-      if (Platform === 'ios') {
-        date = notificationSchedule.toISOString();
-      }
-
-      PushNotification.localNotification({
-        id: Date.now(),
-        bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
-        date,
-        title: 'Tabex Tracking', // (optional)
-        message: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (required)
-        largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
-        smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
-        subText: 'Tabex tracking', // (optional) default: none
-        color: 'blue',
-        backgroundColor: 'darkBlue',
-      });
-
-      PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
+    } else {
+      this.requestPermission();
     }
   }
 
+  async getToken() {
+    let fcmToken = await AsyncStorage.getItem('fcmToken', value);
+    console.log(fcmToken);
+    if (!fcmToken) {
+      fcmToken = await firebase.messaging().getToken();
+      if (fcmToken) {
+        await AsyncStorage.setItem('fcmToken', fcmToken);
+      }
+    }
+    this.setState({ token: fcmToken });
+  }
+
+  async requestPermission() {
+    try {
+      await firebase.messaging().requestPermission();
+      this.getToken();
+    } catch (error) {
+      console.log('permission rejected');
+    }
+  }
+
+  async createNotificationListeners() {
+    /*
+    * Triggered when a particular notification has been received in foreground
+    * */
+    this.notificationListener = firebase.notifications().onNotification((notification) => {
+        const { title, body } = notification;
+        this.showAlert(title, body);
+    });
+
+    /*
+    * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
+    * */
+    this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
+        const { title, body } = notificationOpen.notification;
+        this.showAlert(title, body);
+    });
+
+    /*
+    * If your app is closed, you can check if it was opened by a notification being clicked / tapped / opened as follows:
+    * */
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    if (notificationOpen) {
+      const { title, body } = notificationOpen.notification;
+      this.showAlert(title, body);
+    }
+    /*
+    * Triggered for data only payload in foreground
+    * */
+    this.messageListener = firebase.messaging().onMessage((message) => {
+      //process data message
+      console.log(JSON.stringify(message));
+    });
+  }
+
+  showAlert(title, body) {
+    Alert.alert(
+      title, body,
+      [
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ],
+      { cancelable: false },
+    );
+  }
+
   componentDidMount() {
+    this.checkPermission().then((err, data) => { err ? console.log(err): data });
+    this.createNotificationListeners().then((err, data) => { err ? console.log(err): data });;
     UserStore.on('user-loading', () => this.setState({ isUserLoading: true }));
     UserStore.on('recieved-user-data', () => this.setState({ isUserLoading: false }));
     UserStore.on('user-deleted', () => this._setUser(false));
@@ -150,7 +178,6 @@ export default class tabexapp extends Component {
         isUserLoading: false,
       });
     });
-    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
@@ -168,7 +195,6 @@ export default class tabexapp extends Component {
         isUserLoading: false,
       });
     });
-    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
   render() {

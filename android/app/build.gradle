@@ -149,20 +149,26 @@ android {
 
 ext {
     // Other settings
-    compileSdkVersion = 26 // default: 23
-    buildToolsVersion = "26.0.1" // default: "23.0.1"
-    targetSdkVersion = 26 // default: 23
-    supportLibVersion = "26.0.1" // default: 23.1.1
+    compileSdkVersion = 27 // default: 23
+    buildToolsVersion = "27.0.1" // default: "23.0.1"
+    targetSdkVersion = 27 // default: 23
+    supportLibVersion = "27.0.1" // default: 23.1.1
     googlePlayServicesVersion = "11.8.0+"
     androidMapsUtilsVersion = "0.5+"
 }
 
 dependencies {
-    compile project(':react-native-vector-icons')
-    compile project(':react-native-maps')
-    implementation project(':react-native-maps')
     compile project(':react-native-push-notification')
+    compile project(':react-native-orientation')
+    compile project(':react-native-maps')
     compile project(':react-native-linear-gradient')
+    compile project(':react-native-firebase')
+    implementation project(':react-native-firebase')
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-maps')
+    implementation project(':react-native-maps')
+    implementation project(':react-native-push-notification')
+    implementation project(':react-native-linear-gradient')
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
     implementation project(':react-native-push-notification')
     implementation project(':react-native-linear-gradient')
@@ -172,7 +178,12 @@ dependencies {
     implementation(project(':react-native-maps')) {
     exclude group: 'com.google.android.gms', module: 'play-services-base'
     exclude group: 'com.google.android.gms', module: 'play-services-maps'
-    compile project(':react-native-orientation')
+    implementation project(':react-native-orientation')
+    implementation(project(':react-native-firebase')) {
+      transitive = false
+    }
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
 }
 implementation 'com.google.android.gms:play-services-base:+'
 implementation 'com.google.android.gms:play-services-maps:+'
@@ -184,3 +195,4 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+apply plugin: 'com.google.gms.google-services'

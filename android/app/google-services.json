@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "711229091428",
+    "firebase_url": "https://tabeksapp-1541429448092.firebaseio.com",
+    "project_id": "tabeksapp-1541429448092",
+    "storage_bucket": "tabeksapp-1541429448092.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:711229091428:android:8722783fa83d5cf2",
+        "android_client_info": {
+          "package_name": "com.tabeksapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "711229091428-3mekhhlosgntdv6d67khtc1bqkaapn98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFzRi5KYgBUelxw8DyWxsweCV5iPeNQxA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": { 
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
