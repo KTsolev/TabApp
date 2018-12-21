@@ -77,16 +77,15 @@ export default class tabexapp extends Component {
       key1: 'value1',
       key2: 'value2',
     });
-    console.log(notification)
     const enabled = await firebase.messaging().hasPermission();
     console.log('in check permission');
     if (enabled) {
       console.log('withs permission');
 
-      this.getToken().then(data => console.log(data));
+      this.getToken().then(data => console.warn(data));
       const date = new Date();
       date.setMinutes(date.getMinutes() + 1);
-      console.log(date.getTime())
+
       firebase.notifications().scheduleNotification(notification, {
           fireDate: date.getTime(),
         });
@@ -98,9 +97,10 @@ export default class tabexapp extends Component {
 
   async getToken() {
     let fcmToken = await AsyncStorage.getItem('fcmToken', value);
-    console.log(fcmToken);
     if (!fcmToken) {
       fcmToken = await firebase.messaging().getToken();
+      console.warn(fcmToken);
+      
       if (fcmToken) {
         await AsyncStorage.setItem('fcmToken', fcmToken);
       }
