@@ -9,6 +9,7 @@ import UserStore from './app/data/UserStore';
 import PillStore from './app/data/PillStore';
 import { loadUser, deleteUser } from './app/data/FluxActions';
 import firebase from 'react-native-firebase';
+import { AsyncStorage } from 'react-native';
 
 let PushNotification = require('react-native-push-notification');
 
@@ -68,9 +69,28 @@ export default class tabexapp extends Component {
   }
 
   async checkPermission() {
+    const notification = new firebase.notifications.Notification()
+    .setNotificationId('notificationId')
+    .setTitle('My notification title')
+    .setBody('My notification body')
+    .setData({
+      key1: 'value1',
+      key2: 'value2',
+    });
+    console.log(notification)
     const enabled = await firebase.messaging().hasPermission();
+    console.log('in check permission');
     if (enabled) {
-      this.getToken();
+      console.log('withs permission');
+
+      this.getToken().then(data => console.log(data));
+      const date = new Date();
+      date.setMinutes(date.getMinutes() + 1);
+      console.log(date.getTime())
+      firebase.notifications().scheduleNotification(notification, {
+          fireDate: date.getTime(),
+        });
+
     } else {
       this.requestPermission();
     }
@@ -78,12 +98,14 @@ export default class tabexapp extends Component {
 
   async getToken() {
     let fcmToken = await AsyncStorage.getItem('fcmToken', value);
+    console.log(fcmToken);
     if (!fcmToken) {
       fcmToken = await firebase.messaging().getToken();
       if (fcmToken) {
         await AsyncStorage.setItem('fcmToken', fcmToken);
       }
     }
+    this.setState({ token: fcmToken });
   }
 
   async requestPermission() {
@@ -140,8 +162,8 @@ export default class tabexapp extends Component {
   }
 
   componentDidMount() {
-    this.checkPermission();
-    this.createNotificationListeners();
+    this.checkPermission().then((err, data) => { err ? console.log(err): data });
+    this.createNotificationListeners().then((err, data) => { err ? console.log(err): data });;
     UserStore.on('user-loading', () => this.setState({ isUserLoading: true }));
     UserStore.on('recieved-user-data', () => this.setState({ isUserLoading: false }));
     UserStore.on('user-deleted', () => this._setUser(false));

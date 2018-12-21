@@ -5,6 +5,10 @@ import com.facebook.react.ReactApplication;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.RNFirebasePackage;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.RNFirebasePackage;
+import com.airbnb.android.react.maps.MapsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -32,7 +36,6 @@ public class MainApplication extends Application implements ReactApplication {
             new MainReactPackage(),
             new RNFirebasePackage(),
             new MapsPackage(),
-            new ReactNativePushNotificationPackage(),
             new LinearGradientPackage(),
             new OrientationPackage(),
             new RNFirebasePackage(),
