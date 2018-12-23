@@ -32,7 +32,7 @@ export default class IntroScreen extends Component {
       return <Wizzard finishSetUpUser={this.props.finishSetUpUser}>
       <Wizzard.Step>How much do you pay for pack of cigarettes?</Wizzard.Step>
       <Wizzard.Step>How many cigarettes do you smoke per day?</Wizzard.Step>
-      <Wizzard.Step>When do you want to start your Tabex Treatmen?</Wizzard.Step>
+      <Wizzard.Step>When do you want to start your Tabex treatment?</Wizzard.Step>
       </Wizzard>;
     }
 

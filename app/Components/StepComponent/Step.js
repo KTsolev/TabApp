@@ -162,7 +162,14 @@ export default class Step extends Component {
               });
             }}
             onFocus={() => this.setState({ pricePerPack: '' })}
-            onChangeText={(val) => this.setState({ pricePerPack: val })}
+            onChangeText={(val) => {
+              if (val.indexOf(',') !== -1 ) {
+                let newVal = val.split(',');
+                val = val === ',' ? `0.` : `${newVal[0]}.`;
+              }
+
+              this.setState({ pricePerPack: val });
+            }}
             onEndEditing={this.selectPricePerPack}
             value={`${this.state.pricePerPack}`}
           />
@@ -194,7 +201,14 @@ export default class Step extends Component {
               });
             }}
             onFocus={()=>this.setState({ ciggarettesPerDay: '' })}
-            onChangeText={(val) => this.setState({ ciggarettesPerDay: val })}
+            onChangeText={(val) => (val) => {
+              if (val.indexOf(',') !== -1 ) {
+                let newVal = val.split(',');
+                val = val === ',' ? `0.` : `${newVal[0]}.`;
+              }
+
+              this.setState({ selectCiggarettes: val });
+            }}
             onEndEditing={this.selectCiggarettes}
             value={`${this.state.ciggarettesPerDay}`}
           />
@@ -225,7 +239,7 @@ export default class Step extends Component {
       case 3:
         isValid = moment(this.state.startingDate).isBefore(moment(), 'days');
         toDisable = this.state.startingDate === '';
-        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>You have select valid data that is not prior to the current!</Text>
+        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>You have to select a valid date that is not prior to the current!</Text>
         inputs = <View style={styles.datePicker}>
         <TouchableOpacity onPress={this._toggleDateTimePicker}>
           <Text style={[styles.buttonText, {color:'#000'}]}> {this.state.startingDate ? moment(this.state.startingDate).format('DD/MM/YYYY') : 'dd/mm/yyyy'}</Text>

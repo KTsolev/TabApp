@@ -4,33 +4,33 @@ const validation = {
   currency: {
     presence: {
       allowEmpty: false,
-      message: '^Please enter currency',
+      message: '^Please enter currency!',
     },
   },
 
   pricePerPack: {
     presence: {
       allowEmpty: false,
-      message: '^Please enter a how much do you spent on pack of ciggarettes!',
+      message: '^Please enter how much do you spend on pack of cigarettes!',
     },
     numericality: {
       greaterThan: 0,
       notValid: false,
       notInteger: false,
-      message: '^Please enter valid number for price per pack of ciggarettes!',
+      message: '^Please enter valid number!',
     },
   },
 
   ciggarettesPerDay: {
     presence: {
       allowEmpty: false,
-      message: '^Please enter a how much ciggarettes do you smoke!',
+      message: '^Please enter how much cigarettes do you smoke per day!',
     },
     numericality: {
       greaterThan: 0,
       notValid: false,
       notInteger: false,
-      message: '^Please enter valid number for ciggarettes you smoke per day!',
+      message: '^Please enter valid number!',
     },
   },
 
@@ -41,7 +41,7 @@ const validation = {
     },
     datetime: {
       earliest: moment.utc().format('YYYY-MM-DD'),
-      message: '^You can\'t select date that is in the past!!',
+      message: '^You have to select a valid date that is not prior to the current!',
     },
   },
 };
