@@ -35,12 +35,12 @@ export default styles = StyleSheet.create({
   containerInner: {
     flexDirection: 'column',
     flex: 2,
-    maxWidth: '90%',
-    maxHeight: '40%',
+    maxWidth: '95%',
+    maxHeight: '45%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f1f1f1',
-    padding: 35,
+    padding: 30,
     marginBottom: 10,
     borderRadius: 50,
   },
@@ -48,6 +48,6 @@ export default styles = StyleSheet.create({
   innerRow: {
     flexDirection: 'row',
     width: '80%',
-    marginTop: 20,
+    marginTop: 15,
   },
 });

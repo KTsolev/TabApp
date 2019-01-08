@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -53,6 +54,7 @@
 		AB6FFB9CD64246098B47DFC2 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C927DCA736A4D1F86087AC6 /* libBVLinearGradient.a */; };
 		AD0E3370373347DCB49B2371 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A0A445A8FD3D408ABC195FA9 /* SimpleLineIcons.ttf */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
+		AF48813B21E34F0C00DE3E28 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF48813A21E34F0C00DE3E28 /* GameKit.framework */; };
 		AFB9257021C8F9B60001DE99 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB9256D21C8F9AC0001DE99 /* libBVLinearGradient.a */; };
 		AFB9257121C8F9BE0001DE99 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB9256621C8F94D0001DE99 /* libAirMaps.a */; };
 		AFB9257221C8F9C70001DE99 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB9254521C8F92D0001DE99 /* libRCTPushNotification.a */; };
@@ -461,6 +463,8 @@
 		A0A445A8FD3D408ABC195FA9 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AED24A7A8A6F478E9066F9BB /* libRCTOrientation.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTOrientation.a; sourceTree = "<group>"; };
+		AF48813921E34EE700DE3E28 /* TabeksApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TabeksApp.entitlements; path = TabeksApp/TabeksApp.entitlements; sourceTree = "<group>"; };
+		AF48813A21E34F0C00DE3E28 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		AFB9253321C8F92D0001DE99 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		AFB9256121C8F94C0001DE99 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		AFB9256721C8F9AC0001DE99 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
@@ -505,6 +509,7 @@
 				AB6FFB9CD64246098B47DFC2 /* libBVLinearGradient.a in Frameworks */,
 				B684917D70BF47C794CD0A7C /* libAirMaps.a in Frameworks */,
 				8C610004AA434B14B37EE776 /* libRCTOrientation.a in Frameworks */,
+				AF48813B21E34F0C00DE3E28 /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,6 +622,7 @@
 		13B07FAE1A68108700A75B9A /* TabeksApp */ = {
 			isa = PBXGroup;
 			children = (
+				AF48813921E34EE700DE3E28 /* TabeksApp.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -654,6 +660,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AF48813A21E34F0C00DE3E28 /* GameKit.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 			);
 			name = Frameworks;
@@ -933,6 +940,14 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = FBQPPC3LK4;
+						SystemCapabilities = {
+							com.apple.GameCenter.iOS = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1600,6 +1615,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TabeksApp/TabeksApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = FBQPPC3LK4;
@@ -1627,6 +1643,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TabeksApp/TabeksApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FBQPPC3LK4;
 				HEADER_SEARCH_PATHS = (

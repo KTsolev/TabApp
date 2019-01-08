@@ -68,7 +68,6 @@ export default styles = StyleSheet.create({
   errorText: {
     fontSize: 10,
     padding: 5,
-    textTransform: 'capitalize',
     color: '#ff5100',
     textAlign: 'center',
   },
@@ -77,14 +76,12 @@ export default styles = StyleSheet.create({
     fontSize: 18,
     padding: 15,
     marginBottom: 10,
-    textTransform: 'capitalize',
     color: '#0643a7',
     textAlign: 'center',
   },
 
   headerText: {
     fontSize: 16,
-    textTransform: 'capitalize',
     color: '#fff',
     width: 25,
     height: 25,
@@ -97,7 +94,6 @@ export default styles = StyleSheet.create({
 
   activeHeader: {
     fontSize: 16,
-    textTransform: 'capitalize',
     color: '#fff',
     width: 25,
     height: 25,
@@ -152,7 +148,6 @@ export default styles = StyleSheet.create({
 
   containerText: {
     fontSize: 14,
-    textTransform: 'capitalize',
     color: '#0643a7',
     paddingLeft: 10,
     paddingRight: 10,

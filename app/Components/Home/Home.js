@@ -28,8 +28,8 @@ export default class Home extends Component {
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
 
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day //
-    const moneySaved = Math.round(((user.pricePerPack / 20) * user.ciggarettesPerDay) * daysSinceStart);
-    const notSmoked = (user.ciggarettesPerDay * daysSinceStart);
+    const moneySaved = Math.round(((user.pricePerPack / 20) * user.ciggarettesPerDay) * daysSinceStart).toFixed(2);
+    const notSmoked = Math.round(user.ciggarettesPerDay * daysSinceStart).toFixed(2);
 
     const endingDate = user.endingDate;
     const currency = user.currency.split('-')[1];
@@ -57,7 +57,7 @@ export default class Home extends Component {
 
   _incrementPills() {
     let pills = PillStore.getPills();
-     if (!pills.disabled) {
+    if (!pills.disabled) {
       this.setState({
         pills: pills.count,
         leftPills: pills.leftPills,

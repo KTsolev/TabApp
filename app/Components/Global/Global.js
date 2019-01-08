@@ -215,8 +215,8 @@ export default class Global extends Component{
                 style={styles.img}
                 resizeMode='contain'
                 source={require('../../imgs/pin.png')}/>
-              <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-                {this.state.peopleArroundGLobe}
+              <Text style={{ fontSize: 10, color: '#0648aa', textAlign: 'right' }}>
+                {this.state.peopleArroundGLobe}{" "}
                 people in 7 different countries and 2 continents quit smoking today.
               </Text>
             </View>
@@ -258,8 +258,8 @@ export default class Global extends Component{
                 style={styles.img}
                 resizeMode='contain'
                 source={require('../../imgs/pin.png')}/>
-              <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
-                {this.state.peopleArroundGLobe}
+                <Text style={{ fontSize: 10, color: '#0648aa', flex: 1, textAlign: 'right' }}>
+                {this.state.peopleArroundGLobe}{" "}
                 people in 7 different countries and 2 continents quit smoking today.
               </Text>
             </View>

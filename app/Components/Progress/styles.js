@@ -117,6 +117,7 @@ export default styles = StyleSheet.create({
     fontSize: 12,
     color: '#fff',
     textAlign: 'right',
+    marginRight: 4,
   },
 
   innerBar: {

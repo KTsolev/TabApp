@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TabeksApp</string>
+	<string>Tabex</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,29 +17,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.01</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -53,24 +37,8 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>fontawesome</key>
-	<array>
-		<string>fa-solid-900.woff2</string>
-		<string>fa-solid-900.woff</string>
-		<string>fa-solid-900.ttf</string>
-		<string>fa-solid-900.svg</string>
-		<string>fa-solid-900.eot</string>
-		<string>fa-regular-400.woff2</string>
-		<string>fa-regular-400.woff</string>
-		<string>fa-regular-400.ttf</string>
-		<string>fa-regular-400.svg</string>
-		<string>fa-regular-400.eot</string>
-		<string>fa-brands-400.woff2</string>
-		<string>fa-brands-400.woff</string>
-		<string>fa-brands-400.ttf</string>
-		<string>fa-brands-400.svg</string>
-		<string>fa-brands-400.eot</string>
-	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -88,6 +56,39 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>gamekit</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>fontawesome</key>
+	<array>
+		<string>fa-solid-900.woff2</string>
+		<string>fa-solid-900.woff</string>
+		<string>fa-solid-900.ttf</string>
+		<string>fa-solid-900.svg</string>
+		<string>fa-solid-900.eot</string>
+		<string>fa-regular-400.woff2</string>
+		<string>fa-regular-400.woff</string>
+		<string>fa-regular-400.ttf</string>
+		<string>fa-regular-400.svg</string>
+		<string>fa-regular-400.eot</string>
+		<string>fa-brands-400.woff2</string>
+		<string>fa-brands-400.woff</string>
+		<string>fa-brands-400.ttf</string>
+		<string>fa-brands-400.svg</string>
+		<string>fa-brands-400.eot</string>
 	</array>
 </dict>
 </plist>

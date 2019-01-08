@@ -114,27 +114,21 @@ export default class tabexapp extends Component {
   }
 
   _handleAppStateChange(appState) {
+    let time = moment().add(10, 'minutes').toDate();
+    console.warn(new Date(Date.now() + (10 * (60 * 1000))));
+    PushNotification.localNotificationSchedule({
+      date: new Date(Date.now() + (120 * (60 * 1000))),
+      bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
+      title: 'Tabex Tracking', // (optional)
+      message: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (required)
+      largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
+      smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
+      subText: 'Tabex tracking', // (optional) default: none
+      color: 'blue',
+    });
 
     if (appState === 'background' || appState === 'inactive') {
       this.setState({ notificationCount: this.state.notificationCount + 1 });
-
-      let date = moment().add(2, 'hours').toDate();
-
-      if (Platform === 'ios') {
-        date = notificationSchedule.toISOString();
-      }
-
-      PushNotification.localNotificationSchedule({
-        id: Date.now(),
-        bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
-        date,
-        title: 'Tabex Tracking', // (optional)
-        message: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (required)
-        largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
-        smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
-        subText: 'Tabex tracking', // (optional) default: none
-        color: 'blue',
-      });
 
       PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
     }
@@ -181,7 +175,6 @@ export default class tabexapp extends Component {
   }
 
   render() {
-    console.log(this.state.isUserLoading, this.state.isPillDataLoading)
     if (this.state.isUserLoading ) {
       return <Spinner hide={ this.state.isUserLoading }/>;
     }

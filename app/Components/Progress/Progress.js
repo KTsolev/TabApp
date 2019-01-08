@@ -36,8 +36,8 @@ export default class ProgressScreen extends Component{
     const pillsWidth = Math.round((((180 - pillsTaken) / 180) * 100));
     const pillsMargin = Math.round((pillsTaken / 180) * 100);
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
-    const notSmoked = user.ciggarettesPerDay * daysSinceStart;
+    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart).toFixed(2);
+    const notSmoked = Math.round(user.ciggarettesPerDay * daysSinceStart).toFixed(2);
 
     this.state = {
       timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
@@ -70,12 +70,13 @@ export default class ProgressScreen extends Component{
     const pillsWidth = Math.round((((180 - pillsTaken) / 180) * 100));
     const pillsMargin = Math.round((pillsTaken / 180) * 100);
     const leftPills = pills.leftPills;
-    console.log(pills, leftPills);
+
     this.setState({
       leftPills,
       pillsWidth,
       pillsMargin,
     });
+
     this._saveLeftPills();
   }
 
@@ -136,7 +137,7 @@ export default class ProgressScreen extends Component{
                 colors={['#56c17b', '#2ca5af']}
                 style={styles.barGreen}>
                 <TouchableOpacity disabled={true} style={[styles.innerBar, { marginLeft: `${this.state.pillsMargin ? this.state.pillsMargin : 0}%`, width: `${this.state.pillsWidth ? this.state.pillsWidth : 100}%` }]}>
-                    <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
+                  <Text style={styles.innerBarText}>{this.state.leftPills} pills left</Text>
                 </TouchableOpacity>
               </LinearGradient>
               <View style={styles.barBottomRow}>
@@ -169,7 +170,7 @@ export default class ProgressScreen extends Component{
 
           <View style={[styles.infoArea, { maxHeight: '33%' }]}>
             <TouchableOpacity disabled={true} style={styles.moneyArea}>
-              <Text style={[styles.areaTextBolded, {fontSize: 12}]}>{this.state.moneySaved}</Text>
+              <Text style={[styles.areaTextBolded, { fontSize: 12 }]}>{this.state.moneySaved}</Text>
               <Text style={[styles.areaText, { fontSize: 12 }]}>{this.state.currency} saved</Text>
             </TouchableOpacity>
             <TouchableOpacity disabled={true} style={styles.ciggarettesArea}>

@@ -36,7 +36,6 @@ export default styles = StyleSheet.create({
 
   containerTitle: {
     fontSize: 22,
-    textTransform: 'capitalize',
     color: '#0643a7',
     textAlign: 'center',
     marginTop: 10,
@@ -45,7 +44,6 @@ export default styles = StyleSheet.create({
 
   containerText: {
     fontSize: 14,
-    textTransform: 'capitalize',
     color: '#0643a7',
     paddingLeft: 10,
     paddingRight: 10,
