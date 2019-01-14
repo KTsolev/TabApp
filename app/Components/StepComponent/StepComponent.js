@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Divider } from 'react-native-elements';
 import { createUser, saveUser, } from '../../data/FluxActions';
 import { Dropdown } from 'react-native-material-dropdown';
+import PushNotificationService from '../../data/PushNotificationService';
 import styles from './styles';
 import Step from './Step';
 import {
@@ -24,6 +25,7 @@ import {
   removeOrientationListener as rol
 } from 'react-native-responsive-screen';
 
+const PushNotification = new PushNotificationService();
 
 class Wizzard extends Component {
   static Step = (props) => <Step {...props}/>;
@@ -60,6 +62,7 @@ class Wizzard extends Component {
         isfirst: this.state.index === 0,
       }));
     } else if (this.state.index >= 2 && Object.keys(this.state.userData).length === 5) {
+      PushNotification.sendNotifications((120 * 60000));
       createUser(this.state.userData);
       saveUser(this.state.userData);
     } else {
@@ -82,7 +85,6 @@ class Wizzard extends Component {
   }
 
   _updateUser(newState) {
-    console.log(newState)
     this.setState({
       userData: Object.assign({}, this.state.userData, newState),
     });
@@ -98,6 +100,8 @@ class Wizzard extends Component {
 
   componentDidMount() {
     loc(this);
+    PushNotification.init();
+
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
   }
@@ -109,7 +113,6 @@ class Wizzard extends Component {
   }
 
   render() {
-    console.log(this.state)
     return (
       <TouchableWithoutFeedback accessible={false} onPress={() => {
         Keyboard.dismiss();

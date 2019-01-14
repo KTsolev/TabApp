@@ -2,6 +2,7 @@ package com.tabeksapp;
 
 import android.app.Application;
 import com.facebook.react.ReactApplication;
+import com.reactlibrary.RNNotificationAndroidPermissionLibraryPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNNotificationAndroidPermissionLibraryPackage(),
             new MapsPackage(),
             new ReactNativePushNotificationPackage(),
             new LinearGradientPackage(),

@@ -8,6 +8,9 @@ import UserStore from '../../data/UserStore';
 import PillStore from '../../data/PillStore';
 import Orientation from 'react-native-orientation';
 import styles from './styles';
+
+let PushNotification = require('react-native-push-notification');
+
 import {
   Platform,
   View,

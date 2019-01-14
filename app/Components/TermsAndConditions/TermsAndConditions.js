@@ -49,7 +49,6 @@ export default class TermsAndConditions extends Component {
   }
 
   render() {
-    console.log(generalRights);
     const checkBoxText = <View>
         <Text style={styles.containerText}>
           To continue you must aggree to Sopharma AD

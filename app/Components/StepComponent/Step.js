@@ -205,7 +205,6 @@ export default class Step extends Component {
                 let newVal = val.split(',');
                 val = val === ',' ? `0.` : `${newVal[0]}.`;
               }
-              console.log(val);
               this.setState({ ciggarettesPerDay: val });
             }}
             onEndEditing={this.selectCiggarettes}

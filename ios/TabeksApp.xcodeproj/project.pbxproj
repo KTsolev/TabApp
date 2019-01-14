@@ -47,6 +47,7 @@
 		6425EA84185B41D7906A2F37 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4B9F7A914C8C4ABBBA740630 /* Foundation.ttf */; };
 		74DF00437C374666859496B3 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F296D07F0E9E4B1991AC8B85 /* EvilIcons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		86291AB2D06447BB90A4BECB /* libRNNotificationAndroidPermissionLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D772AEEF2384060A0484DF3 /* libRNNotificationAndroidPermissionLibrary.a */; };
 		8C610004AA434B14B37EE776 /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AED24A7A8A6F478E9066F9BB /* libRCTOrientation.a */; };
 		A068DB5B69264924A62652F9 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2EF9CC82CF2E41E58712E846 /* Ionicons.ttf */; };
 		A0CBE41AD78248C8A3E71EC6 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 02306C7C13EE404689BC3F30 /* Zocial.ttf */; };
@@ -374,6 +375,13 @@
 			remoteGlobalIDString = 64AA15081EF7F30100718508;
 			remoteInfo = "BVLinearGradient-tvOS";
 		};
+		AFC244ED21EBCA3E00B06E28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 373F6B6B1ED5473FB4A490FF /* RNNotificationAndroidPermissionLibrary.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNNotificationAndroidPermissionLibrary;
+		};
 		AFE957DC21C90A7600918F00 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F73276563869407EB4698398 /* BVLinearGradient.xcodeproj */;
@@ -447,12 +455,14 @@
 		2F0AEE4FED514FA8A9195494 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		321CDEA875B24C55BAFAF3A9 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		34B26A215E2740CBAB5BE916 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		373F6B6B1ED5473FB4A490FF /* RNNotificationAndroidPermissionLibrary.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNNotificationAndroidPermissionLibrary.xcodeproj; path = "../node_modules/react-native-notification-android-permission-library/ios/RNNotificationAndroidPermissionLibrary.xcodeproj"; sourceTree = "<group>"; };
 		38CA6CE8B29E40708395E376 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		412F0AB3FE0E4F798453EAF7 /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOrientation.xcodeproj; path = "../node_modules/react-native-orientation/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; };
 		4B9F7A914C8C4ABBBA740630 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		4C927DCA736A4D1F86087AC6 /* libBVLinearGradient.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libBVLinearGradient.a; sourceTree = "<group>"; };
 		512181D7719041CEA341F222 /* libAirMaps.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libAirMaps.a; sourceTree = "<group>"; };
 		517053D6939F468BA0782F5E /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
+		5D772AEEF2384060A0484DF3 /* libRNNotificationAndroidPermissionLibrary.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNNotificationAndroidPermissionLibrary.a; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		658A6CBEA3BD484F85804F3B /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		68801542EAE94E21A767B044 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -510,6 +520,7 @@
 				B684917D70BF47C794CD0A7C /* libAirMaps.a in Frameworks */,
 				8C610004AA434B14B37EE776 /* libRCTOrientation.a in Frameworks */,
 				AF48813B21E34F0C00DE3E28 /* GameKit.framework in Frameworks */,
+				86291AB2D06447BB90A4BECB /* libRNNotificationAndroidPermissionLibrary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +714,7 @@
 				F73276563869407EB4698398 /* BVLinearGradient.xcodeproj */,
 				F8E9AE8DDF27483599DD9710 /* AirMaps.xcodeproj */,
 				412F0AB3FE0E4F798453EAF7 /* RCTOrientation.xcodeproj */,
+				373F6B6B1ED5473FB4A490FF /* RNNotificationAndroidPermissionLibrary.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -782,6 +794,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AFC244EA21EBCA3E00B06E28 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AFC244EE21EBCA3E00B06E28 /* libRNNotificationAndroidPermissionLibrary.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		AFE957AD21C90A7500918F00 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -790,6 +810,7 @@
 				512181D7719041CEA341F222 /* libAirMaps.a */,
 				AED24A7A8A6F478E9066F9BB /* libRCTOrientation.a */,
 				B5CB0332FDE24D948A1A2519 /* libRNVectorIcons-tvOS.a */,
+				5D772AEEF2384060A0484DF3 /* libRNNotificationAndroidPermissionLibrary.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1043,6 +1064,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = AFC244EA21EBCA3E00B06E28 /* Products */;
+					ProjectRef = 373F6B6B1ED5473FB4A490FF /* RNNotificationAndroidPermissionLibrary.xcodeproj */;
 				},
 				{
 					ProductGroup = AFE957E021C90A7600918F00 /* Products */;
@@ -1354,6 +1379,13 @@
 			remoteRef = AFB9256E21C8F9AC0001DE99 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		AFC244EE21EBCA3E00B06E28 /* libRNNotificationAndroidPermissionLibrary.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNNotificationAndroidPermissionLibrary.a;
+			remoteRef = AFC244ED21EBCA3E00B06E28 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		AFE957DD21C90A7600918F00 /* libBVLinearGradient.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1556,12 +1588,14 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = TabeksAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1589,12 +1623,14 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = TabeksAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1625,6 +1661,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = TabeksApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1652,6 +1689,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = TabeksApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1684,11 +1722,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = "TabeksApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1725,11 +1765,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = "TabeksApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1765,11 +1807,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = "TabeksApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1805,11 +1849,13 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
+					"$(SRCROOT)/../node_modules/react-native-notification-android-permission-library/ios",
 				);
 				INFOPLIST_FILE = "TabeksApp-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

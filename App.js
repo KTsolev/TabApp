@@ -8,8 +8,9 @@ import moment from 'moment';
 import UserStore from './app/data/UserStore';
 import PillStore from './app/data/PillStore';
 import { loadUser, deleteUser, loadPillsData, reinitPillsData } from './app/data/FluxActions';
+import PushNotificationService from './app/data/PushNotificationService';
 
-let PushNotification = require('react-native-push-notification');
+const PushNotification = new PushNotificationService();
 
 export default class tabexapp extends Component {
   constructor(props) {
@@ -24,39 +25,10 @@ export default class tabexapp extends Component {
       showDialog: false,
       notificationCount: 0,
     };
-
-    PushNotification.configure({
-        // (optional) Called when Token is generated (iOS and Android)
-        onRegister: (token) => {
-            console.log('TOKEN:', token);
-        },
-
-        // (required) Called when a remote or local notification is opened or received
-        onNotification: this._notificationHandler.bind(this),
-
-        // IOS ONLY (optional): default: all - Permissions to register.
-        permissions: {
-            alert: true,
-            badge: true,
-            sound: true,
-          },
-
-        // Should the initial notification be popped automatically
-        // default: true
-        popInitialNotification: true,
-
-        /**
-          * (optional) default: true
-          * - Specified if permissions (ios) and token (android and ios) will requested or not,
-          * - if not, you must call PushNotificationsHandler.requestPermissions() later
-          */
-        requestPermissions: true,
-      });
-
+    PushNotification.sendNotifications((5 * 60000));
     this._setUser = this._setUser.bind(this);
     this._loadUser = this._loadUser.bind(this);
     this._toggleModal = this._toggleModal.bind(this);
-    this._handleAppStateChange = this._handleAppStateChange.bind(this);
   }
 
   _loadUser() {
@@ -87,21 +59,6 @@ export default class tabexapp extends Component {
     });
   }
 
-  _notificationHandler (notification) {
-    const clicked = notification.userInteraction;
-
-    if (clicked) {
-      this.setState({ notificationCount: this.state.notificationCount - 1 });
-      PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
-
-      if (Platform.OS === 'ios') {
-        PushNotification.cancelLocalNotifications({ id: notification.data.id });
-      } else {
-        PushNotification.cancelLocalNotifications({ id: notification.id });
-      }
-    }
-  }
-
   _toggleModal() {
     let user = UserStore.getUser();
 
@@ -111,27 +68,6 @@ export default class tabexapp extends Component {
       isUserLoading: false,
       showDialog: !this.state.showDialog,
     });
-  }
-
-  _handleAppStateChange(appState) {
-    let time = moment().add(10, 'minutes').toDate();
-    console.warn(new Date(Date.now() + (10 * (60 * 1000))));
-    PushNotification.localNotificationSchedule({
-      date: new Date(Date.now() + (120 * (60 * 1000))),
-      bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
-      title: 'Tabex Tracking', // (optional)
-      message: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (required)
-      largeIcon: 'ic_launcher', // (optional) default: 'ic_launcher'
-      smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
-      subText: 'Tabex tracking', // (optional) default: none
-      color: 'blue',
-    });
-
-    if (appState === 'background' || appState === 'inactive') {
-      this.setState({ notificationCount: this.state.notificationCount + 1 });
-
-      PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
-    }
   }
 
   componentWillMount() {
@@ -151,7 +87,6 @@ export default class tabexapp extends Component {
         isUserLoading: false,
       });
     });
-    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
@@ -171,7 +106,6 @@ export default class tabexapp extends Component {
         isUserLoading: false,
       });
     });
-    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
   render() {
