@@ -12,7 +12,7 @@ import { View,
       } from 'react-native';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import { Divider } from 'react-native-elements';
-import { addNewUserProps, saveUser, loadUser } from '../../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser, savePillsData, loadPillsData } from '../../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../../data/UserStore';
 import PillStore from '../../data/PillStore';
@@ -29,52 +29,41 @@ export default class CalendarTracking extends Component{
     this._orientationDidChange = this._orientationDidChange.bind(this);
 
     const user = UserStore.getUser();
-    let pills = PillStore.getPills();
+    const pills = PillStore.getPills();
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) : 1;
     let startDate = daysSinceStart < 0 ? user.startingDate : moment().format();
     let dates =  this._getSelectedRange(user.startingDate, user.endingDate);
-    let disabled = user.disabled ? moment().diff(moment(user.lastPillTaken), 'days') > 0 ? false : true : false;
+    let disabled = pills.disabled ? moment().diff(moment(pills.lastPillTaken), 'days') > 0 ? false : true : false;
 
     this.state = {
-      pills: Number(user.pills) || pills.count,
+      pills: Number(pills.count) || 0,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
-      pillsTaken,
       isLandScape: false,
       disabled: daysSinceStart < 0 ? true : disabled,
-      lastPillTaken: user.lastPillTaken,
+      lastPillTaken: pills.lastPillTaken,
       dates,
     };
   }
 
 _increasePills() {
-    let pills = PillStore.getPills();
+  let pills = PillStore.getPills();
 
-    if (!this.state.disabled) {
-      let sum = this.state.pillsTaken + 1;
-      this.setState({
-        pills: pills.count,
-        pillsTaken: sum,
-        lastPillTaken: pills.lastPillTaken,
-      });
-
-      addNewUserProps({
-        pills: pills.count,
-        pillsTaken: pills.count,});
-      setTimeout(() => saveUser(UserStore.getUser()), 1000);
-    }
+  if (!pills.disabled) {
+    this.setState({
+      pills: pills.count,
+      leftPills: pills.leftPills,
+      lastPillTaken: pills.lastPillTaken,
+    });
+    setTimeout(() => savePillsData(pills), 0);
   }
+}
 
   _dozeHandler() {
     this.setState({ disabled: true });
-    addNewUserProps({
-      pills: 1,
-      pillsTaken: this.state.pillsTaken,
-      lastPillTaken: this.state.lastPillTaken,
-      disabled: true });
-    setTimeout(() => saveUser(UserStore.getUser()), 1000);
-  }
+    let pills = PillStore.getPills();
 
+    setTimeout(() => savePillsData(pills), 0);
+  }
 
   _getSelectedRange(startDate, endDate) {
 
@@ -83,7 +72,7 @@ _increasePills() {
     let range  = [];
     if (moment().isAfter(minDate, 'days')) {
       while (minDate.isSameOrBefore(maxDate)) {
-          range.push({
+        range.push({
             date: minDate.format('YYYY-MM-DD'),
             selected: true,
             marked: true,
@@ -196,18 +185,20 @@ _increasePills() {
     this.setState({ isLandScape: orientation === 'LANDSCAPE' });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     UserStore.on('user-created', this._getUserData);
-    PillStore.on('pills-increased', this._increasePills);
     UserStore.on('user-saved', () => loadUser());
+    PillStore.on('pills-increased', this._increasePills);
+    PillStore.on('pills-data-saved', () => loadPillsData());
     PillStore.on('day-doze-reached', this._dozeHandler);
     Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-created', this._getUserData);
-    PillStore.removeListener('pills-increased', this._increasePills);
     UserStore.removeListener('user-saved', () => loadUser());
+    PillStore.removeListener('pills-increased', this._increasePills);
+    PillStore.removeListener('pills-data-saved', () => loadPillsData());
     PillStore.removeListener('day-doze-reached', this._dozeHandler);
     Orientation.removeOrientationListener(this._orientationDidChange);
   }

@@ -47,7 +47,6 @@ export default class Step extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       currency: props.userData.currency || '',
       pricePerPack: props.userData.pricePerPack || 0,
@@ -70,7 +69,7 @@ export default class Step extends Component {
 
   selectCurrency(val) {
     let errorText = validateWrapper('currency', val);
-    console.log(val)
+
     if (!!errorText) {
       this.setState({ currencyError: errorText });
       return;
@@ -201,13 +200,13 @@ export default class Step extends Component {
               });
             }}
             onFocus={()=>this.setState({ ciggarettesPerDay: '' })}
-            onChangeText={(val) => (val) => {
+            onChangeText={(val) => {
               if (val.indexOf(',') !== -1 ) {
                 let newVal = val.split(',');
                 val = val === ',' ? `0.` : `${newVal[0]}.`;
               }
-
-              this.setState({ selectCiggarettes: val });
+              console.log(val);
+              this.setState({ ciggarettesPerDay: val });
             }}
             onEndEditing={this.selectCiggarettes}
             value={`${this.state.ciggarettesPerDay}`}

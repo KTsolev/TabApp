@@ -3,7 +3,7 @@ import PercentageCircle from 'react-native-percentage-circle';
 import PillsButton from '../PillsButton/PillsButton';
 import moment from 'moment';
 import { Divider } from 'react-native-elements';
-import { addNewUserProps, saveUser, loadUser, } from '../../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser, savePillsData, loadPillsData } from '../../data/FluxActions';
 import UserStore from '../../data/UserStore';
 import PillStore from '../../data/PillStore';
 import Orientation from 'react-native-orientation';
@@ -22,20 +22,24 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    let pills = PillStore.getPills();
+    const pills = PillStore.getPills();
+
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
+
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day //
     const moneySaved = Math.round(((user.pricePerPack / 20) * user.ciggarettesPerDay) * daysSinceStart);
     const notSmoked = (user.ciggarettesPerDay * daysSinceStart);
+
     const endingDate = user.endingDate;
     const currency = user.currency.split('-')[1];
-    let disabled = user.disabled ? moment().diff(moment(user.lastPillTaken), 'days') > 0 ? false : true : false;
+
+    let disabled = pills.disabled ? moment().diff(moment(pills.lastPillTaken), 'days') > 0 ? false : true : false;
 
     this.state = {
-      pills: Number(user.pills) || 1,
-      pillsTaken: user.pillsTaken ? Number(user.pillsTaken) || 1 : 1,
-      lastPillTaken: user.lastPillTaken,
+      pills: pills.count,
+      pillsTaken: user.pillsTaken ? Number(user.pillsTaken) || 0 : 0,
+      lastPillTaken: pills.lastPillTaken,
       timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
       daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       endingDate,
@@ -46,7 +50,6 @@ export default class Home extends Component {
       moneySaved: moneySaved < 0 ? 0 : moneySaved,
     };
 
-    this._getUser = this._getUser.bind(this);
     this._incrementPills = this._incrementPills.bind(this);
     this._dozeHandler = this._dozeHandler.bind(this);
     this._orientationDidChange = this._orientationDidChange.bind(this);
@@ -54,54 +57,22 @@ export default class Home extends Component {
 
   _incrementPills() {
     let pills = PillStore.getPills();
-
-    if (!this.state.disabled) {
-      let sum = this.state.pillsTaken + 1;
+     if (!pills.disabled) {
       this.setState({
         pills: pills.count,
-        pillsTaken: sum,
+        leftPills: pills.leftPills,
         lastPillTaken: pills.lastPillTaken,
       });
 
-      addNewUserProps({
-        pills: pills.count,
-        pillsTaken: pills.count,
-      });
-      setTimeout(() => saveUser(UserStore.getUser()), 1000);
+      setTimeout(() => savePillsData(pills), 0);
     }
   }
 
   _dozeHandler() {
     this.setState({ disabled: true });
-    addNewUserProps({
-      pills: 1,
-      pillsTaken: this.state.pillsTaken,
-      lastPillTaken: this.state.lastPillTaken,
-      disabled: true,
-    });
-    setTimeout(() => saveUser(UserStore.getUser()), 1000);
-  }
+    let pills = PillStore.getPills();
 
-  _getUser() {
-    const jsonUser = UserStore.getUser();
-    const startingDate = jsonUser.startingDate;
-    const timeSinceStart = moment().diff(moment(startingDate), 'hours');
-    const daysSinceStart = moment().diff(moment(startingDate), 'days');
-    const endingDate = jsonUser.endingDate;
-    const currency = jsonUser.currency.split('-')[1];
-    this.setState({
-      timeSinceStart,
-      startingDate,
-      daysSinceStart,
-      endingDate,
-      isLandScape: false,
-      pills: Number(jsonUser.pills),
-      pillsTaken: jsonUser.pillsTaken ? Number(jsonUser.pillsTaken) || 1 : 1,
-      currency,
-      pricePerPack: jsonUser.pricePerPack && Number(jsonUser.pricePerPack) > 0 ? Number(jsonUser.pricePerPack) : Number(this.state.pricePerPack),
-      ciggarettesPerDay: jsonUser.ciggarettesPerDay && Number(jsonUser.ciggarettesPerDay) > 0 ? Number(jsonUser.ciggarettesPerDay) : Number(this.state.ciggarettesPerDay),
-      pillsTaken: jsonUser.pillsTaken ? Number(jsonUser.pillsTaken) : Number(this.state.pillsTaken),
-    });
+    setTimeout(() => savePillsData(pills), 0);
   }
 
   _orientationDidChange(orientation) {
@@ -111,22 +82,23 @@ export default class Home extends Component {
   componentWillMount() {
     const initial = Orientation.getInitialOrientation();
     this.setState({ isLandScape: initial === 'LANDSCAPE' });
-    UserStore.on('user-updated', this._getUser);
-    PillStore.on('pills-increased', this._incrementPills);
     UserStore.on('user-saved', () => loadUser());
+    PillStore.on('pills-increased', this._incrementPills);
     PillStore.on('day-doze-reached', this._dozeHandler);
+    PillStore.on('pills-data-saved', () => loadPillsData());
     Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-updated', this._getUser);
-    PillStore.removeListener('pills-increased', this._incrementPills);
     UserStore.removeListener('user-saved', () => loadUser());
+    PillStore.removeListener('pills-increased', this._incrementPills);
     PillStore.removeListener('day-doze-reached', this._dozeHandler);
+    PillStore.removeListener('pills-data-saved', () => loadPillsData());
     Orientation.removeOrientationListener(this._orientationDidChange);
   }
 
   render() {
+
     return (
       <View style={this.state.isLandScape ? styles.rowContainer : styles.container}>
         <ImageBackground

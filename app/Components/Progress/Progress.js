@@ -11,9 +11,10 @@ import { View,
       } from 'react-native';
 import PercentageCircle from 'react-native-percentage-circle';
 import LinearGradient from 'react-native-linear-gradient';
-import { addNewUserProps, saveUser, loadUser } from '../../data/FluxActions';
+import { addNewUserProps, saveUser, loadUser, loadPillsData } from '../../data/FluxActions';
 import moment from 'moment';
 import UserStore from '../../data/UserStore';
+import PillStore from '../../data/PillStore';
 import Orientation from 'react-native-orientation';
 import styles from './styles';
 
@@ -21,14 +22,17 @@ export default class ProgressScreen extends Component{
   constructor(props) {
     super(props);
     const user = UserStore.getUser();
-    const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 0;
+    const pills = PillStore.getPills();
+
+    //const pillsTaken = pills.count;//user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
     const daysSinceStart = moment().diff(moment(user.startingDate), 'days') < 0 ? 0 : moment().diff(moment(user.startingDate), 'days');
     const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
     const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
     const daysMargin = Math.round((daysSinceStart / 30) * 100);
-    const leftPills = 180 - pillsTaken;
+    const pillsTaken =  180 - pills.leftPills;
+    const leftPills = pills.leftPills || 180;
     const pillsWidth = Math.round((((180 - pillsTaken) / 180) * 100));
     const pillsMargin = Math.round((pillsTaken / 180) * 100);
     // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
@@ -49,42 +53,30 @@ export default class ProgressScreen extends Component{
       notSmoked: daysSinceStart < 0 ? 0 : notSmoked,
     };
 
-    this._getUserInfo = this._getUserInfo.bind(this);
+    this._decrementLeftPills = this._decrementLeftPills.bind(this);
     this._orientationDidChange = this._orientationDidChange.bind(this);
   }
 
-  _getUserInfo() {
-    const user = UserStore.getUser();
-    const pills = user.pillsTaken ? Number(user.pillsTaken) : 0;
-    const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
-    const daysSinceStart = moment().diff(moment(user.startingDate), 'days');
-    const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
-    const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
-    const daysMargin = Math.round((daysSinceStart / 30) * 100);
-    const leftPills = 180 - pills;
-    const currency = user.currency.split('-')[1];
-    const pillsWidth = Math.round((((180 - pills) / 180) * 100));
-    const pillsMargin = Math.round(((pills / 180) * 100));
-    // pricePerPack / 25 (total cigarretes in pack) * ciggarettesPerDay * day past//
-    const moneySaved = Math.round(((user.pricePerPack / 25) * user.ciggarettesPerDay) * daysSinceStart);
-    const notSmoked = user.ciggarettesPerDay * daysSinceStart;
+  _saveLeftPills() {
+    setTimeout(() => addNewUserProps({
+      leftPills: this.state.leftPills,
+    }), 0);
+    setTimeout(() => saveUser(UserStore.getUser()), 0);
+  }
 
+  _decrementLeftPills() {
+    const pills = PillStore.getPills();
+    const pillsTaken = 180 - pills.leftPills;
+    const pillsWidth = Math.round((((180 - pillsTaken) / 180) * 100));
+    const pillsMargin = Math.round((pillsTaken / 180) * 100);
+    const leftPills = pills.leftPills;
+    console.log(pills, leftPills);
     this.setState({
-      timeSinceStart: timeSinceStart < 0 ? 0 : timeSinceStart,
-      daysSinceStart: daysSinceStart < 0 ? 0 : daysSinceStart,
       leftPills,
-      leftDays,
-      isLandScape: false,
-      daysWidth: daysSinceStart < 0 ? 0 : daysWidth,
-      daysMargin: daysSinceStart < 0 ? 0 : daysMargin,
-      moneySaved: daysSinceStart < 0 ? 0 : moneySaved,
-      notSmoked: daysSinceStart < 0 ? 0 : notSmoked,
-      user,
-      currency,
-      pills,
       pillsWidth,
       pillsMargin,
     });
+    this._saveLeftPills();
   }
 
   _orientationDidChange(orientation) {
@@ -94,14 +86,14 @@ export default class ProgressScreen extends Component{
   componentWillMount() {
     const initial = Orientation.getInitialOrientation();
     this.setState({ isLandScape: initial === 'LANDSCAPE' });
-    UserStore.on('user-updated', this._getUserInfo);
-    UserStore.on('user-saved', () => loadUser());
+    PillStore.on('pills-increased', this._decrementLeftPills);
+    PillStore.on('pills-data-saved', () => loadPillsData());
     Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
-    UserStore.removeListener('user-updated', this._getUserInfo);
-    UserStore.removeListener('user-saved', () => loadUser());
+    PillStore.removeListener('pills-increased', this._decrementLeftPills);
+    PillStore.removeListener('pills-data-saved', () => loadPillsData());
     Orientation.removeOrientationListener(this._orientationDidChange);
   }
 

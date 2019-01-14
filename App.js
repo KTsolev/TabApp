@@ -7,7 +7,7 @@ import Spinner from './app/Components/Spinner/Spinner';
 import moment from 'moment';
 import UserStore from './app/data/UserStore';
 import PillStore from './app/data/PillStore';
-import { loadUser, deleteUser } from './app/data/FluxActions';
+import { loadUser, deleteUser, loadPillsData, reinitPillsData } from './app/data/FluxActions';
 
 let PushNotification = require('react-native-push-notification');
 
@@ -15,15 +15,21 @@ export default class tabexapp extends Component {
   constructor(props) {
     super(props);
     loadUser();
+    reinitPillsData();
 
     this.state = {
       isUserSet: false,
       isUserLoading: true,
+      isPillDataLoading: true,
       showDialog: false,
       notificationCount: 0,
     };
 
     PushNotification.configure({
+        // (optional) Called when Token is generated (iOS and Android)
+        onRegister: (token) => {
+            console.log('TOKEN:', token);
+        },
 
         // (required) Called when a remote or local notification is opened or received
         onNotification: this._notificationHandler.bind(this),
@@ -118,7 +124,7 @@ export default class tabexapp extends Component {
         date = notificationSchedule.toISOString();
       }
 
-      PushNotification.localNotification({
+      PushNotification.localNotificationSchedule({
         id: Date.now(),
         bigText: 'Get one step closer to a smoke free life by taking your tabeks pill now', // (optional) default: 'message' prop
         date,
@@ -128,14 +134,13 @@ export default class tabexapp extends Component {
         smallIcon: 'ic_notification', // (optional) default: 'ic_notification' with fallback for 'ic_launcher'
         subText: 'Tabex tracking', // (optional) default: none
         color: 'blue',
-        backgroundColor: 'darkBlue',
       });
 
       PushNotification.setApplicationIconBadgeNumber(Number(this.state.notificationCount));
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
     UserStore.on('user-loading', () => this.setState({ isUserLoading: true }));
     UserStore.on('recieved-user-data', () => this.setState({ isUserLoading: false }));
     UserStore.on('user-deleted', () => this._setUser(false));
@@ -143,6 +148,8 @@ export default class tabexapp extends Component {
     UserStore.on('user-updated', this._loadUser);
     UserStore.on('user-created', this._loadUser);
     PillStore.on('pills-missed', this._toggleModal);
+    PillStore.on('pills-loading', () => this.setState({ isPillDataLoading: true }));
+    PillStore.on('pills-state-created', () => this.setState({ isPillDataLoading: false }));
     PillStore.on('reset-completed', () => {
       this.setState({
         showDialog: false,
@@ -160,6 +167,8 @@ export default class tabexapp extends Component {
     UserStore.removeListener('user-saved', () => loadUser());
     UserStore.removeListener('user-created', this._loadUser);
     UserStore.removeListener('user-updated', this._loadUser);
+    PillStore.removeListener('pills-loading', () => this.setState({ isPillDataLoading: true }));
+    PillStore.removeListener('pills-state-created', () => this.setState({ isPillDataLoading: false }));
     PillStore.removeListener('pills-missed', this._toggleModal);
     PillStore.removeListener('reset-completed', () => {
       this.setState({
@@ -172,7 +181,8 @@ export default class tabexapp extends Component {
   }
 
   render() {
-    if (this.state.isUserLoading) {
+    console.log(this.state.isUserLoading, this.state.isPillDataLoading)
+    if (this.state.isUserLoading ) {
       return <Spinner hide={ this.state.isUserLoading }/>;
     }
 
@@ -181,6 +191,11 @@ export default class tabexapp extends Component {
       if (this.state.showDialog) {
         return <Modal hideModal={this._toggleModal} showDialog={this.state.showDialog} />
       } else {
+        if (this.state.isPillDataLoading) {
+          setTimeout(() => this.setState({ isPillDataLoading: false }), 1000);
+          return <Spinner hide={ this.state.isPillDataLoading }/>;
+        }
+
         return <MainNavigator />;
       }
     }

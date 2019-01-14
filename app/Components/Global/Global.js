@@ -33,10 +33,9 @@ export default class Global extends Component{
   constructor(props) {
     super(props);
     const jsonUser = UserStore.getUser();
-    const toIncrease = moment().isSame(START_OF_MONTH, 'days') || moment().isSame(MIDDLE_OF_MONTH, 'days');
 
     this.state = {
-      peopleArroundGLobe: toIncrease ? BASE + COEF : BASE,
+      peopleArroundGLobe: BASE,
       isLandScape: false,
       initialRegion: {
           latitude: 47.810175,
@@ -114,28 +113,19 @@ export default class Global extends Component{
   }
 
   async saveStatistics() {
-    let stats = await this.loadStatistics();
-    console.log('loaded', stats);
-
-    console.log('in save')
-    if (this.state.peopleArroundGLobe > stats.prevValue) {
-      console.log('in stats')
-      try {
-        await AsyncStorage.setItem('peopleArroundGLobe', JSON.stringify({ peopleArroundGLobe: this.state.peopleArroundGLobe, prevValue: this.state.peopleArroundGLobe }));
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      let stats = await this.loadStatistics();
+      await AsyncStorage.setItem('peopleArroundGlobe', JSON.stringify({ peopleArroundGLobe: this.state.peopleArroundGLobe, prevValue: this.state.peopleArroundGLobe }));
+    } catch (err) {
+      console.log(err);
     }
-
   }
 
   async loadStatistics() {
     let stats;
-    console.log('in load');
     try {
-      let data = await AsyncStorage.getItem('peopleArroundGLobe');
+      let data = await AsyncStorage.getItem('peopleArroundGlobe');
       let jsonData = JSON.parse(data);
-      console.log(jsonData);
 
       stats = jsonData;
     } catch (err) {
@@ -145,13 +135,26 @@ export default class Global extends Component{
     return stats;
   }
 
+  increasePeopleArroundGLobe(data) {
+    let toIncrease = moment().isSame(START_OF_MONTH, 'days') || moment().isSame(MIDDLE_OF_MONTH, 'days');
+
+    if (data === null || data === undefined) {
+      this.setState({
+        peopleArroundGLobe: toIncrease ? this.state.peopleArroundGLobe + COEF : this.state.peopleArroundGLobe,
+      });
+
+      return;
+    }
+
+    this.setState({
+      peopleArroundGLobe: toIncrease ? data.peopleArroundGLobe + COEF : data.peopleArroundGLobe,
+    });
+  }
+
   componentWillMount() {
     this.loadStatistics().then((data) => {
       let toIncrease = moment().isSame(START_OF_MONTH, 'days') || moment().isSame(MIDDLE_OF_MONTH, 'days');
-      console.log(data);
-      this.setState({
-        peopleArroundGLobe: toIncrease ? data.peopleArroundGLobe + COEF : data.peopleArroundGLobe,
-      });
+      this.increasePeopleArroundGLobe(data);
     });
     this.saveStatistics().then(err => err ? console.log(err) : console.log('success'));
 
@@ -164,6 +167,7 @@ export default class Global extends Component{
   }
 
   componentWillUnmount() {
+    this.saveStatistics().then(err => err ? console.log(err) : console.log('success'));
     UserStore.removeListener('user-updated', this._getUserStartingDate);
     UserStore.removeListener('user-saved', () => loadUser());
     UserStore.removeListener('number-saved', () => loadNumber());

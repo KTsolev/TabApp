@@ -8,6 +8,21 @@ export function increasePills() {
   });
 };
 
+export async function reinitPillsData() {
+  try {
+    let data = await AsyncStorage.getItem('pillsData');
+    let jsonData = JSON.parse(data);
+
+    dispatcher.dispatch({
+        type: 'init-data',
+        data: jsonData,
+      });
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export function pillsMissed(data) {
   dispatcher.dispatch({
     type: 'pills-not-taken',
@@ -32,7 +47,6 @@ export function addNewUserProps(data) {
 };
 
 export async function saveUser(data) {
-  console.log(data)
   try {
     await AsyncStorage.setItem('userData', JSON.stringify(data));
     setTimeout(() => {
@@ -48,12 +62,41 @@ export async function saveUser(data) {
 export async function loadUser() {
   try {
     let data = await AsyncStorage.getItem('userData');
-    console.log(data)
     let jsonData = JSON.parse(data);
+
     dispatcher.dispatch({
         type: 'recieved-user-data',
         data: jsonData,
       });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export async function savePillsData(data) {
+  try {
+    console.log('from save action', data);
+    await AsyncStorage.setItem('pillsData', JSON.stringify(data));
+    setTimeout(() => {
+      dispatcher.dispatch({
+        type: 'pills-data-saved',
+      });
+    }, 1000);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export async function loadPillsData() {
+  try {
+    let data = await AsyncStorage.getItem('pillsData');
+    let jsonData = JSON.parse(data);
+
+    dispatcher.dispatch({
+        type: 'pills-data-loaded',
+        data: jsonData,
+      });
+
   } catch (err) {
     console.log(err);
   }
