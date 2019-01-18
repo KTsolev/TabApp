@@ -82,6 +82,7 @@ class Wizzard extends Component {
   }
 
   _updateUser(newState) {
+    console.log(newState)
     this.setState({
       userData: Object.assign({}, this.state.userData, newState),
     });

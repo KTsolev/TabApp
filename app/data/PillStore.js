@@ -25,7 +25,7 @@ class PillStore extends EventEmmiter {
       this.pillsData.count = this.pillsData.count + 1;
       this.emit('pills-increased');
     }
-    
+
     this.pillsData.lastPillTaken = moment().format();
   }
 
@@ -58,13 +58,13 @@ class PillStore extends EventEmmiter {
         this.emit('recieved-pills-data');
         break;
       case 'pills-not-taken':
-          forgotPills();
-          this.emit('pills-missed');
+        forgotPills();
+        this.emit('pills-missed');
         break;
       case 'reset-completed':
         this.showResetModal = false;
         this.emit('reset-completed');
-      break;  
+        break;
       default:
         break;
     }

@@ -37,9 +37,7 @@ export default class TermsAndConditions extends Component {
   }
 
   onPressHandler() {
-    if (this.state.aggreed) {
-      this.props.onParentChangeHandler(this.state.aggreed);
-    }
+    this.props.onParentChangeHandler(this.state.aggreed);
   }
 
   componentDidMount() {
@@ -62,7 +60,10 @@ export default class TermsAndConditions extends Component {
         <TextPanel style={{flex: 0.4}} panelText={overallTerms} />
         <TextPanel style={{flex: 0.4}} panelText={generalRights} />
         <TouchableOpacity
-          onPress={() => this.setState({ showTerm: false })}>
+          onPress={() => {
+            this.setState({ showTerm: false });
+            this.onChangeHandler();
+          }}>
           <LinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -86,7 +87,7 @@ export default class TermsAndConditions extends Component {
             uncheckedIcon='square'
             checkedColor='#0643a6'
             checkedIcon='check-square'
-            onPress={this.onChangeHandler.bind(this)}
+            onPress={this.onChangeHandler}
             checked={this.state.aggreed}
           />
           <TouchableOpacity onPress={() => this.setState({ showTerm: true })}>

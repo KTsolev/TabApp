@@ -45,7 +45,6 @@ export async function saveUser(data) {
   }
 };
 
-
 export async function loadUser() {
   try {
     let data = await AsyncStorage.getItem('userData');

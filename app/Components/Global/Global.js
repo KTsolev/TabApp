@@ -6,6 +6,7 @@ import moment from 'moment';
 import UserStore from '../../data/UserStore';
 import Orientation from 'react-native-orientation';
 import MapView, { Marker } from 'react-native-maps';
+import { AsyncStorage } from 'react-native';
 import styles from './styles';
 import {
   View,
@@ -18,21 +19,24 @@ import {
   LinkingIOS,
   Dimensions } from 'react-native';
 
+const window = Dimensions.get('window');
+const { width, height }  = window;
+const LATITUDE_DELTA = 1.5;
+const ASPECT_RATIO = (width / height);
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const START_OF_MONTH = moment().startOf('month');
+const MIDDLE_OF_MONTH = moment().startOf('month').add(14, 'days');
+const COEF = 7452;
+let BASE = 135565;
+
 export default class Global extends Component{
   constructor(props) {
     super(props);
-
     const jsonUser = UserStore.getUser();
-    const window = Dimensions.get('window');
-    const { width, height }  = window;
-    const LATITUDE_DELTA = 1.5;
-    const ASPECT_RATIO = (width / height);
-    const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-
-    let coeficient =  moment().diff(moment(jsonUser.startingDate), 'days');
+    const toIncrease = moment().isSame(START_OF_MONTH, 'days') || moment().isSame(MIDDLE_OF_MONTH, 'days');
 
     this.state = {
-      peopleArroundGLobe: coeficient < 0 ? 135565 : 135565 + coeficient,
+      peopleArroundGLobe: toIncrease ? BASE + COEF : BASE,
       isLandScape: false,
       initialRegion: {
           latitude: 47.810175,
@@ -109,17 +113,60 @@ export default class Global extends Component{
     });
   }
 
+  async saveStatistics() {
+    let stats = await this.loadStatistics();
+    console.log('loaded', stats);
+
+    console.log('in save')
+    if (this.state.peopleArroundGLobe > stats.prevValue) {
+      console.log('in stats')
+      try {
+        await AsyncStorage.setItem('peopleArroundGLobe', JSON.stringify({ peopleArroundGLobe: this.state.peopleArroundGLobe, prevValue: this.state.peopleArroundGLobe }));
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+  }
+
+  async loadStatistics() {
+    let stats;
+    console.log('in load');
+    try {
+      let data = await AsyncStorage.getItem('peopleArroundGLobe');
+      let jsonData = JSON.parse(data);
+      console.log(jsonData);
+
+      stats = jsonData;
+    } catch (err) {
+      console.log(err);
+    }
+
+    return stats;
+  }
+
   componentWillMount() {
+    this.loadStatistics().then((data) => {
+      let toIncrease = moment().isSame(START_OF_MONTH, 'days') || moment().isSame(MIDDLE_OF_MONTH, 'days');
+      console.log(data);
+      this.setState({
+        peopleArroundGLobe: toIncrease ? data.peopleArroundGLobe + COEF : data.peopleArroundGLobe,
+      });
+    });
+    this.saveStatistics().then(err => err ? console.log(err) : console.log('success'));
+
     const initial = Orientation.getInitialOrientation();
     this.setState({ isLandScape: initial === 'LANDSCAPE' });
     UserStore.on('user-updated', this._getUserStartingDate);
     UserStore.on('user-saved', () => loadUser());
+    UserStore.on('number-saved', () => loadNumber());
     Orientation.addOrientationListener(this._orientationDidChange);
   }
 
   componentWillUnmount() {
     UserStore.removeListener('user-updated', this._getUserStartingDate);
     UserStore.removeListener('user-saved', () => loadUser());
+    UserStore.removeListener('number-saved', () => loadNumber());
     Orientation.removeOrientationListener(this._orientationDidChange);
   }
 

@@ -10,14 +10,14 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
-@import GoogleMaps;
 @implementation AppDelegate
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
 
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-  [GMSServices provideAPIKey:@"AIzaSyDE0oZqUGNoHRY_2YZsZsRVRJ1mkiocJ5A"];
+
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"TabApp"
                                                initialProperties:nil

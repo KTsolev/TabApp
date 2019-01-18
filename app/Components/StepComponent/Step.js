@@ -21,6 +21,8 @@ import {
   listenOrientationChange as loc,
   removeOrientationListener as rol
 } from 'react-native-responsive-screen';
+import validation from '../../validators/validation';
+import validateWrapper from '../../validators/validate_wrapper';
 
 export default class Step extends Component {
   static currenciesArray = [
@@ -53,6 +55,10 @@ export default class Step extends Component {
       startingDate: props.userData.startingDate || '',
       isDateTimePickerVisible: false,
       activeColors: ['#009fea', '#0544a8'],
+      pricePerPackError: validateWrapper('pricePerPack', props.userData.pricePerPack),
+      currencyError: validateWrapper('currency', props.userData.currency),
+      ciggarettesPerDayError: validateWrapper('ciggarettesPerDay', props.userData.ciggarettesPerDay),
+      startingDateError: validateWrapper('startingDate', props.userData.startingDate),
     };
 
     this.selectCurrency = this.selectCurrency.bind(this);
@@ -63,24 +69,44 @@ export default class Step extends Component {
   }
 
   selectCurrency(val) {
-    let index = val.split('key')[1];
+    let errorText = validateWrapper('currency', val);
     console.log(val)
+    if (!!errorText) {
+      this.setState({ currencyError: errorText });
+      return;
+    }
+
     this.setState({ currency: val });
     this.props.updateUser({ currency: val });
-    return this.state.currency !== val ? val : this.state.currency;
   }
 
   selectPricePerPack() {
+    let errorText = validateWrapper('pricePerPack', this.state.pricePerPack);
+
+    if (!!errorText) {
+      this.setState({ pricePerPackError: errorText });
+      return;
+    }
+
     this.props.updateUser({ pricePerPack: this.state.pricePerPack });
   }
 
   selectCiggarettes() {
+    let errorText = validateWrapper('ciggarettesPerDay', this.state.ciggarettesPerDay);
+
+    if (!!errorText) {
+      this.setState({ ciggarettesPerDayError: errorText });
+      return;
+    }
+
     this.props.updateUser({ ciggarettesPerDay: this.state.ciggarettesPerDay });
   }
 
   _handleDatePicked(val) {
     let endDate = moment(val).add(30, 'days');
+
     this.setState({ startingDate: val, isDateTimePickerVisible: false, });
+
     this.props.updateUser({
         startingDate: moment(val).format(),
         endingDate: endDate.format(),
@@ -106,71 +132,81 @@ export default class Step extends Component {
        selectedItemColor='#0544a8'
        containerStyle={{ width: 250, height: 60, margin: 10, marginTop: -5, alignSelf: 'center' }}
        data={Step.currenciesArray}
+       onBlur={() => {
+          this.setState({
+            currencyError: validateWrapper('currency', this.state.currency),
+          });
+       }}
        onChangeText={this.selectCurrency}
      />;
 
     let inputs;
     let buttons;
-    let errorText;
+    let errorText = '';
     let toDisable = true;
     let isValid = false;
 
     switch (this.props.currentIndex) {
       case 1:
-        toDisable = this.state.currency === '' && this.state.pricePerPack === 0;
-        isValid = isNaN(`${this.state.pricePerPack}`);
-        errorText = <Text style={[styles.errorText, { textAlign: 'center' }]}>You have enter valid number for price per pack and currency option!</Text>
-
+        errorText = <Text style={[styles.errorText, { textAlign: 'center' }]}>
+        { `${!!this.state.pricePerPackError ? this.state.pricePerPackError : ''} \n ${!!this.state.currencyError ? this.state.currencyError : ''} `}</Text>;
         inputs = <View>
           <TextInput
             style={styles.input}
             placeholder='0'
             clearTextOnFocus={true}
             keyboardType='numeric'
-            onFocus={()=>this.setState({ pricePerPack: '' })}
+            onBlur={() => {
+              this.setState({
+                pricePerPackError: validateWrapper('pricePerPack', this.state.pricePerPack),
+              });
+            }}
+            onFocus={() => this.setState({ pricePerPack: '' })}
             onChangeText={(val) => this.setState({ pricePerPack: val })}
             onEndEditing={this.selectPricePerPack}
             value={`${this.state.pricePerPack}`}
           />
-          {toDisable || isValid ? errorText : null}
+          {errorText}
           {currencyDropDown}
         </View>;
         buttons = <View><LinearGradient
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
+                  colors={!!this.state.currencyError || !!this.state.pricePerPackError ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      disabled={toDisable || isValid}
+                      disabled={!!this.state.currencyError || !!this.state.pricePerPackError}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>
                   </LinearGradient></View>;
       break;
       case 2:
-        toDisable = this.state.ciggarettesPerDay === 0;
-        isValid = isNaN(this.state.ciggarettesPerDay);
-        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>You have enter valid number for ciggarettes per day option!</Text>
-
+        errorText = <Text style={[styles.errorText, { alignSelf: 'center' }]}>{!!this.state.ciggarettesPerDayError ? this.state.ciggarettesPerDayError : ''}</Text>;
         inputs = <View>
           <TextInput
             style={styles.input}
             placeholder='0'
             keyboardType='numeric'
+            onBlur={() => {
+              this.setState({
+                ciggarettesPerDayError: validateWrapper('pricePerPack', this.state.ciggarettesPerDay),
+              });
+            }}
             onFocus={()=>this.setState({ ciggarettesPerDay: '' })}
             onChangeText={(val) => this.setState({ ciggarettesPerDay: val })}
             onEndEditing={this.selectCiggarettes}
             value={`${this.state.ciggarettesPerDay}`}
           />
-          {toDisable || isValid ? errorText : null}
+          {errorText}
         </View>;
         buttons =  <View><LinearGradient
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
-                  colors={toDisable || isValid ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
+                  colors={!!this.state.ciggarettesPerDayError ? ['#e3f3fd', '#e7e7e7'] : ['#009fea', '#0544a8']}
                   style={styles.button}>
                     <TouchableOpacity
-                      disabled={toDisable || isValid}
+                      disabled={!!this.state.ciggarettesPerDayError}
                       onPress={this.props.nextStep}>
                       <Text style={styles.buttonText}>{this.props.nextLabel}</Text>
                     </TouchableOpacity>

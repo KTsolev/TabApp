@@ -23,7 +23,7 @@ export default class ProgressScreen extends Component{
     const user = UserStore.getUser();
     const pillsTaken = user.pillsTaken ? Number(user.pillsTaken) > 180 ? 180 : Number(user.pillsTaken) : 0;
     const timeSinceStart = moment().diff(moment(user.startingDate), 'hours');
-    const daysSinceStart = moment().diff(moment(user.startingDate), 'days') < 0 ? 30: moment().diff(moment(user.startingDate), 'days');
+    const daysSinceStart = moment().diff(moment(user.startingDate), 'days') < 0 ? 0 : moment().diff(moment(user.startingDate), 'days');
     const leftDays = daysSinceStart < 0 ? 30 : 30 - daysSinceStart;
     const currency = user.currency.split('-')[1];
     const daysWidth = Math.round(((30 - daysSinceStart) / 30) * 100);
