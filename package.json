@@ -14,7 +14,7 @@
     "link": "^0.1.5",
     "moment": "^2.22.2",
     "npm": "^6.4.1",
-    "pubnub": "^4.21.6",
+    "pubnub": "^4.37.0",
     "pubnub-react": "^1.2.0",
     "react": "16.6.0-alpha.8af6728",
     "react-dom": "^16.6.3",
